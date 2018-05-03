@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import click
 
+from config import persist_config, load_config
 from fandogh_client import create_app, create_version, list_versions, deploy_container
 from beautifultable import BeautifulTable
 
@@ -30,7 +31,7 @@ base.add_command(container)
 @click.option('--name', prompt='application name', help='your application name')
 def init(name):
     response = create_app(name)
-    # todo: create .fandogh directory
+    persist_config(name)
     click.echo(response)
 
 
@@ -40,13 +41,17 @@ app.add_command(init)
 @click.command()
 @click.option('--version', prompt='application version', help='your application version')
 def publish(version):
-    response = create_version('app1', version)
+    config = load_config()
+    app_name = config.get('app.name')
+    response = create_version(app_name, version)
     click.echo(response)
 
 
 @click.command()
 def versions():
-    response = list_versions('app1')
+    config = load_config()
+    app_name = config.get('app.name')
+    response = list_versions(app_name)
     table = BeautifulTable()
     table.column_headers = ['version', 'state']
     table.row_separator_char = ''
@@ -58,8 +63,9 @@ def versions():
 @click.command()
 @click.option('--version', prompt='application version', help='The application version you want to deploy')
 def deploy(version):
-    app = 'app1'
-    response = deploy_container(app, version)
+    config = load_config()
+    app_name = config.get('app.name')
+    response = deploy_container(app_name, version)
     click.echo(response)
 
 
