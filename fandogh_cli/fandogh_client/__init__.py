@@ -1,6 +1,6 @@
 import requests
 
-base_url = 'http://localhost:8000/api/webapp/'
+base_url = 'http://fandogh.cloud:8080/api/webapp/'
 
 
 def create_app(app_name):
@@ -27,3 +27,11 @@ def list_versions(app_name):
         raise Exception(response.text)
     else:
         return response.json()
+
+
+def deploy_container(app_name, version):
+    response = requests.post(base_url + 'deployments', data={'app_name': app_name, 'img_version': version})
+    if response.status_code != 200:
+        raise Exception(response.text)
+    else:
+        return response.text

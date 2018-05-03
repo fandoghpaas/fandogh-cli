@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 import click
 
-from fandogh_client import create_app, create_version, list_versions
+from fandogh_client import create_app, create_version, list_versions, deploy_container
 from beautifultable import BeautifulTable
 
+
+# TODO: better description for state field
 
 @click.group("cli")
 def base():
@@ -53,8 +55,17 @@ def versions():
     click.echo(table)
 
 
+@click.command()
+@click.option('--version', prompt='application version', help='The application version you want to deploy')
+def deploy(version):
+    app = 'app1'
+    response = deploy_container(app, version)
+    click.echo(response)
+
+
 app.add_command(publish)
 app.add_command(versions)
+container.add_command(deploy)
 
 if __name__ == '__main__':
     base()
