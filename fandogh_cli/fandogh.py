@@ -2,7 +2,7 @@
 import click
 
 from config import persist_config, load_config
-from fandogh_client import create_app, create_version, list_versions, deploy_container
+from fandogh_client import create_app, create_version, list_versions, deploy_service
 from beautifultable import BeautifulTable
 
 
@@ -48,10 +48,12 @@ def publish(version):
 
 
 @click.command()
-def versions():
-    config = load_config()
-    app_name = config.get('app.name')
-    response = list_versions(app_name)
+@click.option('--app', help='The application name', default=None)
+def versions(app):
+    if not app:
+        config = load_config()
+        app = config.get('app.name')
+    response = list_versions(app)
     table = BeautifulTable()
     table.column_headers = ['version', 'state']
     table.row_separator_char = ''
@@ -65,7 +67,7 @@ def versions():
 def deploy(version):
     config = load_config()
     app_name = config.get('app.name')
-    response = deploy_container(app_name, version)
+    response = deploy_service(app_name, version)
     click.echo(response)
 
 
