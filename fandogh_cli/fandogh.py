@@ -7,6 +7,8 @@ from beautifultable import BeautifulTable
 
 
 # TODO: better description for state field
+from workspace import build_workspace
+
 
 def create_table(columns):
     table = BeautifulTable()
@@ -50,7 +52,8 @@ app.add_command(init)
 def publish(version):
     config = load_config()
     app_name = config.get('app.name')
-    response = create_version(app_name, version)
+    workspace_path = build_workspace({})
+    response = create_version(app_name, version, workspace_path)
     click.echo(response)
 
 
@@ -85,7 +88,6 @@ def service_list():
     for item in services:
         table.append_row([item.get('name'), item.get('start_date'), item.get('state')])
     click.echo(table)
-
 
 app.add_command(publish)
 app.add_command(versions)

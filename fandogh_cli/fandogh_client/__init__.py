@@ -14,8 +14,8 @@ def create_app(app_name):
         return response.text
 
 
-def create_version(app_name, version):
-    with open('/Users/SOROOSH/projects/fandogh/fandogh-cli/Archive.zip', 'rb') as file:
+def create_version(app_name, version, workspace_path):
+    with open(workspace_path, 'rb') as file:
         files = {'source': file}
         response = requests.post(base_url + 'apps/' + app_name + '/versions/' + version, files=files, data={'version': version})
         if response.status_code != 200:
