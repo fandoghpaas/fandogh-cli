@@ -2,11 +2,18 @@
 import click
 
 from config import persist_config, load_config
-from fandogh_client import create_app, create_version, list_versions, deploy_service
+from fandogh_client import create_app, create_version, list_versions, deploy_service, list_services
 from beautifultable import BeautifulTable
 
 
 # TODO: better description for state field
+
+def create_table(columns):
+    table = BeautifulTable()
+    table.column_headers = columns
+    table.row_separator_char = ''
+    return table
+
 
 @click.group("cli")
 def base():
@@ -18,13 +25,13 @@ def app():
     pass
 
 
-@click.group("container")
-def container():
+@click.group("service")
+def service():
     pass
 
 
 base.add_command(app)
-base.add_command(container)
+base.add_command(service)
 
 
 @click.command()
@@ -54,26 +61,36 @@ def versions(app):
         config = load_config()
         app = config.get('app.name')
     response = list_versions(app)
-    table = BeautifulTable()
-    table.column_headers = ['version', 'state']
-    table.row_separator_char = ''
+    table = create_table(['version', 'state'])
     for item in response:
         table.append_row([item.get('version'), item.get('state')])
     click.echo(table)
 
 
 @click.command()
+@click.option('--app', help='The application name', default=None)
 @click.option('--version', prompt='application version', help='The application version you want to deploy')
-def deploy(version):
-    config = load_config()
-    app_name = config.get('app.name')
-    response = deploy_service(app_name, version)
+def deploy(app, version):
+    if not app:
+        config = load_config()
+        app = config.get('app.name')
+    response = deploy_service(app, version)
     click.echo(response)
+
+
+@click.command('list')
+def service_list():
+    services = list_services()
+    table = create_table(['name', 'start date', 'state'])
+    for item in services:
+        table.append_row([item.get('name'), item.get('start_date'), item.get('state')])
+    click.echo(table)
 
 
 app.add_command(publish)
 app.add_command(versions)
-container.add_command(deploy)
+service.add_command(deploy)
+service.add_command(service_list)
 
 if __name__ == '__main__':
     base()

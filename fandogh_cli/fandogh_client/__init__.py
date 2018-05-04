@@ -1,6 +1,8 @@
 import requests
 
 base_url = 'http://localhost:8000/api/webapp/'
+
+
 # base_url = 'http://fandogh.cloud:8080/api/webapp/'
 
 
@@ -36,3 +38,11 @@ def deploy_service(app_name, version, service_name=None):
         raise Exception(response.text)
     else:
         return response.text
+
+
+def list_services():
+    response = requests.get(base_url + 'services')
+    if response.status_code != 200:
+        raise Exception(response.text)
+    else:
+        return response.json()
