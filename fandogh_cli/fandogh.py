@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 import click
 
-from config import persist_config, load_config
-from fandogh_client import create_app, create_version, list_versions, deploy_service, list_services
+from .config import persist_config, load_config
+from .fandogh_client import create_app, create_version, list_versions, deploy_service, list_services
 from beautifultable import BeautifulTable
 
 
 # TODO: better description for state field
-from workspace import build_workspace
+from .workspace import build_workspace
 
 
 def create_table(columns):
