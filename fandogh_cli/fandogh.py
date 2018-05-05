@@ -71,13 +71,18 @@ def versions(app):
 
 
 @click.command()
-@click.option('--app', help='The application name', default=None)
-@click.option('--version', prompt='application version', help='The application version you want to deploy')
-def deploy(app, version):
+@click.option('--app', help='The image name', default=None)
+@click.option('--version', prompt='The image version', help='The application version you want to deploy')
+@click.option('--name', prompt='Your service name', help='Choose a unique name for your service')
+def deploy(app, version, name):
+    token = load_token()
+    if not token:
+        click.echo('In order to see your services you need to login first')
+        return
     if not app:
         config = load_config()
         app = config.get('app.name')
-    response = deploy_service(app, version)
+    response = deploy_service(app, version, name, token)
     click.echo(response)
 
 

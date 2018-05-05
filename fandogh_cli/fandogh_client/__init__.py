@@ -32,8 +32,11 @@ def list_versions(app_name):
         return response.json()
 
 
-def deploy_service(app_name, version, service_name=None):
-    response = requests.post(base_webapp_url + 'services', data={'app_name': app_name, 'img_version': version, 'service_name': service_name})
+def deploy_service(app_name, version, service_name, token):
+    response = requests.post(base_webapp_url + 'services',
+                             data={'app_name': app_name, 'img_version': version, 'service_name': service_name},
+                             headers={'Authorization': 'JWT ' + token}
+                             )
     if response.status_code != 200:
         raise Exception(response.text)
     else:
@@ -41,7 +44,8 @@ def deploy_service(app_name, version, service_name=None):
 
 
 def list_services(token):
-    response = requests.get(base_webapp_url + 'services', headers={'Authorization': 'JWT ' + token})
+    response = requests.get(base_webapp_url + 'services',
+                            headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
         raise Exception(response.text)
     else:
