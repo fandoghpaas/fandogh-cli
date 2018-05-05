@@ -1,10 +1,9 @@
 import requests
+import os
 
-base_url = 'http://localhost:8000/api/'
+fandogh_host = os.getenv('FANDOGH_HOST', 'http://fandogh.cloud:8080')
+base_url = '%s/api/' % fandogh_host
 base_webapp_url = '%swebapp/' % base_url
-
-
-# base_url = 'http://fandogh.cloud:8080/api/webapp/'
 
 
 def create_app(app_name):
