@@ -37,7 +37,6 @@ def persist_token(token_obj):
 def load_token():
     credentials_path = _get_credentials_path()
     token_obj = load_yml_file(credentials_path)
-    print(token_obj)
     return token_obj.get('token', None) if token_obj else None
 
 
