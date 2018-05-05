@@ -40,7 +40,7 @@ def deploy_service(app_name, version, service_name, token):
     if response.status_code != 200:
         raise Exception(response.text)
     else:
-        return response.text
+        return response.json()
 
 
 def list_services(token):

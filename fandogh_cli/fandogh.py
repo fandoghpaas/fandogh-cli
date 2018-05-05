@@ -83,7 +83,9 @@ def deploy(app, version, name):
         config = load_config()
         app = config.get('app.name')
     response = deploy_service(app, version, name, token)
-    click.echo(response)
+    click.echo('Your service deployed successfully.')
+    click.echo('The service is accessible via following link:')
+    click.echo(response.get('url'))
 
 
 @click.command('list')
