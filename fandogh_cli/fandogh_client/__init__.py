@@ -1,7 +1,7 @@
 import requests
 
 base_url = 'http://localhost:8000/api/'
-base_webapp_url = '%s/webapp/' % base_url
+base_webapp_url = '%swebapp/' % base_url
 
 
 # base_url = 'http://fandogh.cloud:8080/api/webapp/'
@@ -41,8 +41,8 @@ def deploy_service(app_name, version, service_name=None):
         return response.text
 
 
-def list_services():
-    response = requests.get(base_webapp_url + 'services')
+def list_services(token):
+    response = requests.get(base_webapp_url + 'services', headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
         raise Exception(response.text)
     else:
@@ -54,4 +54,4 @@ def get_token(username, password):
     if response.status_code != 200:
         raise Exception(response.text)
     else:
-        return response.text
+        return response.json()

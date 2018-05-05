@@ -82,7 +82,11 @@ def deploy(app, version):
 
 @click.command('list')
 def service_list():
-    services = list_services()
+    token = load_token()
+    if not token:
+        click.echo('In order to see your services you need to login first')
+        return
+    services = list_services(token)
     table = create_table(['name', 'start date', 'state'])
     for item in services:
         table.append_row([item.get('name'), item.get('start_date'), item.get('state')])
@@ -93,7 +97,8 @@ def service_list():
 @click.option('--username', prompt='username', help='your username')
 @click.option('--password', prompt='password', help='your password', hide_input=True)
 def login(username, password):
-    click.echo(get_token(username, password))
+    token_obj = get_token(username, password)
+    persist_token(token_obj)
 
 
 app.add_command(publish)
