@@ -17,6 +17,7 @@ def create_table(columns):
 
 
 @click.group("cli")
+@click.version_option()
 def base():
     pass
 
