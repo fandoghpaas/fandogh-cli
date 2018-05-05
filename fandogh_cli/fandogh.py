@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 import click
 
-from .config import persist_config, load_config
-from .fandogh_client import create_app, create_version, list_versions, deploy_service, list_services
+from .config import *
+from .fandogh_client import create_app, create_version, list_versions, deploy_service, list_services, get_token
 from beautifultable import BeautifulTable
-
 
 # TODO: better description for state field
 from .workspace import build_workspace
@@ -89,10 +88,19 @@ def service_list():
         table.append_row([item.get('name'), item.get('start_date'), item.get('state')])
     click.echo(table)
 
+
+@click.command()
+@click.option('--username', prompt='username', help='your username')
+@click.option('--password', prompt='password', help='your password', hide_input=True)
+def login(username, password):
+    click.echo(get_token(username, password))
+
+
 app.add_command(publish)
 app.add_command(versions)
 service.add_command(deploy)
 service.add_command(service_list)
+base.add_command(login)
 
 if __name__ == '__main__':
     base()
