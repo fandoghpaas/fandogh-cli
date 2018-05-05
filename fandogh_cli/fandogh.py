@@ -100,6 +100,7 @@ def service_list():
 def login(username, password):
     token_obj = get_token(username, password)
     persist_token(token_obj)
+    click.echo('Logged in successfully')
 
 
 app.add_command(publish)
