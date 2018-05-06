@@ -2,7 +2,7 @@
 import click
 
 from .config import *
-from .fandogh_client import create_app, create_version, list_versions, deploy_service, list_services, get_token, destroy_service
+from .fandogh_client import create_app, create_version, list_versions, deploy_service, list_services, get_token, destroy_service, get_apps
 from beautifultable import BeautifulTable
 
 # TODO: better description for state field
@@ -42,6 +42,21 @@ def init(name):
     response = create_app(name)
     persist_config(name)
     click.echo(response)
+
+
+@click.command('list')
+def list_apps():
+    token = load_token()
+    print(token)
+    if not token:
+        click.echo('In order to see your apps you need to login first')
+        return
+    response = get_apps(token)
+    table = create_table(['Name', 'Create Date'])
+    for item in response:
+        print(item)
+        table.append_row([item.get('name'), item.get('created_at')])
+    click.echo(table)
 
 
 app.add_command(init)
@@ -123,6 +138,7 @@ def login(username, password):
 
 app.add_command(publish)
 app.add_command(versions)
+app.add_command(list_apps)
 service.add_command(deploy)
 service.add_command(service_list)
 service.add_command(service_destroy)

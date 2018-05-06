@@ -14,6 +14,14 @@ def create_app(app_name):
         return response.text
 
 
+def get_apps(token):
+    response = requests.get(base_webapp_url + 'apps', headers={'Authorization': 'JWT ' + token})
+    if response.status_code != 200:
+        raise Exception(response.text)
+    else:
+        return response.json()
+
+
 def create_version(app_name, version, workspace_path):
     with open(workspace_path, 'rb') as file:
         files = {'source': file}
