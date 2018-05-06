@@ -52,6 +52,15 @@ def list_services(token):
         return response.json()
 
 
+def destroy_service(service_name, token):
+    response = requests.delete(base_webapp_url + 'services/' + service_name,
+                               headers={'Authorization': 'JWT ' + token})
+    if response.status_code != 200:
+        raise Exception(response.text)
+    else:
+        return response.json()
+
+
 def get_token(username, password):
     response = requests.post(base_url + 'tokens', data={'username': username, 'password': password})
     if response.status_code != 200:

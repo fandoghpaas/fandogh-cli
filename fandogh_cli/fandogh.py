@@ -2,7 +2,7 @@
 import click
 
 from .config import *
-from .fandogh_client import create_app, create_version, list_versions, deploy_service, list_services, get_token
+from .fandogh_client import create_app, create_version, list_versions, deploy_service, list_services, get_token, destroy_service
 from beautifultable import BeautifulTable
 
 # TODO: better description for state field
@@ -101,6 +101,17 @@ def service_list():
     click.echo(table)
 
 
+@click.command('destroy')
+@click.option('--service', 'service_name', prompt='Name of the service you want to destroy', )
+def service_destroy(service_name):
+    token = load_token()
+    if not token:
+        click.echo('In order to see your services you need to login first')
+        return
+    response = destroy_service(service_name, token)
+    click.echo(response)
+
+
 @click.command()
 @click.option('--username', prompt='username', help='your username')
 @click.option('--password', prompt='password', help='your password', hide_input=True)
@@ -114,6 +125,7 @@ app.add_command(publish)
 app.add_command(versions)
 service.add_command(deploy)
 service.add_command(service_list)
+service.add_command(service_destroy)
 base.add_command(login)
 
 if __name__ == '__main__':
