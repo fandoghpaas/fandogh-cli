@@ -22,10 +22,18 @@ def get_apps(token):
         return response.json()
 
 
+def get_build(app, version, token):
+    response = requests.get(base_webapp_url + 'apps/' + app + '/versions/' + version + '/builds', headers={'Authorization': 'JWT ' + token})
+    if response.status_code != 200:
+        raise Exception(response.text)
+    else:
+        return response.json()
+
+
 def create_version(app_name, version, workspace_path):
     with open(workspace_path, 'rb') as file:
         files = {'source': file}
-        response = requests.post(base_webapp_url + 'apps/' + app_name + '/versions/' + version, files=files, data={'version': version})
+        response = requests.post(base_webapp_url + 'apps/' + app_name + '/versions', files=files, data={'version': version})
         if response.status_code != 200:
             raise Exception(response.text)
         else:
