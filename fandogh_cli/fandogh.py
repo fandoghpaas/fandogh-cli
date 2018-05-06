@@ -6,7 +6,7 @@ from .fandogh_client import *
 from beautifultable import BeautifulTable
 
 # TODO: better description for state field
-from .workspace import build_workspace
+from .workspace import build_workspace, cleanup_workspace
 
 
 def create_table(columns):
@@ -39,7 +39,11 @@ base.add_command(service)
 @click.command()
 @click.option('--name', prompt='application name', help='your application name')
 def init(name):
-    response = create_app(name)
+    token = load_token()
+    if not token:
+        click.echo('In order to see your apps you need to login first')
+        return
+    response = create_app(name, token)
     persist_config(name)
     click.echo(response)
 
@@ -47,14 +51,12 @@ def init(name):
 @click.command('list')
 def list_apps():
     token = load_token()
-    print(token)
     if not token:
         click.echo('In order to see your apps you need to login first')
         return
     response = get_apps(token)
     table = create_table(['Name', 'Create Date'])
     for item in response:
-        print(item)
         table.append_row([item.get('name'), item.get('created_at')])
     click.echo(table)
 
@@ -67,7 +69,6 @@ app.add_command(init)
 @click.option('--version', prompt='application version', help='your application version')
 def build_inspect(app, version):
     token = load_token()
-    print(token)
     if not token:
         click.echo('In order to see your apps you need to login first')
         return
@@ -85,8 +86,11 @@ def publish(version):
     config = load_config()
     app_name = config.get('app.name')
     workspace_path = build_workspace({})
-    response = create_version(app_name, version, workspace_path)
-    click.echo(response)
+    try:
+        response = create_version(app_name, version, workspace_path)
+        click.echo(response)
+    finally:
+        cleanup_workspace({})
 
 
 @click.command()
@@ -164,6 +168,3 @@ base.add_command(login)
 
 if __name__ == '__main__':
     base()
-
-
-

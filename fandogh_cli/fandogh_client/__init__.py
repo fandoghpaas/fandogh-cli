@@ -6,8 +6,10 @@ base_url = '%s/api/' % fandogh_host
 base_webapp_url = '%swebapp/' % base_url
 
 
-def create_app(app_name):
-    response = requests.post(base_webapp_url + 'apps', data={'name': app_name})
+def create_app(app_name, token):
+    response = requests.post(base_webapp_url + 'apps',
+                             data={'name': app_name},
+                             headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
         raise Exception(response.text)
     else:
@@ -15,7 +17,8 @@ def create_app(app_name):
 
 
 def get_apps(token):
-    response = requests.get(base_webapp_url + 'apps', headers={'Authorization': 'JWT ' + token})
+    response = requests.get(base_webapp_url + 'apps',
+                            headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
         raise Exception(response.text)
     else:
@@ -23,7 +26,8 @@ def get_apps(token):
 
 
 def get_build(app, version, token):
-    response = requests.get(base_webapp_url + 'apps/' + app + '/versions/' + version + '/builds', headers={'Authorization': 'JWT ' + token})
+    response = requests.get(base_webapp_url + 'apps/' + app + '/versions/' + version + '/builds',
+                            headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
         raise Exception(response.text)
     else:
@@ -33,7 +37,9 @@ def get_build(app, version, token):
 def create_version(app_name, version, workspace_path):
     with open(workspace_path, 'rb') as file:
         files = {'source': file}
-        response = requests.post(base_webapp_url + 'apps/' + app_name + '/versions', files=files, data={'version': version})
+        response = requests.post(base_webapp_url + 'apps/' + app_name + '/versions',
+                                 files=files,
+                                 data={'version': version})
         if response.status_code != 200:
             raise Exception(response.text)
         else:
