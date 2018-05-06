@@ -48,6 +48,7 @@ $ application version: v1
 ```
 
 TODO:
+- clean up workspace
 - service log
-- service list
+- app list
 - service destroy 
