@@ -46,3 +46,8 @@ $ fandogh app publish
 $ application version: v1
 "Version created successfully"
 ```
+
+TODO:
+- service log
+- service list
+- service destroy 
