@@ -38,7 +38,7 @@ then you can run the following command:
  "App created successfully"
 ```
 
-Now it's time to publish the first version of your application. An application in fandogh consists of a Dockerfile and the the files which are necessary to build the docker image. For the time being you Dockerfile should be in the root your application directory.
+Now it's time to publish the first version of your application. An application in fandogh consists of a Dockerfile and the the files which are necessary (a.k.a context) to build the docker image. For the time being you Dockerfile should be in the root your application directory.
 Run the following command to publish your application version:
 
 ```bash
@@ -47,8 +47,25 @@ $ application version: v1
 "Version created successfully"
 ```
 
+### How to deploy an application
+
+Deploying a service on Fandogh is easy as pie. Let's say you have an application with name `hello-world` 
+which has version named `v1` with state `BUILT` (to see the state of builds todo read here).
+
+You just need to run the following command:
+```bash
+$ fandogh service deploy  --app hello-world --version v1 --name hello-world`
+Your service deployed successfully.
+The service is accessible via following link:
+http://hello.fandogh.cloud
+```
+
+The above command will deploy a <b>service</b> with name <b>hello-world</b> from docker image hello-world:v1.
+ 
+<b>Note:</b> at the time being services can be only exposed to the outside via port 80. 
+so ensure your web server is listening on this port.
+
+
+
 TODO:
-- clean up workspace
-- service log
-- app list
-- service destroy 
+- service log 
