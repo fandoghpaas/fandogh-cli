@@ -47,7 +47,7 @@ $ application version: v1
 "Version created successfully"
 ```
 
-### How to deploy an application
+### How to deploy a service
 
 Deploying a service on Fandogh is easy as pie. Let's say you have an application with name `hello-world` 
 which has version named `v1` with state `BUILT` (to see the state of builds todo read here).
@@ -64,6 +64,16 @@ The above command will deploy a <b>service</b> with name <b>hello-world</b> from
  
 <b>Note:</b> at the time being services can be only exposed to the outside via port 80. 
 so ensure your web server is listening on this port.
+
+### How to shutdown a service
+
+Releasing the resources is your friend to manage your cost. In cloud you can easily free the resource and no to pay for it anymore.
+To do so via fandogh-cli is even simpler than deploying a service. Let's say we want to destroy the service we deployed in the previous section.
+ 
+```bash
+$ fandogh service destroy  --name hello
+Service destroyed successfully.
+```
 
 
 

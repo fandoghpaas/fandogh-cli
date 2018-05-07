@@ -138,7 +138,7 @@ def service_list():
 
 
 @click.command('destroy')
-@click.option('--service', 'service_name', prompt='Name of the service you want to destroy', )
+@click.option('--name', 'service_name', prompt='Name of the service you want to destroy', )
 def service_destroy(service_name):
     token = load_token()
     if not token:
