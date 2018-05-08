@@ -57,7 +57,7 @@ You just need to run the following command:
 $ fandogh service deploy  --app hello-world --version v1 --name hello-world`
 Your service deployed successfully.
 The service is accessible via following link:
-http://hello.fandogh.cloud
+http://hello-world.fandogh.cloud
 ```
 
 The above command will deploy a <b>service</b> with name <b>hello-world</b> from docker image hello-world:v1.
