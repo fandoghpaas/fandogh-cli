@@ -20,6 +20,7 @@ def cleanup_workspace(workspace_config):
 
 
 def zipdir(path, ziph):
-    for i in os.listdir(path):
-        if 'workspace.zip' not in i:
-            ziph.write(i, compress_type=zipfile.ZIP_DEFLATED)
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            if file != 'workspace.zip':
+                ziph.write(os.path.join(os.path.relpath(root, path), file))
