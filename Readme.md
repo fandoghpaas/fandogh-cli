@@ -79,3 +79,4 @@ Service destroyed successfully.
 
 TODO:
 - service log 
+- respect .dockerignore file 
