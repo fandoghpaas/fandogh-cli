@@ -75,8 +75,5 @@ $ fandogh service destroy  --name hello
 Service destroyed successfully.
 ```
 
-
-
 TODO:
 - service log 
-- respect .dockerignore file 
