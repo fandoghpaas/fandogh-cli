@@ -9,6 +9,10 @@ from beautifultable import BeautifulTable
 from .workspace import build_workspace, cleanup_workspace
 
 
+def please_login_first():
+    click.echo('In order to see your apps you need to login first')
+
+
 def create_table(columns):
     table = BeautifulTable()
     table.column_headers = columns
@@ -41,7 +45,7 @@ base.add_command(service)
 def init(name):
     token = load_token()
     if not token:
-        click.echo('In order to see your apps you need to login first')
+        please_login_first()
         return
     response = create_app(name, token)
     persist_config(name)
@@ -52,7 +56,7 @@ def init(name):
 def list_apps():
     token = load_token()
     if not token:
-        click.echo('In order to see your apps you need to login first')
+        please_login_first()
         return
     response = get_apps(token)
     table = create_table(['Name', 'Create Date'])
@@ -70,7 +74,7 @@ app.add_command(init)
 def build_inspect(app, version):
     token = load_token()
     if not token:
-        click.echo('In order to see your apps you need to login first')
+        please_login_first()
         return
 
     if not app:
@@ -113,7 +117,7 @@ def versions(app):
 def deploy(app, version, name):
     token = load_token()
     if not token:
-        click.echo('In order to see your services you need to login first')
+        please_login_first()
         return
     if not app:
         config = load_config()
@@ -128,7 +132,7 @@ def deploy(app, version, name):
 def service_list():
     token = load_token()
     if not token:
-        click.echo('In order to see your services you need to login first')
+        please_login_first()
         return
     services = list_services(token)
     table = create_table(['name', 'start date', 'state'])
@@ -142,7 +146,7 @@ def service_list():
 def service_destroy(service_name):
     token = load_token()
     if not token:
-        click.echo('In order to see your services you need to login first')
+        please_login_first()
         return
     response = destroy_service(service_name, token)
     click.echo(response)
