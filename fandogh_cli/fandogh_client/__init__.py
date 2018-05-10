@@ -8,7 +8,7 @@ base_webapp_url = '%swebapp/' % base_url
 
 def create_app(app_name, token):
     response = requests.post(base_webapp_url + 'apps',
-                             data={'name': app_name},
+                             json={'name': app_name},
                              headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
         raise Exception(response.text)
@@ -39,7 +39,7 @@ def create_version(app_name, version, workspace_path):
         files = {'source': file}
         response = requests.post(base_webapp_url + 'apps/' + app_name + '/versions',
                                  files=files,
-                                 data={'version': version})
+                                 json={'version': version})
         if response.status_code != 200:
             raise Exception(response.text)
         else:
@@ -98,7 +98,7 @@ def destroy_service(service_name, token):
 
 
 def get_token(username, password):
-    response = requests.post(base_url + 'tokens', data={'username': username, 'password': password})
+    response = requests.post(base_url + 'tokens', json={'username': username, 'password': password})
     if response.status_code != 200:
         raise Exception(response.text)
     else:
