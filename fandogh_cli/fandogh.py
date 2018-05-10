@@ -97,6 +97,16 @@ def publish(version):
         cleanup_workspace({})
 
 
+@click.command('logs')
+@click.option('--service_name', prompt="service name", help="Your service name")
+def logs(service_name):
+    token_obj = load_token()
+    if token_obj is None:
+        please_login_first()
+        return
+    click.echo(get_logs(service_name, token_obj))
+
+
 @click.command()
 @click.option('--app', help='The application name', default=None)
 def versions(app):
@@ -168,6 +178,7 @@ app.add_command(build_inspect)
 service.add_command(deploy)
 service.add_command(service_list)
 service.add_command(service_destroy)
+service.add_command(logs)
 base.add_command(login)
 
 if __name__ == '__main__':

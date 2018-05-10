@@ -89,3 +89,11 @@ def get_token(username, password):
         raise Exception(response.text)
     else:
         return response.json()
+
+
+def get_logs(service_id, token):
+    response = requests.get(base_url + "services/%s/logs" % service_id, headers={'Authorization': 'JWT ' + token})
+    if response.status_code != 200:
+        raise Exception(response.text)
+    else:
+        return response.json()
