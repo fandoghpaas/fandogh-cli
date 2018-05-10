@@ -61,7 +61,7 @@ app.add_command(init)
 
 @click.command('inspect')
 @click.option('--app', help='The application name', default=None)
-@click.option('--version', prompt='application version', help='your application version')
+@click.option('--version', '-v', prompt='application version', help='your application version')
 def build_inspect(app, version):
     token = load_token()
     if not token:
@@ -76,7 +76,7 @@ def build_inspect(app, version):
 
 
 @click.command()
-@click.option('--version', prompt='application version', help='your application version')
+@click.option('--version', '-v', prompt='application version', help='your application version')
 def publish(version):
     config = load_config()
     app_name = config.get('app.name')
@@ -103,9 +103,9 @@ def versions(app):
 
 @click.command()
 @click.option('--app', help='The image name', default=None)
-@click.option('--version', prompt='The image version', help='The application version you want to deploy')
+@click.option('--version', '-v', prompt='The image version', help='The application version you want to deploy')
 @click.option('--name', prompt='Your service name', help='Choose a unique name for your service')
-@click.option('--env', '-e', 'envs', multiple=True)
+@click.option('--env', '-e', 'envs', help='Environment variables (format: VARIABLE_NAME=VARIABLE_VALUE)', multiple=True)
 def deploy(app, version, name, envs):
     token = load_token()
     if not token:
