@@ -54,9 +54,23 @@ def list_versions(app_name):
         return response.json()
 
 
-def deploy_service(app_name, version, service_name, token):
+def _parse_env_variables(envs):
+    env_variables = {}
+    print(envs)
+    for env in envs:
+        (k, v) = env.split('=')
+        env_variables[k] = v
+    return env_variables
+
+
+def deploy_service(app_name, version, service_name, envs, token):
+    env_variables = _parse_env_variables(envs)
+    print(env_variables)
     response = requests.post(base_webapp_url + 'services',
-                             data={'app_name': app_name, 'img_version': version, 'service_name': service_name},
+                             json={'app_name': app_name,
+                                   'img_version': version,
+                                   'service_name': service_name,
+                                   'environment_variables': env_variables},
                              headers={'Authorization': 'JWT ' + token}
                              )
     if response.status_code != 200:

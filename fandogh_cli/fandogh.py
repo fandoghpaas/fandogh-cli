@@ -105,7 +105,8 @@ def versions(app):
 @click.option('--app', help='The image name', default=None)
 @click.option('--version', prompt='The image version', help='The application version you want to deploy')
 @click.option('--name', prompt='Your service name', help='Choose a unique name for your service')
-def deploy(app, version, name):
+@click.option('--env', '-e', 'envs', multiple=True)
+def deploy(app, version, name, envs):
     token = load_token()
     if not token:
         click.echo('In order to see your services you need to login first')
@@ -117,7 +118,7 @@ def deploy(app, version, name):
     pre = '''Your service deployed successfully.
 The service is accessible via following link:
 '''
-    message = present(lambda: deploy_service(app, version, name, token), pre=pre, field='url')
+    message = present(lambda: deploy_service(app, version, name, envs, token), pre=pre, field='url')
     click.echo(message)
 
 
