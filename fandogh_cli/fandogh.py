@@ -1,16 +1,13 @@
 #!/usr/bin/env python
 import click
 
+from fandogh_cli.utils import login_required
 from .config import *
 from .fandogh_client import *
 from beautifultable import BeautifulTable
 
 # TODO: better description for state field
 from .workspace import build_workspace, cleanup_workspace
-
-
-def please_login_first():
-    click.echo('In order to see your apps you need to login first')
 
 
 def create_table(columns):
@@ -42,22 +39,18 @@ base.add_command(service)
 
 @click.command()
 @click.option('--name', prompt='application name', help='your application name')
+@login_required
 def init(name):
     token = load_token()
-    if not token:
-        please_login_first()
-        return
     response = create_app(name, token)
     persist_config(name)
     click.echo(response)
 
 
 @click.command('list')
+@login_required
 def list_apps():
     token = load_token()
-    if not token:
-        please_login_first()
-        return
     response = get_apps(token)
     table = create_table(['Name', 'Create Date'])
     for item in response:
@@ -71,11 +64,9 @@ app.add_command(init)
 @click.command('inspect')
 @click.option('--app', help='The application name', default=None)
 @click.option('--version', prompt='application version', help='your application version')
+@login_required
 def build_inspect(app, version):
     token = load_token()
-    if not token:
-        please_login_first()
-        return
 
     if not app:
         config = load_config()
@@ -99,11 +90,9 @@ def publish(version):
 
 @click.command('build_log')
 @click.option('--version', prompt="version", help="application version")
+@login_required
 def build_log(version):
     token_obj = load_token()
-    if token_obj is None:
-        please_login_first()
-        return
     click.echo(get_build(load_config().app_name, version, token_obj)['logs'])
 
 
@@ -124,11 +113,9 @@ def versions(app):
 @click.option('--app', help='The image name', default=None)
 @click.option('--version', prompt='The image version', help='The application version you want to deploy')
 @click.option('--name', prompt='Your service name', help='Choose a unique name for your service')
+@login_required
 def deploy(app, version, name):
     token = load_token()
-    if not token:
-        please_login_first()
-        return
     if not app:
         config = load_config()
         app = config.app_name
@@ -144,11 +131,9 @@ def logs(service_name):
 
 
 @click.command('list')
+@login_required
 def service_list():
     token = load_token()
-    if not token:
-        please_login_first()
-        return
     services = list_services(token)
     table = create_table(['name', 'start date', 'state'])
     for item in services:
@@ -158,11 +143,9 @@ def service_list():
 
 @click.command('destroy')
 @click.option('--name', 'service_name', prompt='Name of the service you want to destroy', )
+@login_required
 def service_destroy(service_name):
     token = load_token()
-    if not token:
-        please_login_first()
-        return
     response = destroy_service(service_name, token)
     click.echo(response)
 
