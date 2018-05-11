@@ -56,7 +56,6 @@ def list_versions(app_name):
 
 def _parse_env_variables(envs):
     env_variables = {}
-    print(envs)
     for env in envs:
         (k, v) = env.split('=')
         env_variables[k] = v
@@ -65,7 +64,6 @@ def _parse_env_variables(envs):
 
 def deploy_service(app_name, version, service_name, envs, token):
     env_variables = _parse_env_variables(envs)
-    print(env_variables)
     response = requests.post(base_webapp_url + 'services',
                              json={'app_name': app_name,
                                    'img_version': version,
