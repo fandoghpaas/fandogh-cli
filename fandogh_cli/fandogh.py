@@ -79,7 +79,7 @@ def build_inspect(app, version):
 
     if not app:
         config = load_config()
-        app = config.get('app.name')
+        app = config.app_name
     response = get_build(app, version, token)
     click.echo(response.get('logs'))
 
@@ -88,7 +88,7 @@ def build_inspect(app, version):
 @click.option('--version', prompt='application version', help='your application version')
 def publish(version):
     config = load_config()
-    app_name = config.get('app.name')
+    app_name = config.app_name
     workspace_path = build_workspace({})
     try:
         response = create_version(app_name, version, workspace_path)
@@ -97,14 +97,14 @@ def publish(version):
         cleanup_workspace({})
 
 
-@click.command('logs')
-@click.option('--service_name', prompt="service name", help="Your service name")
-def logs(service_name):
+@click.command('build_log')
+@click.option('--version', prompt="version", help="application version")
+def build_log(version):
     token_obj = load_token()
     if token_obj is None:
         please_login_first()
         return
-    click.echo(get_logs(service_name, token_obj))
+    click.echo(get_build(load_config().app_name, version, token_obj)['logs'])
 
 
 @click.command()
@@ -112,7 +112,7 @@ def logs(service_name):
 def versions(app):
     if not app:
         config = load_config()
-        app = config.get('app.name')
+        app = config.app_name
     response = list_versions(app)
     table = create_table(['version', 'state'])
     for item in response:
@@ -131,11 +131,16 @@ def deploy(app, version, name):
         return
     if not app:
         config = load_config()
-        app = config.get('app.name')
+        app = config.app_name
     response = deploy_service(app, version, name, token)
     click.echo('Your service deployed successfully.')
     click.echo('The service is accessible via following link:')
     click.echo(response.get('url'))
+
+
+@click.command()
+def logs(service_name):
+    pass
 
 
 @click.command('list')
@@ -175,10 +180,11 @@ app.add_command(publish)
 app.add_command(versions)
 app.add_command(list_apps)
 app.add_command(build_inspect)
+service.add_command(build_log)
 service.add_command(deploy)
 service.add_command(service_list)
 service.add_command(service_destroy)
-service.add_command(logs)
+
 base.add_command(login)
 
 if __name__ == '__main__':
