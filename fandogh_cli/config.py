@@ -8,6 +8,11 @@ except ImportError:
     from yaml import Loader, Dumper
 
 
+class ConfigObject:
+    def __init__(self, **kwargs):
+        self.app_name = kwargs.get('app.name')
+
+
 def _get_config_path():
     cwd = os.getcwd()
     config_path = os.path.join(cwd, '.fandogh', 'config.yml')
@@ -42,7 +47,7 @@ def load_token():
 
 def load_config():
     config_path = _get_config_path()
-    return load_yml_file(config_path)
+    return ConfigObject(**load_yml_file(config_path))
 
 
 def load_yml_file(path):
