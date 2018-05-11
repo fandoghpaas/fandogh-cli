@@ -2,19 +2,12 @@
 import click
 
 from fandogh_cli.utils import login_required
+from .presenter import present
 from .config import *
 from .fandogh_client import *
-from beautifultable import BeautifulTable
 
 # TODO: better description for state field
 from .workspace import build_workspace, cleanup_workspace
-
-
-def create_table(columns):
-    table = BeautifulTable()
-    table.column_headers = columns
-    table.row_separator_char = ''
-    return table
 
 
 @click.group("cli")
@@ -51,10 +44,11 @@ def init(name):
 @login_required
 def list_apps():
     token = load_token()
-    response = get_apps(token)
-    table = create_table(['Name', 'Create Date'])
-    for item in response:
-        table.append_row([item.get('name'), item.get('created_at')])
+    table = present(lambda: get_apps(token),
+                    renderer='table',
+                    headers=['Name', 'Create Date'],
+                    columns=['name', 'created_at'])
+
     click.echo(table)
 
 
@@ -63,7 +57,7 @@ app.add_command(init)
 
 @click.command('inspect')
 @click.option('--app', help='The application name', default=None)
-@click.option('--version', prompt='application version', help='your application version')
+@click.option('--version', '-v', prompt='application version', help='your application version')
 @login_required
 def build_inspect(app, version):
     token = load_token()
@@ -76,7 +70,7 @@ def build_inspect(app, version):
 
 
 @click.command()
-@click.option('--version', prompt='application version', help='your application version')
+@click.option('--version', '-v', prompt='application version', help='your application version')
 def publish(version):
     config = load_config()
     app_name = config.app_name
@@ -102,10 +96,10 @@ def versions(app):
     if not app:
         config = load_config()
         app = config.app_name
-    response = list_versions(app)
-    table = create_table(['version', 'state'])
-    for item in response:
-        table.append_row([item.get('version'), item.get('state')])
+    table = present(lambda: list_versions(app),
+                    renderer='table',
+                    headers=['version', 'state'],
+                    columns=['version', 'state'])
     click.echo(table)
 
 
@@ -120,28 +114,31 @@ def service_logs(service_name):
 
 @click.command()
 @click.option('--app', help='The image name', default=None)
-@click.option('--version', prompt='The image version', help='The application version you want to deploy')
+@click.option('--version', '-v', prompt='The image version', help='The application version you want to deploy')
 @click.option('--name', prompt='Your service name', help='Choose a unique name for your service')
+@click.option('--env', '-e', 'envs', help='Environment variables (format: VARIABLE_NAME=VARIABLE_VALUE)', multiple=True)
 @login_required
-def deploy(app, version, name):
+def deploy(app, version, name, envs):
     token = load_token()
     if not app:
         config = load_config()
-        app = config.app_name
-    response = deploy_service(app, version, name, token)
-    click.echo('Your service deployed successfully.')
-    click.echo('The service is accessible via following link:')
-    click.echo(response.get('url'))
+        app = config.get('app.name')
+
+    pre = '''Your service deployed successfully.
+The service is accessible via following link:
+'''
+    message = present(lambda: deploy_service(app, version, name, envs, token), pre=pre, field='url')
+    click.echo(message)
 
 
 @click.command('list')
 @login_required
 def service_list():
     token = load_token()
-    services = list_services(token)
-    table = create_table(['name', 'start date', 'state'])
-    for item in services:
-        table.append_row([item.get('name'), item.get('start_date'), item.get('state')])
+    table = present(lambda: list_services(token),
+                    renderer='table',
+                    headers=['name', 'start date', 'state'],
+                    columns=['name', 'start_date', 'state'])
     click.echo(table)
 
 
@@ -150,17 +147,20 @@ def service_list():
 @login_required
 def service_destroy(service_name):
     token = load_token()
-    response = destroy_service(service_name, token)
-    click.echo(response)
+    message = present(lambda: destroy_service(service_name, token))
+    click.echo(message)
 
 
 @click.command()
 @click.option('--username', prompt='username', help='your username')
 @click.option('--password', prompt='password', help='your password', hide_input=True)
 def login(username, password):
-    token_obj = get_token(username, password)
-    persist_token(token_obj)
-    click.echo('Logged in successfully')
+    def handle_token():
+        token_obj = get_token(username, password)
+        persist_token(token_obj)
+
+    message = present(lambda: handle_token(), post='Logged in successfully')
+    click.echo(message)
 
 
 app.add_command(publish)
