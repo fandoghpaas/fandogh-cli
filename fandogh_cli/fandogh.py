@@ -109,6 +109,15 @@ def versions(app):
     click.echo(table)
 
 
+@click.command('logs')
+@click.option('--service_name', prompt='service_name', help="Service name")
+@login_required
+def service_logs(service_name):
+    token_obj = load_token()
+    logs = get_logs(service_name, token_obj)
+    click.echo(logs)
+
+
 @click.command()
 @click.option('--app', help='The image name', default=None)
 @click.option('--version', prompt='The image version', help='The application version you want to deploy')
@@ -123,11 +132,6 @@ def deploy(app, version, name):
     click.echo('Your service deployed successfully.')
     click.echo('The service is accessible via following link:')
     click.echo(response.get('url'))
-
-
-@click.command()
-def logs(service_name):
-    pass
 
 
 @click.command('list')
@@ -163,10 +167,11 @@ app.add_command(publish)
 app.add_command(versions)
 app.add_command(list_apps)
 app.add_command(build_inspect)
-service.add_command(build_log)
+app.add_command(build_log)
 service.add_command(deploy)
 service.add_command(service_list)
 service.add_command(service_destroy)
+service.add_command(service_logs)
 
 base.add_command(login)
 

@@ -91,9 +91,12 @@ def get_token(username, password):
         return response.json()
 
 
-def get_logs(service_id, token):
-    response = requests.get(base_url + "services/%s/logs" % service_id, headers={'Authorization': 'JWT ' + token})
-    if response.status_code != 200:
-        raise Exception(response.text)
-    else:
+def get_logs(service_name, token):
+    response = requests.get(base_webapp_url + "services/%s/logs" % service_name, headers={'Authorization': 'JWT ' + token})
+    if response.status_code == 404:
+        return "Resource not found"
+    elif response.status_code == 200:
         return response.json()
+    else:
+        raise Exception(response.text)
+
