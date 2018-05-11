@@ -39,7 +39,7 @@ def create_version(app_name, version, workspace_path):
         files = {'source': file}
         response = requests.post(base_webapp_url + 'apps/' + app_name + '/versions',
                                  files=files,
-                                 json={'version': version})
+                                 data={'version': version})
         if response.status_code != 200:
             raise Exception(response.text)
         else:
