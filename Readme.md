@@ -54,7 +54,7 @@ which has version named `v1` with state `BUILT` (to see the state of builds todo
 
 You just need to run the following command:
 ```bash
-$ fandogh service deploy  --app hello-world --version v1 --name hello-world`
+$ fandogh service deploy  --app hello-world --version v1 --name hello-world
 Your service deployed successfully.
 The service is accessible via following link:
 http://hello-world.fandogh.cloud
