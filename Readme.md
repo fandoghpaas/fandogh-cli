@@ -38,7 +38,7 @@ then you can run the following command:
  "App created successfully"
 ```
 
-Now it's time to publish the first version of your application. An application in fandogh consists of a Dockerfile and the the files which are necessary (a.k.a context) to build the docker image. For the time being you Dockerfile should be in the root your application directory.
+Now it's time to publish the first version of your application. An application in fandogh consists of a Dockerfile and the files which are necessary (a.k.a context) to build the docker image. For the time being you Dockerfile should be in the root your application directory.
 Run the following command to publish your application version:
 
 ```bash
