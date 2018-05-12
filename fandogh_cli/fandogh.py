@@ -114,7 +114,7 @@ def deploy(app, version, name, envs):
     token = load_token()
     if not app:
         config = load_config()
-        app = config.get('app.name', None)
+        app = config.app_name
         if not app:
             click.echo('please declare the application name', err=True)
 
