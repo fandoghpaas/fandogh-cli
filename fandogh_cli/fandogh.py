@@ -1,7 +1,9 @@
 #!/usr/bin/env python
+from time import sleep
+
 import click
 
-from fandogh_cli.utils import login_required
+from fandogh_cli.utils import login_required, do_every
 from .presenter import present
 from .config import *
 from .fandogh_client import *
@@ -61,12 +63,16 @@ app.add_command(init)
 @login_required
 def build_inspect(app, version):
     token = load_token()
-
     if not app:
         config = load_config()
         app = config.app_name
-    response = get_build(app, version, token)
-    click.echo(response.get('logs'))
+    while True:
+        response = get_build(app, version, token)
+        click.clear()
+        click.echo(response.get('logs'))
+        if response.get('state') != 'BUILDING':
+            break
+        sleep(1)
 
 
 @click.command()
