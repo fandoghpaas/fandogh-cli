@@ -57,11 +57,7 @@ def list_apps():
 app.add_command(init)
 
 
-@click.command('inspect')
-@click.option('--app', help='The application name', default=None)
-@click.option('--version', '-v', prompt='application version', help='your application version')
-@login_required
-def build_inspect(app, version):
+def show_build_logs(app, version):
     token = load_token()
     if not app:
         config = load_config()
@@ -75,9 +71,18 @@ def build_inspect(app, version):
         sleep(1)
 
 
+@click.command('inspect')
+@click.option('--app', help='The application name', default=None)
+@click.option('--version', '-v', prompt='application version', help='your application version')
+@login_required
+def build_inspect(app, version):
+    show_build_logs(app, version)
+
+
 @click.command()
 @click.option('--version', '-v', prompt='application version', help='your application version')
-def publish(version):
+@click.option('-d', 'detach', is_flag=True, default=False, help='detach terminal, by default the image build logs will be shown synchronously.')
+def publish(version, detach):
     config = load_config()
     app_name = config.app_name
     workspace_path = build_workspace({})
@@ -86,6 +91,10 @@ def publish(version):
         click.echo(response)
     finally:
         cleanup_workspace({})
+    if detach:
+        return
+    else:
+        show_build_logs(app_name, version)
 
 
 @click.command()
