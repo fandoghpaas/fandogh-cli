@@ -141,10 +141,11 @@ The service is accessible via following link:
 
 
 @click.command('list')
+@click.option('-a', 'show_all', is_flag=True, default=False, help='show all the services regardless if it\'s running or not')
 @login_required
-def service_list():
+def service_list(show_all):
     token = load_token()
-    table = present(lambda: list_services(token),
+    table = present(lambda: list_services(token, show_all),
                     renderer='table',
                     headers=['name', 'start date', 'state'],
                     columns=['name', 'start_date', 'state'])

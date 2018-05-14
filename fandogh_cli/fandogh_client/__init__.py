@@ -77,13 +77,16 @@ def deploy_service(app_name, version, service_name, envs, token):
         return response.json()
 
 
-def list_services(token):
+def list_services(token, show_all):
     response = requests.get(base_webapp_url + 'services',
                             headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
         raise Exception(response.text)
     else:
-        return response.json()
+        json_result = response.json()
+        if show_all:
+            return json_result
+        return [item for item in json_result if item.get('state', None) == 'RUNNING']
 
 
 def destroy_service(service_name, token):
@@ -111,4 +114,3 @@ def get_logs(service_name, token):
         return response.json()
     else:
         raise Exception(response.text)
-
