@@ -1,6 +1,6 @@
 from beautifultable import BeautifulTable
-import traceback
 import os
+
 
 FANDOGH_DEBUG = os.environ.get('FANDOGH_DEBUG', False)
 
@@ -39,11 +39,7 @@ renderers = {
 
 
 def present(data_provider, pre='', post='', renderer='text', **kwargs):
-    try:
         data = data_provider()
         rendered = renderers.get(renderer)(data, **kwargs)
         return pre + str(rendered) + post
-    except Exception as e:
-        if FANDOGH_DEBUG:
-            traceback.print_exc()
-        print(e.args[0])
+
