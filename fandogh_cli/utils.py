@@ -28,7 +28,7 @@ def login_required(fn):
     return fn
 
 
-def makedirs(name, mode=0o660, exist_ok=True):
+def makedirs(name, mode=0o770, exist_ok=True):
     if not is_python2():
         os.makedirs(name, mode, exist_ok)
     else:
