@@ -1,6 +1,6 @@
 import os
-
 from yaml import load, dump
+from fandogh_cli.utils import makedirs
 
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
@@ -27,14 +27,14 @@ def _get_credentials_path():
 
 def persist_config(app):
     config_path = _get_config_path()
-    os.makedirs(os.path.dirname(config_path), exist_ok=True)
+    makedirs(os.path.dirname(config_path), exist_ok=True)
     with open(config_path, 'w') as file:
         file.write(dump({'app.name': app}, default_flow_style=False))
 
 
 def persist_token(token_obj):
     credentials_path = _get_credentials_path()
-    os.makedirs(os.path.dirname(credentials_path), exist_ok=True)
+    makedirs(os.path.dirname(credentials_path), exist_ok=True)
     with open(credentials_path, 'w') as file:
         file.write(dump(token_obj, default_flow_style=False))
 
