@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 from time import sleep
-
 import click
-
+from click import Command
 from fandogh_cli.utils import login_required, do_every
 from .presenter import present
 from .config import *
@@ -10,6 +9,16 @@ from .fandogh_client import *
 
 # TODO: better description for state field
 from .workspace import build_workspace, cleanup_workspace
+
+
+class FandoghCommand(Command):
+    def invoke(self, ctx):
+        try:
+            return super(FandoghCommand, self).invoke(ctx)
+        except FandoghAPIError as exp:
+            click.echo(exp.message, err=True)
+        except Exception as exp:
+            raise exp
 
 
 @click.group("cli")
@@ -71,7 +80,7 @@ def show_build_logs(app, version):
         sleep(1)
 
 
-@click.command('inspect')
+@click.command('inspect', cls=FandoghCommand)
 @click.option('--app', help='The application name', default=None)
 @click.option('--version', '-v', prompt='application version', help='your application version')
 @login_required
@@ -81,7 +90,8 @@ def build_inspect(app, version):
 
 @click.command()
 @click.option('--version', '-v', prompt='application version', help='your application version')
-@click.option('-d', 'detach', is_flag=True, default=False, help='detach terminal, by default the image build logs will be shown synchronously.')
+@click.option('-d', 'detach', is_flag=True, default=False,
+              help='detach terminal, by default the image build logs will be shown synchronously.')
 def publish(version, detach):
     config = load_config()
     app_name = config.app_name
@@ -144,7 +154,8 @@ The service is accessible via following link:
 
 
 @click.command('list')
-@click.option('-a', 'show_all', is_flag=True, default=False, help='show all the services regardless if it\'s running or not')
+@click.option('-a', 'show_all', is_flag=True, default=False,
+              help='show all the services regardless if it\'s running or not')
 @login_required
 def service_list(show_all):
     token = load_token()
