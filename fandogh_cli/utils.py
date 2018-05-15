@@ -12,14 +12,15 @@ def is_python2():
 
 def debug(msg):
     if FANDOGH_DEBUG:
-        print(msg)
+        click.echo(msg)
 
 
 def login_required(fn):
     # TODO: Move out of utils
     from fandogh_cli.config import load_token
+
     def please_login_first(*args, **kwargs):
-        click.echo('In order to use this command, you need to login first')
+        click.echo("Please login first. You can do it by running 'fandogh login' command")
 
     token_obj = load_token()
     if token_obj is None:
@@ -27,13 +28,7 @@ def login_required(fn):
     return fn
 
 
-def do_every(seconds, task, while_condition=lambda: True):
-    while while_condition():
-        task()
-        sleep(seconds)
-
-
-def makedirs(name, mode=0660, exist_ok=True):
+def makedirs(name, mode=0o660, exist_ok=True):
     if not is_python2():
         os.makedirs(name, mode, exist_ok)
     else:
@@ -44,10 +39,11 @@ def makedirs(name, mode=0660, exist_ok=True):
             if head and tail and not os.path.exists(head):
                 try:
                     _makedirs(head, mode)
-                except OSError, e:
+                except OSError as e:
                     if e.errno != os.errno.EEXIST and not exist_ok:
                         raise
                 if tail == os.curdir:
                     return
             os.mkdir(name, mode)
+
         _makedirs(name, mode)
