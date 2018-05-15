@@ -33,7 +33,7 @@ def do_every(seconds, task, while_condition=lambda: True):
         sleep(seconds)
 
 
-def makedirs(name, mode=0777, exist_ok=True):
+def makedirs(name, mode=0660, exist_ok=True):
     if not is_python2():
         os.makedirs(name, mode, exist_ok)
     else:
