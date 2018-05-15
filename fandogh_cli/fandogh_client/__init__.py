@@ -6,12 +6,26 @@ base_url = '%s/api/' % fandogh_host
 base_webapp_url = '%swebapp/' % base_url
 
 
+class FandoghAPIError(Exception):
+    message = "Server Error"
+
+
+class ResourceNotFoundError(FandoghAPIError):
+    message = "Resource Not found"
+
+
+def get_exception(response):
+    return {
+        404: ResourceNotFoundError,
+    }.get(response.status_code, FandoghAPIError)
+
+
 def create_app(app_name, token):
     response = requests.post(base_webapp_url + 'apps',
                              json={'name': app_name},
                              headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
-        raise Exception(response.text)
+        raise get_exception(response)
     else:
         return response.text
 
@@ -20,7 +34,7 @@ def get_apps(token):
     response = requests.get(base_webapp_url + 'apps',
                             headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
-        raise Exception(response.text)
+        raise get_exception(response)
     else:
         return response.json()
 
@@ -29,7 +43,7 @@ def get_build(app, version, token):
     response = requests.get(base_webapp_url + 'apps/' + app + '/versions/' + version + '/builds',
                             headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
-        raise Exception(response.text)
+        raise get_exception(response)
     else:
         return response.json()
 
@@ -41,7 +55,7 @@ def create_version(app_name, version, workspace_path):
                                  files=files,
                                  data={'version': version})
         if response.status_code != 200:
-            raise Exception(response.text)
+            raise get_exception(response)
         else:
             return response.text
 
@@ -49,7 +63,7 @@ def create_version(app_name, version, workspace_path):
 def list_versions(app_name):
     response = requests.get(base_webapp_url + 'apps/' + app_name + '/versions')
     if response.status_code != 200:
-        raise Exception(response.text)
+        raise get_exception(response)
     else:
         return response.json()
 
@@ -72,7 +86,7 @@ def deploy_service(app_name, version, service_name, envs, token):
                              headers={'Authorization': 'JWT ' + token}
                              )
     if response.status_code != 200:
-        raise Exception(response.text)
+        raise get_exception(response)
     else:
         return response.json()
 
@@ -81,7 +95,7 @@ def list_services(token, show_all):
     response = requests.get(base_webapp_url + 'services',
                             headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
-        raise Exception(response.text)
+        raise get_exception(response)
     else:
         json_result = response.json()
         if show_all:
@@ -93,7 +107,7 @@ def destroy_service(service_name, token):
     response = requests.delete(base_webapp_url + 'services/' + service_name,
                                headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
-        raise Exception(response.text)
+        raise get_exception(response)
     else:
         return response.json()
 
@@ -101,16 +115,15 @@ def destroy_service(service_name, token):
 def get_token(username, password):
     response = requests.post(base_url + 'tokens', json={'username': username, 'password': password})
     if response.status_code != 200:
-        raise Exception(response.text)
+        raise get_exception(response)
     else:
         return response.json()
 
 
 def get_logs(service_name, token):
-    response = requests.get(base_webapp_url + "services/%s/logs" % service_name, headers={'Authorization': 'JWT ' + token})
-    if response.status_code == 404:
-        return "Resource not found"
-    elif response.status_code == 200:
+    response = requests.get(base_webapp_url + "services/%s/logs" % service_name,
+                            headers={'Authorization': 'JWT ' + token})
+    if response.status_code == 200:
         return response.json()
     else:
-        raise Exception(response.text)
+        raise get_exception(response)
