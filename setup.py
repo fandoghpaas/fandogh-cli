@@ -5,7 +5,7 @@ import setuptools
 setup(
     name='fandogh_cli',
     packages=setuptools.find_packages(exclude=['tests', 'tests.*']),
-    version='0.2.1',
+    version='0.2.2',
     description='Official CLI for Fandogh PaaS',
     author='Soroosh Sarabadani',
     install_requires=["click",
