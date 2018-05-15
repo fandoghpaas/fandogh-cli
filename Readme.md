@@ -76,6 +76,3 @@ To do so via fandogh-cli is even simpler than deploying a service. Let's say we 
 $ fandogh service destroy  --name hello
 Service destroyed successfully.
 ```
-
-TODO:
-- service log 
