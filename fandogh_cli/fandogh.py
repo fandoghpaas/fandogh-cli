@@ -2,7 +2,7 @@
 from time import sleep
 import click
 from click import Command
-from fandogh_cli.utils import login_required, do_every
+from fandogh_cli.utils import login_required, debug
 from .presenter import present
 from .config import *
 from .fandogh_client import *
@@ -15,7 +15,10 @@ class FandoghCommand(Command):
     def invoke(self, ctx):
         try:
             return super(FandoghCommand, self).invoke(ctx)
-        except FandoghAPIError as exp:
+        except (FandoghAPIError, AuthenticationError) as exp:
+            debug('APIError. status code: {}, content: {}'.format(
+                exp.response.status_code,
+                exp.response.content))
             click.echo(exp.message, err=True)
         except Exception as exp:
             raise exp
@@ -41,7 +44,7 @@ base.add_command(app)
 base.add_command(service)
 
 
-@click.command()
+@click.command(cls=FandoghCommand)
 @click.option('--name', prompt='application name', help='your application name')
 @login_required
 def init(name):
@@ -51,7 +54,7 @@ def init(name):
     click.echo(response)
 
 
-@click.command('list')
+@click.command('list', cls=FandoghCommand)
 @login_required
 def list_apps():
     token = load_token()
@@ -167,8 +170,8 @@ def service_list(show_all):
 
 
 @click.command('destroy', cls=FandoghCommand)
-@click.option('--name', 'service_name', prompt='Name of the service you want to destroy', )
 @login_required
+@click.option('--name', 'service_name', prompt='Name of the service you want to destroy', )
 def service_destroy(service_name):
     token = load_token()
     message = present(lambda: destroy_service(service_name, token))
