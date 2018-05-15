@@ -107,7 +107,10 @@ def versions(app):
                     renderer='table',
                     headers=['version', 'state'],
                     columns=['version', 'state'])
-    click.echo(table)
+    if len(table.strip()):
+        click.echo(table)
+    else:
+        click.echo("There is no version available for this image")
 
 
 @click.command('logs')
