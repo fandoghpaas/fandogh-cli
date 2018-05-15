@@ -88,7 +88,7 @@ def build_inspect(app, version):
     show_build_logs(app, version)
 
 
-@click.command()
+@click.command(cls=FandoghCommand)
 @click.option('--version', '-v', prompt='application version', help='your application version')
 @click.option('-d', 'detach', is_flag=True, default=False,
               help='detach terminal, by default the image build logs will be shown synchronously.')
@@ -107,7 +107,7 @@ def publish(version, detach):
         show_build_logs(app_name, version)
 
 
-@click.command()
+@click.command(cls=FandoghCommand)
 @click.option('--app', help='The application name', default=None)
 def versions(app):
     if not app:
@@ -123,7 +123,7 @@ def versions(app):
         click.echo("There is no version available for this image")
 
 
-@click.command('logs')
+@click.command('logs', cls=FandoghCommand)
 @click.option('--service_name', prompt='service_name', help="Service name")
 @login_required
 def service_logs(service_name):
@@ -132,7 +132,7 @@ def service_logs(service_name):
     click.echo(logs)
 
 
-@click.command()
+@click.command(cls=FandoghCommand)
 @click.option('--app', help='The image name', default=None)
 @click.option('--version', '-v', prompt='The image version', help='The application version you want to deploy')
 @click.option('--name', prompt='Your service name', help='Choose a unique name for your service')
@@ -153,7 +153,7 @@ The service is accessible via following link:
     click.echo(message)
 
 
-@click.command('list')
+@click.command('list', cls=FandoghCommand)
 @click.option('-a', 'show_all', is_flag=True, default=False,
               help='show all the services regardless if it\'s running or not')
 @login_required
@@ -166,7 +166,7 @@ def service_list(show_all):
     click.echo(table)
 
 
-@click.command('destroy')
+@click.command('destroy', cls=FandoghCommand)
 @click.option('--name', 'service_name', prompt='Name of the service you want to destroy', )
 @login_required
 def service_destroy(service_name):
@@ -175,7 +175,7 @@ def service_destroy(service_name):
     click.echo(message)
 
 
-@click.command()
+@click.command(cls=FandoghCommand)
 @click.option('--username', prompt='username', help='your username')
 @click.option('--password', prompt='password', help='your password', hide_input=True)
 def login(username, password):
