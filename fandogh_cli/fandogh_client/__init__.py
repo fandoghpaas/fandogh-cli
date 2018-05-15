@@ -9,15 +9,29 @@ base_webapp_url = '%swebapp/' % base_url
 class FandoghAPIError(Exception):
     message = "Server Error"
 
+    def __init__(self, response):
+        self.response = response
+
+
+class AuthenticationError(Exception):
+    message = "Please login first. You can do it by running 'fandogh login' command"
+
+    def __init__(self, response):
+        self.response = response
+
 
 class ResourceNotFoundError(FandoghAPIError):
     message = "Resource Not found"
 
+    def __init__(self, response):
+        self.response = response
+
 
 def get_exception(response):
     return {
-        404: ResourceNotFoundError,
-    }.get(response.status_code, FandoghAPIError)
+        404: ResourceNotFoundError(response),
+        401: AuthenticationError(response)
+    }.get(response.status_code, FandoghAPIError(response))
 
 
 def create_app(app_name, token):
