@@ -12,6 +12,7 @@ setup(
                       "requests",
                       "beautifultable",
                       "pyyaml"],
+    python_requires='>=3.5',
     author_email='soroosh.sarabadani@gmail.com',
     url='https://github.com/psycho-ir/fandogh-cli',
     keywords=['PaaS', 'Fandogh'],
