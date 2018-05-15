@@ -1,3 +1,5 @@
+[![PyPI version](https://badge.fury.io/py/fandogh_cli.svg)](https://badge.fury.io/py/fandogh_cli)
+
 Fandogh-CLI
 ======
 
