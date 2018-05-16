@@ -3,7 +3,7 @@ import os
 
 fandogh_host = os.getenv('FANDOGH_HOST', 'http://fandogh.cloud:8080')
 base_url = '%s/api/' % fandogh_host
-base_images_url = '%simages/' % base_url
+base_images_url = '%simages' % base_url
 base_services_url = '%sservices' % base_url
 
 
@@ -55,7 +55,7 @@ def get_images(token):
 
 
 def get_image_build(image_name, version, token):
-    response = requests.get(base_images_url + image_name + '/versions/' + version + '/builds',
+    response = requests.get(base_images_url + '/' + image_name + '/versions/' + version + '/builds',
                             headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
         raise get_exception(response)
@@ -66,7 +66,7 @@ def get_image_build(image_name, version, token):
 def create_version(image_name, version, workspace_path):
     with open(workspace_path, 'rb') as file:
         files = {'source': file}
-        response = requests.post(base_images_url + image_name + '/versions',
+        response = requests.post(base_images_url + '/' + image_name + '/versions',
                                  files=files,
                                  data={'version': version})
         if response.status_code != 200:
@@ -76,7 +76,7 @@ def create_version(image_name, version, workspace_path):
 
 
 def list_versions(image_name):
-    response = requests.get(base_images_url + image_name + '/versions')
+    response = requests.get(base_images_url + '/' + image_name + '/versions')
     if response.status_code != 200:
         raise get_exception(response)
     else:
