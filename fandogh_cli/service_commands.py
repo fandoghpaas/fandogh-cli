@@ -2,7 +2,7 @@ import click
 
 from .fandogh_client import *
 from .utils import login_required
-from .config import load_token, load_config
+from .config import get_project_config, get_user_config
 from .presenter import present
 from .base_commands import FandoghCommand
 
@@ -16,7 +16,7 @@ def service():
 @click.option('--service_name', prompt='service_name', help="Service name")
 @login_required
 def service_logs(service_name):
-    token_obj = load_token()
+    token_obj = get_user_config().get('token')
     logs = present(lambda: get_logs(service_name, token_obj))
     click.echo(logs)
 
@@ -28,10 +28,9 @@ def service_logs(service_name):
 @click.option('--env', '-e', 'envs', help='Environment variables (format: VARIABLE_NAME=VARIABLE_VALUE)', multiple=True)
 @login_required
 def deploy(app, version, name, envs):
-    token = load_token()
+    token = get_user_config().get('token')
     if not app:
-        config = load_config()
-        app = config.app_name
+        app = get_project_config().get('app.name')
         if not app:
             click.echo('please declare the application name', err=True)
 
@@ -47,7 +46,7 @@ The service is accessible via following link:
               help='show all the services regardless if it\'s running or not')
 @login_required
 def service_list(show_all):
-    token = load_token()
+    token = get_user_config().get('token')
     table = present(lambda: list_services(token, show_all),
                     renderer='table',
                     headers=['name', 'start date', 'state'],
@@ -59,7 +58,7 @@ def service_list(show_all):
 @login_required
 @click.option('--name', 'service_name', prompt='Name of the service you want to destroy', )
 def service_destroy(service_name):
-    token = load_token()
+    token = get_user_config().get('token')
     message = present(lambda: destroy_service(service_name, token))
     click.echo(message)
 

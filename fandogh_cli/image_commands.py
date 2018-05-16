@@ -19,16 +19,16 @@ def image():
 @click.option('--name', prompt='image name', help='your image name')
 @login_required
 def init(name):
-    token = load_token()
+    token = get_user_config().get('token')
     response = create_app(name, token)
-    persist_config(name)
+    get_project_config().set('app.name', name)
     click.echo(response)
 
 
 @click.command('list', cls=FandoghCommand)
 @login_required
 def list_images():
-    token = load_token()
+    token = get_user_config().get('token')
     table = present(lambda: get_apps(token),
                     renderer='table',
                     headers=['Name', 'Creation Date'],
@@ -38,10 +38,9 @@ def list_images():
 
 
 def show_image_logs(app, version):
-    token = load_token()
+    token = get_user_config().get('token')
     if not app:
-        config = load_config()
-        app = config.app_name
+        app = get_project_config().get('app.name')
     while True:
         response = get_build(app, version, token)
         click.clear()
@@ -64,8 +63,7 @@ def logs(image, version):
 @click.option('-d', 'detach', is_flag=True, default=False,
               help='detach terminal, by default the image build logs will be shown synchronously.')
 def publish(version, detach):
-    config = load_config()
-    app_name = config.app_name
+    app_name = get_project_config().get('app.name')
     workspace_path = build_workspace({})
     try:
         response = create_version(app_name, version, workspace_path)
@@ -82,8 +80,7 @@ def publish(version, detach):
 @click.option('--image', help='The image name', default=None)
 def versions(image):
     if not image:
-        config = load_config()
-        image = config.app_name
+        image = get_project_config().get('app.name')
     table = present(lambda: list_versions(image),
                     renderer='table',
                     headers=['version', 'state'],

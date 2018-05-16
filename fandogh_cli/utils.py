@@ -17,12 +17,12 @@ def debug(msg):
 
 def login_required(fn):
     # TODO: Move out of utils
-    from fandogh_cli.config import load_token
+    from fandogh_cli.config import get_user_config
 
     def please_login_first(*args, **kwargs):
         click.echo("Please login first. You can do it by running 'fandogh login' command")
 
-    token_obj = load_token()
+    token_obj = get_user_config().get('token')
     if token_obj is None:
         return please_login_first
     return fn

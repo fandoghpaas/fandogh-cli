@@ -22,7 +22,7 @@ def base():
 def login(username, password):
     def handle_token():
         token_obj = get_token(username, password)
-        persist_token(token_obj)
+        get_user_config().set('token', token_obj['token'])
 
     message = present(lambda: handle_token(), post='Logged in successfully')
     click.echo(message)
@@ -32,6 +32,6 @@ base.add_command(login)
 base.add_command(image)
 base.add_command(service)
 
-
 if __name__ == '__main__':
+
     base()
