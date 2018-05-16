@@ -35,9 +35,9 @@ def get_exception(response):
     }.get(response.status_code, FandoghAPIError(response))
 
 
-def create_image(app_name, token):
+def create_image(image_name, token):
     response = requests.post(base_images_url,
-                             json={'name': app_name},
+                             json={'name': image_name},
                              headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
         raise get_exception(response)
@@ -94,8 +94,8 @@ def _parse_env_variables(envs):
 def deploy_service(image_name, version, service_name, envs, token):
     env_variables = _parse_env_variables(envs)
     response = requests.post(base_services_url,
-                             json={'app_name': image_name,
-                                   'img_version': version,
+                             json={'image_name': image_name,
+                                   'image_version': version,
                                    'service_name': service_name,
                                    'environment_variables': env_variables},
                              headers={'Authorization': 'JWT ' + token}
