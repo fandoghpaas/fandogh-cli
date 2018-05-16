@@ -60,7 +60,7 @@ def list_apps():
     token = load_token()
     table = present(lambda: get_apps(token),
                     renderer='table',
-                    headers=['Name', 'Create Date'],
+                    headers=['Name', 'Creation Date'],
                     columns=['name', 'created_at'])
 
     click.echo(table)
