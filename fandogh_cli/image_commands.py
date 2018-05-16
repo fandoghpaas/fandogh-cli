@@ -20,7 +20,7 @@ def image():
 @login_required
 def init(name):
     token = load_token()
-    response = create_app(name, token)
+    response = create_image(name, token)
     persist_config(name)
     click.echo(response)
 
@@ -29,7 +29,7 @@ def init(name):
 @login_required
 def list_images():
     token = load_token()
-    table = present(lambda: get_apps(token),
+    table = present(lambda: get_images(token),
                     renderer='table',
                     headers=['Name', 'Creation Date'],
                     columns=['name', 'created_at'])
@@ -43,7 +43,7 @@ def show_image_logs(app, version):
         config = load_config()
         app = config.app_name
     while True:
-        response = get_build(app, version, token)
+        response = get_image_build(app, version, token)
         click.clear()
         click.echo(response.get('logs'))
         if response.get('state') != 'BUILDING':

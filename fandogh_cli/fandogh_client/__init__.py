@@ -34,7 +34,7 @@ def get_exception(response):
     }.get(response.status_code, FandoghAPIError(response))
 
 
-def create_app(app_name, token):
+def create_image(app_name, token):
     response = requests.post(base_webapp_url + 'apps',
                              json={'name': app_name},
                              headers={'Authorization': 'JWT ' + token})
@@ -44,7 +44,7 @@ def create_app(app_name, token):
         return response.text
 
 
-def get_apps(token):
+def get_images(token):
     response = requests.get(base_webapp_url + 'apps',
                             headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
@@ -53,7 +53,7 @@ def get_apps(token):
         return response.json()
 
 
-def get_build(app, version, token):
+def get_image_build(app, version, token):
     response = requests.get(base_webapp_url + 'apps/' + app + '/versions/' + version + '/builds',
                             headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
@@ -62,10 +62,10 @@ def get_build(app, version, token):
         return response.json()
 
 
-def create_version(app_name, version, workspace_path):
+def create_version(image_name, version, workspace_path):
     with open(workspace_path, 'rb') as file:
         files = {'source': file}
-        response = requests.post(base_webapp_url + 'apps/' + app_name + '/versions',
+        response = requests.post(base_webapp_url + 'apps/' + image_name + '/versions',
                                  files=files,
                                  data={'version': version})
         if response.status_code != 200:
@@ -74,8 +74,8 @@ def create_version(app_name, version, workspace_path):
             return response.text
 
 
-def list_versions(app_name):
-    response = requests.get(base_webapp_url + 'apps/' + app_name + '/versions')
+def list_versions(image_name):
+    response = requests.get(base_webapp_url + 'apps/' + image_name + '/versions')
     if response.status_code != 200:
         raise get_exception(response)
     else:
@@ -90,10 +90,10 @@ def _parse_env_variables(envs):
     return env_variables
 
 
-def deploy_service(app_name, version, service_name, envs, token):
+def deploy_service(image_name, version, service_name, envs, token):
     env_variables = _parse_env_variables(envs)
     response = requests.post(base_webapp_url + 'services',
-                             json={'app_name': app_name,
+                             json={'app_name': image_name,
                                    'img_version': version,
                                    'service_name': service_name,
                                    'environment_variables': env_variables},
