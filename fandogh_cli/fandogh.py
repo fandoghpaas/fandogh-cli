@@ -1,27 +1,18 @@
 #!/usr/bin/env python
-from time import sleep
+
 import click
-from click import Command
-from fandogh_cli.utils import login_required, debug
+
+from fandogh_cli.image_commands import image
+from .base_commands import FandoghCommand
+from .utils import login_required
 from .presenter import present
 from .config import *
 from .fandogh_client import *
 
 # TODO: better description for state field
-from .workspace import build_workspace, cleanup_workspace
 
 
-class FandoghCommand(Command):
-    def invoke(self, ctx):
-        try:
-            return super(FandoghCommand, self).invoke(ctx)
-        except (FandoghAPIError, AuthenticationError) as exp:
-            debug('APIError. status code: {}, content: {}'.format(
-                exp.response.status_code,
-                exp.response.content))
-            click.echo(exp.message, err=True)
-        except Exception as exp:
-            raise exp
+
 
 
 @click.group("cli")
@@ -30,9 +21,7 @@ def base():
     pass
 
 
-@click.group("app")
-def app():
-    pass
+
 
 
 @click.group("service")
@@ -40,90 +29,11 @@ def service():
     pass
 
 
-base.add_command(app)
+base.add_command(image)
 base.add_command(service)
 
 
-@click.command(cls=FandoghCommand)
-@click.option('--name', prompt='application name', help='your application name')
-@login_required
-def init(name):
-    token = load_token()
-    response = create_app(name, token)
-    persist_config(name)
-    click.echo(response)
 
-
-@click.command('list', cls=FandoghCommand)
-@login_required
-def list_apps():
-    token = load_token()
-    table = present(lambda: get_apps(token),
-                    renderer='table',
-                    headers=['Name', 'Creation Date'],
-                    columns=['name', 'created_at'])
-
-    click.echo(table)
-
-
-app.add_command(init)
-
-
-def show_build_logs(app, version):
-    token = load_token()
-    if not app:
-        config = load_config()
-        app = config.app_name
-    while True:
-        response = get_build(app, version, token)
-        click.clear()
-        click.echo(response.get('logs'))
-        if response.get('state') != 'BUILDING':
-            break
-        sleep(1)
-
-
-@click.command('inspect', cls=FandoghCommand)
-@click.option('--app', help='The application name', default=None)
-@click.option('--version', '-v', prompt='application version', help='your application version')
-@login_required
-def build_inspect(app, version):
-    show_build_logs(app, version)
-
-
-@click.command(cls=FandoghCommand)
-@click.option('--version', '-v', prompt='application version', help='your application version')
-@click.option('-d', 'detach', is_flag=True, default=False,
-              help='detach terminal, by default the image build logs will be shown synchronously.')
-def publish(version, detach):
-    config = load_config()
-    app_name = config.app_name
-    workspace_path = build_workspace({})
-    try:
-        response = create_version(app_name, version, workspace_path)
-        click.echo(response)
-    finally:
-        cleanup_workspace({})
-    if detach:
-        return
-    else:
-        show_build_logs(app_name, version)
-
-
-@click.command(cls=FandoghCommand)
-@click.option('--app', help='The application name', default=None)
-def versions(app):
-    if not app:
-        config = load_config()
-        app = config.app_name
-    table = present(lambda: list_versions(app),
-                    renderer='table',
-                    headers=['version', 'state'],
-                    columns=['version', 'state'])
-    if len(table.strip()):
-        click.echo(table)
-    else:
-        click.echo("There is no version available for this image")
 
 
 @click.command('logs', cls=FandoghCommand)
@@ -190,10 +100,7 @@ def login(username, password):
     click.echo(message)
 
 
-app.add_command(publish)
-app.add_command(versions)
-app.add_command(list_apps)
-app.add_command(build_inspect)
+
 service.add_command(deploy)
 service.add_command(service_list)
 service.add_command(service_destroy)
