@@ -26,6 +26,7 @@ def service_logs(service_name):
 @click.option('--version', '-v', prompt='The image version', help='The application version you want to deploy')
 @click.option('--name', prompt='Your service name', help='Choose a unique name for your service')
 @click.option('--env', '-e', 'envs', help='Environment variables (format: VARIABLE_NAME=VARIABLE_VALUE)', multiple=True)
+@click.option('--port', '-p', 'port', help='The service port that will be exposed on port 80 to worldwide')
 @login_required
 def deploy(app, version, name, envs):
     token = get_user_config().get('token')
@@ -37,7 +38,7 @@ def deploy(app, version, name, envs):
     pre = '''Your service deployed successfully.
 The service is accessible via following link:
 '''
-    message = present(lambda: deploy_service(app, version, name, envs, token), pre=pre, field='url')
+    message = present(lambda: deploy_service(app, version, name, envs, port, token), pre=pre, field='url')
     click.echo(message)
 
 
