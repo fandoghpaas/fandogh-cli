@@ -91,13 +91,14 @@ def _parse_env_variables(envs):
     return env_variables
 
 
-def deploy_service(image_name, version, service_name, envs, token):
+def deploy_service(image_name, version, service_name, envs, port, token):
     env_variables = _parse_env_variables(envs)
     response = requests.post(base_services_url,
                              json={'image_name': image_name,
                                    'image_version': version,
                                    'service_name': service_name,
-                                   'environment_variables': env_variables},
+                                   'environment_variables': env_variables,
+                                   'port': port},
                              headers={'Authorization': 'JWT ' + token}
                              )
     if response.status_code != 200:
