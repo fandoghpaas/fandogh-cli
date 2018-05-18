@@ -28,7 +28,7 @@ def service_logs(service_name):
 @click.option('--env', '-e', 'envs', help='Environment variables (format: VARIABLE_NAME=VARIABLE_VALUE)', multiple=True)
 @click.option('--port', '-p', 'port', help='The service port that will be exposed on port 80 to worldwide')
 @login_required
-def deploy(app, version, name, envs):
+def deploy(app, version, name, port, envs):
     token = get_user_config().get('token')
     if not app:
         app = get_project_config().get('app.name')
