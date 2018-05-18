@@ -28,6 +28,13 @@ class ResourceNotFoundError(FandoghAPIError):
         self.response = response
 
 
+class FandoghInternalError(FandoghAPIError):
+    message = "Sorry, there is an internal error, the incident has been logged and we will fix it ASAP"
+
+    def __init__(self, response):
+        self.response = response
+
+
 class FandoghBadRequest(FandoghAPIError):
     def __init__(self, response):
         self.response = response
@@ -39,11 +46,13 @@ class FandoghBadRequest(FandoghAPIError):
 
 
 def get_exception(response):
-    return {
-        404: ResourceNotFoundError(response),
-        401: AuthenticationError(response),
-        400: FandoghBadRequest(response),
-    }.get(response.status_code, FandoghAPIError(response))
+    exception_class = {
+        404: ResourceNotFoundError,
+        401: AuthenticationError,
+        400: FandoghBadRequest,
+        500: FandoghInternalError,
+    }.get(response.status_code, FandoghAPIError)
+    return exception_class(response)
 
 
 def create_image(image_name, token):
