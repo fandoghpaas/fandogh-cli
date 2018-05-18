@@ -20,7 +20,7 @@ def image():
 @login_required
 def init(name):
     token = get_user_config().get('token')
-    response = create_app(name, token)
+    response = create_image(name, token)
     get_project_config().set('app.name', name)
     click.echo(response)
 
@@ -29,7 +29,7 @@ def init(name):
 @login_required
 def list_images():
     token = get_user_config().get('token')
-    table = present(lambda: get_apps(token),
+    table = present(lambda: get_images(token),
                     renderer='table',
                     headers=['Name', 'Creation Date'],
                     columns=['name', 'created_at'])
