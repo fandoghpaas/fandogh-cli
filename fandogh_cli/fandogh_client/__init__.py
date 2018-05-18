@@ -28,10 +28,21 @@ class ResourceNotFoundError(FandoghAPIError):
         self.response = response
 
 
+class FandoghBadRequest(FandoghAPIError):
+    def __init__(self, response):
+        self.response = response
+        try:
+            self.message = "Errors: \n{}".format(
+                "\n".join([" -> {}: {}".format(k, v) for k, v in response.json().items()]))
+        except AttributeError:
+            self.message = response.text
+
+
 def get_exception(response):
     return {
         404: ResourceNotFoundError(response),
-        401: AuthenticationError(response)
+        401: AuthenticationError(response),
+        400: FandoghBadRequest(response),
     }.get(response.status_code, FandoghAPIError(response))
 
 
