@@ -71,13 +71,13 @@ class ConfigRepository:
         if os.path.exists(configuration_file):
             with open(configuration_file) as cfile:
                 return load(cfile)
-        makedirs(configuration_file)
+        makedirs(os.path.dirname(configuration_file))
         with open(configuration_file, mode='w'):
             pass
-        return ConfigRepository({})
+        return {}
 
     def _load_from_dict(self, configs):
-        self._configs = configs
+        self._configs = configs or {}
 
     def set(self, key, value, save=True):
         self._configs[key] = value
