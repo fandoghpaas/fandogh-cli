@@ -20,6 +20,7 @@ def base():
 @click.option('--username', prompt='username', help='your username')
 @click.option('--password', prompt='password', help='your password', hide_input=True)
 def login(username, password):
+    """Login to fandogh server"""
     def handle_token():
         token_obj = get_token(username, password)
         get_user_config().set('token', token_obj['token'])
