@@ -15,10 +15,13 @@ def image():
     pass
 
 
-@click.command(cls=FandoghCommand)
+@click.command("init", cls=FandoghCommand)
 @click.option('--name', prompt='image name', help='your image name')
 @login_required
 def init(name):
+    """
+    TEST
+    """
     token = get_user_config().get('token')
     response = create_image(name, token)
     get_project_config().set('app.name', name)
@@ -58,7 +61,7 @@ def logs(image, version):
     show_image_logs(image, version)
 
 
-@click.command(cls=FandoghCommand)
+@click.command("publish", cls=FandoghCommand)
 @click.option('--version', '-v', prompt='Image version', help='your image version')
 @click.option('-d', 'detach', is_flag=True, default=False,
               help='detach terminal, by default the image build logs will be shown synchronously.')
@@ -76,7 +79,7 @@ def publish(version, detach):
         show_image_logs(app_name, version)
 
 
-@click.command(cls=FandoghCommand)
+@click.command("versions", cls=FandoghCommand)
 @click.option('--image', help='The image name', default=None)
 def versions(image):
     if not image:
