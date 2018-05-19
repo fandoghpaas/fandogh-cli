@@ -1,4 +1,3 @@
-from time import sleep
 import click
 import os
 
@@ -17,12 +16,12 @@ def debug(msg):
 
 def login_required(fn):
     # TODO: Move out of utils
-    from fandogh_cli.config import load_token
+    from fandogh_cli.config import get_user_config
 
     def please_login_first(*args, **kwargs):
         click.echo("Please login first. You can do it by running 'fandogh login' command")
 
-    token_obj = load_token()
+    token_obj = get_user_config().get('token')
     if token_obj is None:
         return please_login_first
     return fn
@@ -47,3 +46,18 @@ def makedirs(name, mode=0o770, exist_ok=True):
             os.mkdir(name, mode)
 
         _makedirs(name, mode)
+
+
+class TextStyle:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+
+def format_text(text, style):
+    return "{}{}{}".format(style, text, TextStyle.ENDC)
