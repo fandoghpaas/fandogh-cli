@@ -69,24 +69,23 @@ class Version:
         return str(self)
 
 
-def get_versions():
+def get_package_info():
     url = "https://pypi.org/pypi/{}/json".format(NAME)
     try:
         response = requests.get(url)
         if response.status_code == 200:
-            return response.json()['releases'].keys()
+            return response.json()
         raise RuntimeError("Unexpected response status while calling pypi")
-    except KeyError as missing_key:
-        raise RuntimeError("Unexpected response from pypi, missing key: {}".format(missing_key))
     except Exception as exp:
-        raise ConnectionError("Unable to connect to pypi.org: {}".format(exp))
+        raise RuntimeError("Unable to connect to pypi.org: {}".format(exp))
 
 
-def get_max_version():
-    all_versions = sorted([Version(v) for v in get_versions()], reverse=True)
-    if len(all_versions) > 0:
-        return all_versions[0]
-    return get_current_version()
+def get_latest_version():
+    package_info = get_package_info()
+    try:
+        return Version(package_info['info']['version'])
+    except KeyError as missing_key:
+        raise RuntimeError("Unexpected response: {} is missing from response".format(missing_key))
 
 
 def get_current_version():
