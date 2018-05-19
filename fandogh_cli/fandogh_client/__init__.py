@@ -24,8 +24,10 @@ class AuthenticationError(Exception):
 class ResourceNotFoundError(FandoghAPIError):
     message = "Resource Not found"
 
-    def __init__(self, response):
+    def __init__(self, response, message=None):
         self.response = response
+        if message:
+            self.message = message
 
 
 class FandoghInternalError(FandoghAPIError):
@@ -89,6 +91,11 @@ def create_version(image_name, version, workspace_path):
         response = requests.post(base_images_url + '/' + image_name + '/versions',
                                  files=files,
                                  data={'version': version})
+        if response.status_code == 404:
+            raise ResourceNotFoundError(
+                response=response,
+                message="There is no image named {}, please check for typo".format(image_name)
+            )
         if response.status_code != 200:
             raise get_exception(response)
         else:
