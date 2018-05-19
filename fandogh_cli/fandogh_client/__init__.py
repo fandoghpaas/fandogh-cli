@@ -97,8 +97,6 @@ def create_version(image_name, version, workspace_path):
 
 def list_versions(image_name):
     response = requests.get(base_images_url + '/' + image_name + '/versions')
-    if response.status_code == 404:
-        return ""
     if response.status_code != 200:
         raise get_exception(response)
     else:
