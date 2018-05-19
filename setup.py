@@ -2,10 +2,12 @@ from distutils.core import setup
 
 import setuptools
 
+from fandogh_cli import VERSION
+
 setup(
     name='fandogh_cli',
     packages=setuptools.find_packages(exclude=['tests', 'tests.*']),
-    version='0.2.4',
+    version=VERSION,
     description='Official CLI for Fandogh PaaS',
     author='Soroosh Sarabadani',
     install_requires=["click",
