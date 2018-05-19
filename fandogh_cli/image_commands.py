@@ -88,7 +88,7 @@ def versions(image):
     if len(table.strip()):
         click.echo(table)
     else:
-        click.echo("There is no version available for this image")
+        click.echo("There is no version available for '{}'".format(image))
 
 
 image.add_command(init)
