@@ -9,6 +9,7 @@ from .base_commands import FandoghCommand
 
 @click.group("service")
 def service():
+    """Service management commands"""
     pass
 
 
@@ -16,12 +17,13 @@ def service():
 @click.option('--service_name', prompt='service_name', help="Service name")
 @login_required
 def service_logs(service_name):
+    """Display service logs"""
     token_obj = get_user_config().get('token')
     logs = present(lambda: get_logs(service_name, token_obj))
     click.echo(logs)
 
 
-@click.command(cls=FandoghCommand)
+@click.command("deploy", cls=FandoghCommand)
 @click.option('--app', help='The image name', default=None)
 @click.option('--version', '-v', prompt='The image version', help='The application version you want to deploy')
 @click.option('--name', prompt='Your service name', help='Choose a unique name for your service')
@@ -29,6 +31,7 @@ def service_logs(service_name):
 @click.option('--port', '-p', 'port', help='The service port that will be exposed on port 80 to worldwide')
 @login_required
 def deploy(app, version, name, port, envs):
+    """Deploy service"""
     token = get_user_config().get('token')
     if not app:
         app = get_project_config().get('app.name')
@@ -47,6 +50,7 @@ The service is accessible via following link:
               help='show all the services regardless if it\'s running or not')
 @login_required
 def service_list(show_all):
+    """List available service for this image"""
     token = get_user_config().get('token')
     table = present(lambda: list_services(token, show_all),
                     renderer='table',
@@ -59,6 +63,7 @@ def service_list(show_all):
 @login_required
 @click.option('--name', 'service_name', prompt='Name of the service you want to destroy', )
 def service_destroy(service_name):
+    """Destroy service"""
     token = get_user_config().get('token')
     message = present(lambda: destroy_service(service_name, token))
     click.echo(message)

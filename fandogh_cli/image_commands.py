@@ -12,13 +12,19 @@ from .workspace import build_workspace, cleanup_workspace
 
 @click.group("image")
 def image():
+    """
+    Image management commands
+    """
     pass
 
 
-@click.command(cls=FandoghCommand)
+@click.command("init", cls=FandoghCommand)
 @click.option('--name', prompt='image name', help='your image name')
 @login_required
 def init(name):
+    """
+    Upload project on the server
+    """
     token = get_user_config().get('token')
     response = create_image(name, token)
     get_project_config().set('app.name', name)
@@ -28,6 +34,9 @@ def init(name):
 @click.command('list', cls=FandoghCommand)
 @login_required
 def list_images():
+    """
+    List images
+    """
     token = get_user_config().get('token')
     table = present(lambda: get_images(token),
                     renderer='table',
@@ -55,14 +64,20 @@ def show_image_logs(app, version):
 @click.option('--version', '-v', prompt='application version', help='your application version')
 @login_required
 def logs(image, version):
+    """
+    Display image log
+    """
     show_image_logs(image, version)
 
 
-@click.command(cls=FandoghCommand)
+@click.command("publish", cls=FandoghCommand)
 @click.option('--version', '-v', prompt='Image version', help='your image version')
 @click.option('-d', 'detach', is_flag=True, default=False,
               help='detach terminal, by default the image build logs will be shown synchronously.')
 def publish(version, detach):
+    """
+    Publish new version of image
+    """
     app_name = get_project_config().get('app.name')
     workspace_path = build_workspace({})
     try:
@@ -76,9 +91,12 @@ def publish(version, detach):
         show_image_logs(app_name, version)
 
 
-@click.command(cls=FandoghCommand)
+@click.command("versions", cls=FandoghCommand)
 @click.option('--image', help='The image name', default=None)
 def versions(image):
+    """
+    List published versions of this image
+    """
     if not image:
         image = get_project_config().get('app.name')
     table = present(lambda: list_versions(image),

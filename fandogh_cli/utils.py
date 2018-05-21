@@ -20,7 +20,7 @@ def login_required(fn):
 
     def please_login_first(*args, **kwargs):
         click.echo("Please login first. You can do it by running 'fandogh login' command")
-
+    please_login_first.__doc__ = fn.__doc__
     token_obj = get_user_config().get('token')
     if token_obj is None:
         return please_login_first
