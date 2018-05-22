@@ -1,46 +1,52 @@
 import os
 import zipfile
 from fnmatch import fnmatch
-
-FANDOGH_DEBUG = os.environ.get('FANDOGH_DEBUG', False)
-
-
-def get_ignored_entries():
-    if not os.path.exists('.dockerignore'):
-        return []
-    with open('.dockerignore', 'r') as file:
-        entries = file.readlines()
-    return entries
+from fandogh_cli.utils import debug
 
 
-def build_workspace(workspace_config):
-    workspace_path = workspace_config.get('path', os.getcwd())
-    zip_file_name = os.path.join(workspace_path, 'workspace.zip')
-    zipf = zipfile.ZipFile(zip_file_name, 'w', zipfile.ZIP_DEFLATED)
-    zipdir(workspace_path, zipf)
-    zipf.close()
+class Workspace:
+    def __init__(self, workspace_config=None):
+        workspace_config = workspace_config or {}
+        self.path = workspace_config.get('path', os.getcwd())
+        self.zip_file_name = os.path.join(self.path, 'workspace.zip')
+        self.has_docker_ignore = '.dockerignore' in os.listdir(self.path)
+        self._create_zip_file()
+        self.zip_file_size = os.path.getsize(self.zip_file_name) / 1048576
 
-    return zip_file_name
+    def _create_zip_file(self):
+        zipf = zipfile.ZipFile(self.zip_file_name, 'w', zipfile.ZIP_DEFLATED)
+        self.zipdir(self.path, zipf)
+        zipf.close()
 
+    def clean(self):
+        if os.path.exists(self.zip_file_name):
+            os.remove(self.zip_file_name)
 
-def cleanup_workspace(workspace_config):
-    workspace_path = workspace_config.get('path', os.getcwd())
-    zip_file_name = os.path.join(workspace_path, 'workspace.zip')
-    if os.path.exists(zip_file_name):
-        os.remove(zip_file_name)
+    def __str__(self):
+        return self.zip_file_name
 
+    def __repr__(self):
+        return str(self)
 
-def zipdir(path, ziph):
-    ignored_entries = get_ignored_entries()
-    ignored_entries.append('*dockerignore')
-    if FANDOGH_DEBUG:
-        print(ignored_entries)
-    for root, dirs, files in os.walk(path):
-        for file in files:
-            if file != 'workspace.zip':
-                file_path = os.path.join(os.path.relpath(root, path), file)
-                if any(fnmatch(file_path, ignore.strip()) for ignore in ignored_entries):
-                    if FANDOGH_DEBUG:
-                        print('{} filtered out.'.format(file_path))
-                    continue
-                ziph.write(file_path)
+    def __unicode__(self):
+        return str(self)
+
+    def get_ignored_entries(self):
+        if not self.has_docker_ignore:
+            return []
+        with open(os.path.join(self.path, '.dockerignore'), 'r') as file:
+            entries = file.readlines()
+        return entries
+
+    def zipdir(self, path, ziph):
+        ignored_entries = self.get_ignored_entries()
+        ignored_entries.append('*dockerignore')
+        debug(ignored_entries)
+        for root, dirs, files in os.walk(path):
+            for file in files:
+                if file != 'workspace.zip':
+                    file_path = os.path.join(os.path.relpath(root, path), file)
+                    if any(fnmatch(file_path, ignore.strip()) for ignore in ignored_entries):
+                        debug('{} filtered out.'.format(file_path))
+                        continue
+                    ziph.write(file_path)

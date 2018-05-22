@@ -5,6 +5,11 @@ fandogh_host = os.getenv('FANDOGH_HOST', 'http://fandogh.cloud:8080')
 base_url = '%s/api/' % fandogh_host
 base_images_url = '%simages' % base_url
 base_services_url = '%sservices' % base_url
+max_workspace_size = 20  # MB
+
+
+class TooLargeWorkspace(Exception):
+    pass
 
 
 class FandoghAPIError(Exception):
