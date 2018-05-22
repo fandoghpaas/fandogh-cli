@@ -31,8 +31,8 @@ def init(name):
     except FandoghBadRequest as exp:
         if name in {x['name'] for x in get_images(token)}:
             click.echo(
-                format_text("You have another image named '{}', "
-                            "choose another name if this is not the same project".format(name), TextStyle.WARNING)
+                format_text("You already have an image named '{}', "
+                            "choose another name if this is not the same workspace".format(name), TextStyle.WARNING)
             )
         else:
             raise
