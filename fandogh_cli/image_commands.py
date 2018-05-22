@@ -2,7 +2,7 @@
 import click
 
 from .base_commands import FandoghCommand
-from .utils import login_required
+from .utils import login_required, format_text, TextStyle
 from .presenter import present
 from .config import *
 from .fandogh_client import *
@@ -83,12 +83,23 @@ def publish(version, detach):
     try:
         response = create_version(app_name, version, workspace_path)
         click.echo(response)
+    except TooLargeWorkspace as size:
+        click.echo(format_text(
+            "The workspace size should not be larger than {}MB, its {}MB.".format(max_workspace_size, size),
+            TextStyle.FAIL
+        ))
+        click.echo(format_text(
+            "[perhaps you may be able to take advantage of '.dockerignore' "
+            "to reduce your worksspace size, check documentation for .dockerignore at: "
+            "https://docs.docker.com/engine/reference/builder/#dockerignore-file]", TextStyle.BOLD
+        ))
+    else:
+        if detach:
+            return
+        else:
+            show_image_logs(app_name, version)
     finally:
         cleanup_workspace({})
-    if detach:
-        return
-    else:
-        show_image_logs(app_name, version)
 
 
 @click.command("versions", cls=FandoghCommand)
