@@ -2,7 +2,7 @@
 import click
 
 from .base_commands import FandoghCommand
-from .utils import login_required
+from .utils import login_required, format_text, TextStyle
 from .presenter import present
 from .config import *
 from .fandogh_client import *
@@ -26,9 +26,22 @@ def init(name):
     Upload project on the server
     """
     token = get_user_config().get('token')
-    response = create_image(name, token)
+    try:
+        response = create_image(name, token)
+    except FandoghBadRequest as exp:
+        if name in {x['name'] for x in get_images(token)}:
+            click.echo(
+                format_text("You have another image named '{}', "
+                            "choose another name if this is not the same project".format(name), TextStyle.WARNING)
+            )
+        else:
+            raise
+    except Exception:
+        raise
+    else:
+        click.echo(response)
+
     get_project_config().set('app.name', name)
-    click.echo(response)
 
 
 @click.command('list', cls=FandoghCommand)
