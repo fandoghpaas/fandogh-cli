@@ -3,7 +3,7 @@
 Fandogh-CLI
 ======
 
-fandogh-cli is the official CLI of [Fandogh PaaS](http://fandogh.com). 
+fandogh-cli is the official CLI of [Fandogh PaaS](http://fandogh.cloud). 
 One with the current version of the CLI can create new images on Fandogh and publish the versions and deploy them as service.
 
 ### How to install the CLI
