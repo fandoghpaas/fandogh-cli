@@ -7,7 +7,7 @@ from .presenter import present
 from .config import *
 from .fandogh_client import *
 from time import sleep
-from .workspace import build_workspace, cleanup_workspace
+from .workspace import  Workspace
 
 
 @click.group("image")
@@ -79,27 +79,28 @@ def publish(version, detach):
     Publish new version of image
     """
     app_name = get_project_config().get('app.name')
-    workspace_path = build_workspace({})
+    workspace = Workspace()
+    if workspace.zip_file_size > max_workspace_size:
+        click.echo(format_text(
+            "The workspace size should not be larger than {}MB, its {}MB.".format(max_workspace_size,
+                                                                                  round(workspace.zip_file_size, 2)),
+            TextStyle.WARNING
+        ))
+        if not workspace.has_docker_ignore:
+            click.echo(format_text(
+                "[perhaps you may be able to take advantage of '.dockerignore' "
+                "to reduce your worksspace size, check documentation for .dockerignore at: "
+                "https://docs.docker.com/engine/reference/builder/#dockerignore-file]", TextStyle.BOLD
+            ))
     try:
-        response = create_version(app_name, version, workspace_path)
+        response = create_version(app_name, version, str(workspace))
         click.echo(response)
-    except TooLargeWorkspace as size:
-        click.echo(format_text(
-            "The workspace size should not be larger than {}MB, its {}MB.".format(max_workspace_size, size),
-            TextStyle.FAIL
-        ))
-        click.echo(format_text(
-            "[perhaps you may be able to take advantage of '.dockerignore' "
-            "to reduce your worksspace size, check documentation for .dockerignore at: "
-            "https://docs.docker.com/engine/reference/builder/#dockerignore-file]", TextStyle.BOLD
-        ))
-    else:
-        if detach:
-            return
-        else:
-            show_image_logs(app_name, version)
     finally:
-        cleanup_workspace({})
+        workspace.clean()
+    if detach:
+        return
+    else:
+        show_image_logs(app_name, version)
 
 
 @click.command("versions", cls=FandoghCommand)

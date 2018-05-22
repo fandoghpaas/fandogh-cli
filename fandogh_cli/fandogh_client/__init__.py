@@ -91,9 +91,6 @@ def get_image_build(image_name, version, token):
 
 
 def create_version(image_name, version, workspace_path):
-    workspace_size = os.path.getsize(workspace_path) / 1048576  # which is 1024 * 1024
-    if workspace_size > max_workspace_size:
-        raise TooLargeWorkspace(round(workspace_size, 1))
     with open(workspace_path, 'rb') as file:
         files = {'source': file}
         response = requests.post(base_images_url + '/' + image_name + '/versions',
