@@ -34,7 +34,7 @@ def deploy(app, version, name, port, envs):
     """Deploy service"""
     token = get_user_config().get('token')
     if not app:
-        app = get_project_config().get('app.name')
+        app = get_project_config().get('image.name')
         if not app:
             click.echo('please declare the application name', err=True)
 

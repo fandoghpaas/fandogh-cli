@@ -41,7 +41,7 @@ def init(name):
     else:
         click.echo(response)
 
-    get_project_config().set('app.name', name)
+    get_project_config().set('image.name', name)
 
 
 @click.command('list', cls=FandoghCommand)
@@ -62,7 +62,7 @@ def list_images():
 def show_image_logs(app, version):
     token = get_user_config().get('token')
     if not app:
-        app = get_project_config().get('app.name')
+        app = get_project_config().get('image.name')
     while True:
         response = get_image_build(app, version, token)
         click.clear()
@@ -91,7 +91,7 @@ def publish(version, detach):
     """
     Publish new version of image
     """
-    app_name = get_project_config().get('app.name')
+    app_name = get_project_config().get('image.name')
     workspace = Workspace()
     if workspace.zip_file_size > max_workspace_size:
         click.echo(format_text(
@@ -123,7 +123,7 @@ def versions(image):
     List published versions of this image
     """
     if not image:
-        image = get_project_config().get('app.name')
+        image = get_project_config().get('image.name')
     table = present(lambda: list_versions(image),
                     renderer='table',
                     headers=['version', 'state'],
