@@ -41,7 +41,7 @@ def init(name):
     else:
         click.echo(response)
 
-    get_project_config().set('app.name', name)
+    get_project_config().set('image.name', name)
 
 
 @click.command('list', cls=FandoghCommand)
@@ -59,12 +59,12 @@ def list_images():
     click.echo(table)
 
 
-def show_image_logs(app, version):
+def show_image_logs(image_name, version):
     token = get_user_config().get('token')
-    if not app:
-        app = get_project_config().get('app.name')
+    if not image_name:
+        image_name = get_project_config().get('image.name')
     while True:
-        response = get_image_build(app, version, token)
+        response = get_image_build(image_name, version, token)
         click.clear()
         click.echo(response.get('logs'))
         if response.get('state') != 'BUILDING':
@@ -74,7 +74,7 @@ def show_image_logs(app, version):
 
 @click.command('logs', cls=FandoghCommand)
 @click.option('-i', '--image', 'image', help='The image name', default=None)
-@click.option('--version', '-v', prompt='application version', help='your application version')
+@click.option('--version', '-v', prompt='image version', help='your image version')
 @login_required
 def logs(image, version):
     """
@@ -91,7 +91,7 @@ def publish(version, detach):
     """
     Publish new version of image
     """
-    app_name = get_project_config().get('app.name')
+    image_name = get_project_config().get('image.name')
     workspace = Workspace()
     if workspace.zip_file_size > max_workspace_size:
         click.echo(format_text(
@@ -106,14 +106,14 @@ def publish(version, detach):
                 "https://docs.docker.com/engine/reference/builder/#dockerignore-file]", TextStyle.BOLD
             ))
     try:
-        response = create_version(app_name, version, str(workspace))
+        response = create_version(image_name, version, str(workspace))
         click.echo(response)
     finally:
         workspace.clean()
     if detach:
         return
     else:
-        show_image_logs(app_name, version)
+        show_image_logs(image_name, version)
 
 
 @click.command("versions", cls=FandoghCommand)
@@ -123,7 +123,7 @@ def versions(image):
     List published versions of this image
     """
     if not image:
-        image = get_project_config().get('app.name')
+        image = get_project_config().get('image.name')
     table = present(lambda: list_versions(image),
                     renderer='table',
                     headers=['version', 'state'],

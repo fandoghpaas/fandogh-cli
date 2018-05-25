@@ -25,23 +25,23 @@ def service_logs(service_name):
 
 @click.command("deploy", cls=FandoghCommand)
 @click.option('--image', help='The image name', default=None)
-@click.option('--version', '-v', prompt='The image version', help='The application version you want to deploy')
+@click.option('--version', '-v', prompt='The image version', help='The image version you want to deploy')
 @click.option('--name', prompt='Your service name', help='Choose a unique name for your service')
 @click.option('--env', '-e', 'envs', help='Environment variables (format: VARIABLE_NAME=VARIABLE_VALUE)', multiple=True)
 @click.option('--port', '-p', 'port', help='The service port that will be exposed on port 80 to worldwide')
 @login_required
-def deploy(app, version, name, port, envs):
+def deploy(image, version, name, port, envs):
     """Deploy service"""
     token = get_user_config().get('token')
-    if not app:
-        app = get_project_config().get('app.name')
-        if not app:
-            click.echo('please declare the application name', err=True)
+    if not image:
+        image = get_project_config().get('image.name')
+        if not image:
+            click.echo('please declare the image name', err=True)
 
     pre = '''Your service deployed successfully.
 The service is accessible via following link:
 '''
-    message = present(lambda: deploy_service(app, version, name, envs, port, token), pre=pre, field='url')
+    message = present(lambda: deploy_service(image, version, name, envs, port, token), pre=pre, field='url')
     click.echo(message)
 
 
