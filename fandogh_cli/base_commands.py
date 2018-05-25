@@ -49,9 +49,10 @@ class FandoghCommand(Command):
             latest_version = get_latest_version()
             last_check = datetime.now()
         else:
-            last_check, latest_version = cached_version_info['last_check'], Version(cached_version_info['latest_version'])
-            if (datetime.now() - last_check) > timedelta(hours=6):
+            last_check, latest_version = cached_version_info.get('last_check', None), Version(
+                cached_version_info.get('latest_version', None))
+            if latest_version is None or (datetime.now() - last_check) > timedelta(hours=6):
                 latest_version = get_latest_version()
                 last_check = datetime.now()
-        get_user_config().set("version_info", dict(last_check=last_check, latest_version=str(latest_version)),)
+        get_user_config().set("version_info", dict(last_check=last_check, latest_version=str(latest_version)), )
         return latest_version
