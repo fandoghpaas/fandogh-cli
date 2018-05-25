@@ -152,7 +152,7 @@ def list_services(token, show_all):
 
 
 def destroy_service(service_name, token):
-    response = requests.delete(base_services_url + service_name,
+    response = requests.delete(base_services_url + '/' + service_name,
                                headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
         raise get_exception(response)
@@ -169,7 +169,7 @@ def get_token(username, password):
 
 
 def get_logs(service_name, token):
-    response = requests.get(base_services_url + "%s/logs" % service_name,
+    response = requests.get(base_services_url + '/' + service_name + '/logs',
                             headers={'Authorization': 'JWT ' + token})
     if response.status_code == 200:
         return response.json()

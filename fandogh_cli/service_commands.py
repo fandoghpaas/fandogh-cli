@@ -24,7 +24,7 @@ def service_logs(service_name):
 
 
 @click.command("deploy", cls=FandoghCommand)
-@click.option('--app', help='The image name', default=None)
+@click.option('--image', help='The image name', default=None)
 @click.option('--version', '-v', prompt='The image version', help='The application version you want to deploy')
 @click.option('--name', prompt='Your service name', help='Choose a unique name for your service')
 @click.option('--env', '-e', 'envs', help='Environment variables (format: VARIABLE_NAME=VARIABLE_VALUE)', multiple=True)
