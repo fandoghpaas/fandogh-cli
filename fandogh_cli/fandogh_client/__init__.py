@@ -90,12 +90,21 @@ def get_image_build(image_name, version, token):
         return response.json()
 
 
-def create_version(image_name, version, workspace_path):
+from requests_toolbelt.multipart import encoder
+
+
+def create_version(image_name, version, workspace_path, monitor_callback):
     with open(workspace_path, 'rb') as file:
-        files = {'source': file}
+        e = encoder.MultipartEncoder(
+            fields={'version': version,
+                    'source': ('workspace', file, 'text/plain')}
+        )
+        m = encoder.MultipartEncoderMonitor(e, monitor_callback)
+
         response = requests.post(base_images_url + '/' + image_name + '/versions',
-                                 files=files,
-                                 data={'version': version})
+                                 data=m,
+                                 headers={'Content-Type': m.content_type})
+
         if response.status_code == 404:
             raise ResourceNotFoundError(
                 response=response,

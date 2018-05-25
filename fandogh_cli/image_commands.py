@@ -7,7 +7,7 @@ from .presenter import present
 from .config import *
 from .fandogh_client import *
 from time import sleep
-from .workspace import  Workspace
+from .workspace import Workspace
 
 
 @click.group("image")
@@ -105,8 +105,18 @@ def publish(version, detach):
                 "to reduce your worksspace size, check documentation for .dockerignore at: "
                 "https://docs.docker.com/engine/reference/builder/#dockerignore-file]", TextStyle.BOLD
             ))
+
+    bar = click.progressbar(length=int(workspace.zip_file_size_kb), label='Uploading the workspace')
+    diff = 0
+
+    def monitor_callback(monitor):
+        nonlocal diff
+        progress = monitor.bytes_read - diff
+        bar.update(progress)
+        diff += progress
+
     try:
-        response = create_version(image_name, version, str(workspace))
+        response = create_version(image_name, version, str(workspace), monitor_callback)
         click.echo(response)
     finally:
         workspace.clean()

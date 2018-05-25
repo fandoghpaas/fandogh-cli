@@ -13,6 +13,7 @@ setup(
     install_requires=["click",
                       "pyOpenSSL",
                       "requests[security]",
+                      "requests-toolbelt",
                       "beautifultable",
                       "pyyaml"],
     author_email='soroosh.sarabadani@gmail.com',
