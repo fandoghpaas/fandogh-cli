@@ -91,6 +91,7 @@ def publish(version, detach):
     """
     Publish new version of image
     """
+    token = get_user_config().get('token')
     image_name = get_project_config().get('image.name')
     workspace = Workspace()
     if workspace.zip_file_size > max_workspace_size:
@@ -116,7 +117,8 @@ def publish(version, detach):
         diff += progress
 
     try:
-        response = create_version(image_name, version, str(workspace), monitor_callback)
+        response = create_version(image_name, version, str(workspace), monitor_callback, token)
+        bar.render_finish()
         click.echo(response)
     finally:
         workspace.clean()
@@ -132,9 +134,10 @@ def versions(image):
     """
     List published versions of this image
     """
+    token = get_user_config().get('token')
     if not image:
         image = get_project_config().get('image.name')
-    table = present(lambda: list_versions(image),
+    table = present(lambda: list_versions(image, token),
                     renderer='table',
                     headers=['version', 'state'],
                     columns=['version', 'state'])
