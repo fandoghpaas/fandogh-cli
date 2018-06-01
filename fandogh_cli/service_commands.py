@@ -13,16 +13,6 @@ def service():
     pass
 
 
-@click.command('logs', cls=FandoghCommand)
-@click.option('--service_name', prompt='service_name', help="Service name")
-@login_required
-def service_logs(service_name):
-    """Display service logs"""
-    token_obj = get_user_config().get('token')
-    logs = present(lambda: get_logs(service_name, token_obj))
-    click.echo(logs)
-
-
 @click.command("deploy", cls=FandoghCommand)
 @click.option('--image', help='The image name', default=None)
 @click.option('--version', '-v', prompt='The image version', help='The image version you want to deploy')
@@ -68,6 +58,15 @@ def service_destroy(service_name):
     message = present(lambda: destroy_service(service_name, token))
     click.echo(message)
 
+
+@click.command('logs', cls=FandoghCommand)
+@click.option('--name', 'service_name', prompt='service_name', help="Service name")
+@login_required
+def service_logs(service_name):
+    """Display service logs"""
+    token_obj = get_user_config().get('token')
+    logs = present(lambda: get_logs(service_name, token_obj))
+    click.echo(logs)
 
 service.add_command(deploy)
 service.add_command(service_list)
