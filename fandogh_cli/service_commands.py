@@ -68,6 +68,7 @@ def service_logs(service_name):
     logs = present(lambda: get_logs(service_name, token_obj))
     click.echo(logs)
 
+
 service.add_command(deploy)
 service.add_command(service_list)
 service.add_command(service_destroy)
