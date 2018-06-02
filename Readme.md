@@ -28,7 +28,7 @@ After you install the CLI, run the following command to log in with your Fandogh
 
 TODO: explain what happens internally
 
-### How to create a new Iage
+### How to create a new Image
 
 In order to create a new image in Fandogh you need to change your current directory to the directory of your application, 
 then you can run the following command:
