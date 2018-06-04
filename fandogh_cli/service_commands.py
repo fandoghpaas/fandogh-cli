@@ -44,8 +44,8 @@ def service_list(show_all):
     token = get_user_config().get('token')
     table = present(lambda: list_services(token, show_all),
                     renderer='table',
-                    headers=['name', 'start date', 'state'],
-                    columns=['name', 'start_date', 'state'])
+                    headers=['Service Name', 'URL', 'Started at', 'State'],
+                    columns=['name', 'url', 'start_date', 'state'])
     click.echo(table)
 
 
