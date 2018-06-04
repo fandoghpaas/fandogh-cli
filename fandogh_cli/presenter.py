@@ -6,7 +6,7 @@ FANDOGH_DEBUG = os.environ.get('FANDOGH_DEBUG', False)
 
 
 def _create_table(columns):
-    table = BeautifulTable()
+    table = BeautifulTable(max_width=120)
     table.column_headers = columns
     table.row_separator_char = ''
     return table
