@@ -19,8 +19,10 @@ def service():
 @click.option('--name', prompt='Your service name', help='Choose a unique name for your service')
 @click.option('--env', '-e', 'envs', help='Environment variables (format: VARIABLE_NAME=VARIABLE_VALUE)', multiple=True)
 @click.option('--port', '-p', 'port', help='The service port that will be exposed on port 80 to worldwide', default=80)
+@click.option('--internal',  help='This is an internal service like a DB and the port should '
+                                  'not be exposed publicly', default=False, is_flag=True)
 @login_required
-def deploy(image, version, name, port, envs):
+def deploy(image, version, name, port, envs, internal):
     """Deploy service"""
     token = get_user_config().get('token')
     if not image:
@@ -31,7 +33,7 @@ def deploy(image, version, name, port, envs):
     pre = '''Your service deployed successfully.
 The service is accessible via following link:
 '''
-    message = present(lambda: deploy_service(image, version, name, envs, port, token), pre=pre, field='url')
+    message = present(lambda: deploy_service(image, version, name, envs, port, token, internal), pre=pre, field='url')
     click.echo(message)
 
 
