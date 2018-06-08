@@ -134,13 +134,14 @@ def _parse_env_variables(envs):
     return env_variables
 
 
-def deploy_service(image_name, version, service_name, envs, port, token):
+def deploy_service(image_name, version, service_name, envs, port, token, internal):
     env_variables = _parse_env_variables(envs)
     response = requests.post(base_services_url,
                              json={'image_name': image_name,
                                    'image_version': version,
                                    'service_name': service_name,
                                    'environment_variables': env_variables,
+                                   'internal': internal,
                                    'port': port},
                              headers={'Authorization': 'JWT ' + token}
                              )
