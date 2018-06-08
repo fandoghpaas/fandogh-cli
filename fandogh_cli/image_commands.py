@@ -108,13 +108,12 @@ def publish(version, detach):
             ))
 
     bar = click.progressbar(length=int(workspace.zip_file_size_kb), label='Uploading the workspace')
-    diff = 0
+    shared_values = {'diff': 0}
 
     def monitor_callback(monitor):
-        nonlocal diff
-        progress = monitor.bytes_read - diff
+        progress = monitor.bytes_read - shared_values['diff']
         bar.update(progress)
-        diff += progress
+        shared_values['diff'] += progress
 
     try:
         response = create_version(image_name, version, str(workspace), monitor_callback, token)
