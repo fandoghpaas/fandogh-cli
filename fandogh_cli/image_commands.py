@@ -29,7 +29,7 @@ def init(name):
     try:
         response = create_image(name, token)
     except FandoghBadRequest as exp:
-        if name in {x['name'] for x in get_images(token)}:
+        if name in {x['name'].split("/")[1] if '/' in x['name'] else x['name'] for x in get_images(token)}:
             click.echo(
                 format_text("You already have an image named '{}', "
                             "choose another name if this is not the same workspace".format(name), TextStyle.WARNING)
