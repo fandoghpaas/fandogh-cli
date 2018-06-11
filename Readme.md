@@ -26,7 +26,7 @@ After you install the CLI, run the following command to log in with your Fandogh
 
 `fandogh login` 
 
-TODO: explain what happens internally
+When you run `fandogh login` it wil prompt for username and password which will be used to obtain a token. the token will be stored in $HOME/.fandogh/credentials and later will be used by all other fandogh commands.
 
 ### How to create a new Image
 
