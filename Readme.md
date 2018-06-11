@@ -52,7 +52,7 @@ Image Version created successfully
 ### How to deploy a service
 
 Deploying a service on Fandogh is easy as pie. Let's say you have an image with name `hello-world` 
-which has a version named `v1` in state `BUILT` (to see the state of builds todo read here).
+which has a version named `v1` in state `BUILT`.
 
 Run the following command to deploy your service:
 ```bash
@@ -61,11 +61,14 @@ Your service deployed successfully.
 The service is accessible via following link:
 http://hello-world.fandogh.cloud
 ```
-
 The above command will deploy a <b>service</b> with name <b>hello-world</b> from docker image hello-world:v1.
- 
-<b>Note:</b> at the time being services can be only exposed to the outside via port 80. 
-so ensure your web server is listening on this port.
+You can also use the following options when running deploy command:  
+
+- --port or -p: to specify which port of of container should be exposed
+- --internal: to indicate that this service is an internal service and the port should only be accessible within the private network
+- --env or -e: to specify environment variables to set in the container.you can use this option as many as you need, for example `fandogh service deploy  --image hello-world --version v1 --name hello-world --env some_variable=some_value --env another_variable=another_value`
+
+
 
 ### How to shutdown a service
 
