@@ -128,7 +128,7 @@ def publish(version, detach):
 
 
 @click.command("versions", cls=FandoghCommand)
-@click.option('--image', help='The image name', default=None)
+@click.option('-i', '--image', 'image', prompt='Image name', help='The image name', default=lambda: get_project_config().get('image.name'))
 def versions(image):
     """
     List published versions of this image
