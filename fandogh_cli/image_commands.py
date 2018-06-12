@@ -73,8 +73,8 @@ def show_image_logs(image_name, version):
 
 
 @click.command('logs', cls=FandoghCommand)
-@click.option('-i', '--image', 'image', help='The image name', default=None)
-@click.option('--version', '-v', prompt='image version', help='your image version')
+@click.option('-i', '--image', 'image', prompt='Image name', help='The image name', default=lambda: get_project_config().get('image.name'))
+@click.option('--version', '-v', prompt='Image version', help='your image version')
 @login_required
 def logs(image, version):
     """
