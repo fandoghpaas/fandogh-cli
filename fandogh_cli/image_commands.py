@@ -70,6 +70,8 @@ def show_image_logs(image_name, version):
         if response.get('state') != 'BUILDING':
             break
         sleep(1)
+    if response.get('state') == 'FAILED':
+        exit(1)
 
 
 @click.command('logs', cls=FandoghCommand)
