@@ -23,6 +23,7 @@ class FandoghCommand(Command):
                 exp.response.status_code,
                 exp.response.content))
             click.echo(format_text(exp.message, TextStyle.FAIL), err=True)
+            exit(1)
         except VersionException as exp:
             click.echo(format_text("New Version of {} is available, please update to continue "
                                    "using Fandogh services using : `pip install {} --upgrade`".format(NAME, NAME),
