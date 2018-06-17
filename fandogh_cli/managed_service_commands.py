@@ -16,10 +16,13 @@ def managed_service():
 @click.command("deploy", cls=FandoghCommand)
 @click.argument('name', nargs=1)
 @click.argument('version', nargs=1)
-@click.option('-c', '--configuration', 'config', 'Managedd service dependent configuration (format: VARIABLE_NAME=VARIABLE_VALUE)', multiple=True)
+@click.option('-c', '--configuration', 'config', help='Managed service configuration (format: VARIABLE_NAME=VARIABLE_VALUE)', multiple=True)
 @login_required
 def deploy(name, version, config):
-    click.echo('deploying... {} {}'.format(name, version))
+    """Deploy Managed Service"""
+    token = get_user_config().get('token')
+    response = deploy_managed_service(name, version, config, token)
+    click.echo(response)
 
 
 managed_service.add_command(deploy)
