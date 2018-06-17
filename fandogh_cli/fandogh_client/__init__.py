@@ -5,6 +5,7 @@ fandogh_host = os.getenv('FANDOGH_HOST', 'http://fandogh.cloud:8080')
 base_url = '%s/api/' % fandogh_host
 base_images_url = '%simages' % base_url
 base_services_url = '%sservices' % base_url
+base_managed_services_url = '%smanaged-services' % base_url
 max_workspace_size = 20  # MB
 
 
@@ -126,7 +127,7 @@ def list_versions(image_name, token):
         return response.json()
 
 
-def _parse_env_variables(envs):
+def _parse_key_values(envs):
     env_variables = {}
     for env in envs:
         (k, v) = env.split('=')
@@ -135,7 +136,7 @@ def _parse_env_variables(envs):
 
 
 def deploy_service(image_name, version, service_name, envs, port, token, internal):
-    env_variables = _parse_env_variables(envs)
+    env_variables = _parse_key_values(envs)
     response = requests.post(base_services_url,
                              json={'image_name': image_name,
                                    'image_version': version,
@@ -187,3 +188,17 @@ def get_logs(service_name, token):
         return response.json()
     else:
         raise get_exception(response)
+
+
+def deploy_managed_service(service_name, version, configs, token):
+    configution = _parse_key_values(configs)
+    response = requests.post(base_managed_services_url,
+                             json={'name': service_name,
+                                   'version': version,
+                                   'config': configution},
+                             headers={'Authorization': 'JWT ' + token}
+                             )
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        return response.json()
