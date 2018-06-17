@@ -4,6 +4,7 @@ import click
 
 from .image_commands import image
 from .service_commands import service
+from .managed_service_commands import managed_service
 from .base_commands import FandoghCommand
 from .presenter import present
 from .config import *
@@ -32,6 +33,7 @@ def login(username, password):
 base.add_command(login)
 base.add_command(image)
 base.add_command(service)
+base.add_command(managed_service)
 
 if __name__ == '__main__':
 
