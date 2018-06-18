@@ -22,7 +22,7 @@ def deploy(name, version, config):
     """Deploy Managed Service"""
     token = get_user_config().get('token')
     response = deploy_managed_service(name, version, config, token)
-    click.echo(response)
+    click.echo(response.get('message'))
 
 
 managed_service.add_command(deploy)
