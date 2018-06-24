@@ -104,7 +104,7 @@ You can have access to the PHPMyAdmin via following link:
 http://mysql.your_namespace.fandogh.cloud
 ```  
 
-From your services you can access to the Mysql via by using `mysql:3306` address. 
+From your services you can access to the Mysql by using `mysql:3306` address. 
 
 #### Configuration
 There are couple of configuration that you can pass to Fandogh when you are deploying a Mysql service:
