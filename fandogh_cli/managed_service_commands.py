@@ -28,7 +28,7 @@ def deploy(name, version, config):
 
 @click.command("list", cls=FandoghCommand)
 @login_required
-def deploy():
+def list():
     """List available managed-services"""
     token = get_user_config().get('token')
     click.echo(present(lambda: get_available_managed_services(token),
