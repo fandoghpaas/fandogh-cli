@@ -79,3 +79,49 @@ To do so via fandogh-cli it's even simpler than deploying a service. Let's say w
 $ fandogh service destroy  --name hello
 Service destroyed successfully.
 ```
+
+## Managed Services
+
+Fandogh Platform provides a set of production ready managed services that you can deploy in seconds and use them via your services. 
+The following list consist of the managed services we already support.
+
+### MySQL Service
+
+The MySQL Managed Service on Fandogh consist of Mysql RDBMS itself and Web UI (PHPMyAdmin) that let you to manage your DBMS.
+In order to log into the Web UI you can use the root user credentials.
+ 
+Username: root
+
+password: root (can be changed through config options)
+
+You can deploy a MySQL Server in your namespace by running the following command:
+
+```bash
+$ fandogh managed-service deploy mysql 9.4
+
+Your Mysql service will be ready in a few seconds.
+You can have access to the PHPMyAdmin via following link:
+http://mysql.your_namespace.fandogh.cloud
+```  
+
+From your services you can access to the Mysql by using `mysql:3306` address. 
+
+#### Configuration
+There are couple of configuration that you can pass to Fandogh when you are deploying a Mysql service:
+
+* `service_name default: mysql` 
+
+    The value of this field will be the name of your DBMS. as the result this name will change the URL of your phpmyadmin panel. 
+    e.g. If you set `service_name=test-dbms` then the admin URL will be something like `http://test-dbms.your_namespace.fandogh.cloud`
+* `phpmyadmin_enabled default: true`  
+
+    This is a boolean field that indicates if you want to have phpmyadmin running for this RDBMS or not.
+    e.g. If you set `phpmyadmin_enabled=false` then the admin UI won't be deployed for the given DBMS.
+* `mysql_root_password default: root`
+ 
+    The value of this field will be the password of your mysql root password.
+    
+Example:
+```bash
+$ fandogh managed-service deploy mysql 9.4 -c service_name=test-dbms -c phpmyadmin_enabled=false -c mysql_root_password=test123
+```
