@@ -18,7 +18,7 @@ def base():
 
 
 @click.command(cls=FandoghCommand)
-@click.option('--username', prompt='username', help='your username')
+@click.option('--username', prompt='username (Email)', help='your username')
 @click.option('--password', prompt='password', help='your password', hide_input=True)
 def login(username, password):
     """Login to fandogh server"""
