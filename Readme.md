@@ -88,11 +88,11 @@ The following list consist of the managed services we already support.
 ### MySQL Service
 
 The MySQL Managed Service on Fandogh consist of Mysql RDBMS itself and Web UI (PHPMyAdmin) that let you to manage your DBMS.
-In order to log into the Web UI you can use the master user credentials.
+In order to log into the Web UI you can use the root user credentials.
  
-Username: master
+Username: root
 
-password: master (can be changed through config options)
+password: root (can be changed through config options)
 
 You can deploy a MySQL Server in your namespace by running the following command:
 
@@ -119,7 +119,7 @@ There are couple of configuration that you can pass to Fandogh when you are depl
     e.g. If you set `phpmyadmin_enabled=false` then the admin UI won't be deployed for the given DBMS.
 * `mysql_root_password default: root`
  
-    The value of this field will be the password of your mysql master password.
+    The value of this field will be the password of your mysql root password.
     
 Example:
 ```bash
