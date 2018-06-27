@@ -20,6 +20,7 @@ def login_required(fn):
 
     def please_login_first(*args, **kwargs):
         click.echo("Please login first. You can do it by running 'fandogh login' command")
+
     please_login_first.__doc__ = fn.__doc__
     token_obj = get_user_config().get('token')
     if token_obj is None:
@@ -31,22 +32,11 @@ def makedirs(name, mode=0o770, exist_ok=True):
     if not is_python2():
         os.makedirs(name, mode, exist_ok)
     else:
-        def _makedirs(name, mode):
-            head, tail = os.path.split(name)
-            if not tail:
-                head, tail = os.path.split(head)
-            if head and tail and not os.path.exists(head):
-                try:
-                    _makedirs(head, mode)
-                except OSError as e:
-                    if e.errno != os.errno.EEXIST and not exist_ok:
-                        raise
-                if tail == os.curdir:
-                    return
-            os.mkdir(name, mode)
-
-        _makedirs(name, mode)
-
+        try:
+            os.makedirs(name, mode)
+        except OSError as e:
+            if not exist_ok:
+                raise e
 
 class TextStyle:
     HEADER = '\033[95m'
