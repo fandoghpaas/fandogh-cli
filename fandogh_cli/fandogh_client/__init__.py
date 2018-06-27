@@ -202,3 +202,13 @@ def deploy_managed_service(service_name, version, configs, token):
         raise get_exception(response)
     else:
         return response.json()
+
+
+def get_available_managed_services(token):
+    response = requests.get(base_managed_services_url,
+                            headers={'Authorization': 'JWT ' + token}
+                            )
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        return response.json()
