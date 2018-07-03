@@ -17,7 +17,7 @@ setup(
                       "beautifultable",
                       "pyyaml"],
     author_email='soroosh.sarabadani@gmail.com',
-    url='https://github.com/psycho-ir/fandogh-cli',
+    url='https://github.com/fandoghpaas/fandogh-cli',
     keywords=['PaaS', 'Fandogh'],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
