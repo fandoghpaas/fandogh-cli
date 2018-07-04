@@ -25,4 +25,13 @@ def deploy(name, version, configs):
     click.echo(response.get('message'))
 
 
+@click.command("list", cls=FandoghCommand)
+@login_required
+def list():
+    """List available managed-services"""
+    token = get_user_config().get('token')
+    click.echo(present(lambda: get_available_managed_services(token),
+                       renderer='list'))
+
+
 managed_service.add_command(deploy)

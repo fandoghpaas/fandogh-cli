@@ -1,7 +1,6 @@
 from beautifultable import BeautifulTable
 import os
 
-
 FANDOGH_DEBUG = os.environ.get('FANDOGH_DEBUG', False)
 
 
@@ -32,14 +31,20 @@ def text_renderer(data, **kwargs):
         return str(data or '')
 
 
+def list_renderer(data, **kwargs):
+    assert isinstance(data, list)
+    return "\n".join(["- {}".format(item) for item in data])
+
+
 renderers = {
     'table': table_renderer,
-    'text': text_renderer
+    'text': text_renderer,
+    'list': list_renderer
 }
 
 
 def present(data_provider, pre='', post='', renderer='text', **kwargs):
-        data = data_provider()
-        rendered = renderers.get(renderer)(data, **kwargs)
-        return pre + str(rendered) + post
+    data = data_provider()
+    rendered = renderers.get(renderer)(data, **kwargs)
+    return pre + str(rendered) + post
 
