@@ -26,9 +26,11 @@ def deploy(name, version, configs):
         click.echo(response.get('message'))
     except FandoghBadRequest:
         click.echo(format_text(
-            "Requested service doesn't exists, please check `fandogh managed-service help` for more information "
+            "please check `fandogh managed-service help` for more information "
             "regarding fandogh managed services",
             TextStyle.FAIL))
+        raise
+
 
 
 @click.command("help", cls=FandoghCommand)
