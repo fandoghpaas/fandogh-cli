@@ -7,6 +7,7 @@ from fandogh_cli.fandogh_client import FandoghAPIError, AuthenticationError
 from fandogh_cli.utils import debug, TextStyle, format_text
 from fandogh_cli.version_check import get_latest_version, get_current_version, Version
 from fandogh_cli.config import get_user_config
+from fandogh_cli.info_collector import collect
 
 
 class VersionException(Exception):
@@ -19,16 +20,19 @@ class FandoghCommand(Command):
             self._check_for_new_version()
             return super(FandoghCommand, self).invoke(ctx)
         except (FandoghAPIError, AuthenticationError) as exp:
+            collect(self, ctx, exp)
             debug('APIError. status code: {}, content: {}'.format(
                 exp.response.status_code,
                 exp.response.content))
             click.echo(format_text(exp.message, TextStyle.FAIL), err=True)
             exit(1)
         except VersionException as exp:
+            collect(self, ctx, exp)
             click.echo(format_text("New Version of {} is available, please update to continue "
                                    "using Fandogh services using : `pip install {} --upgrade`".format(NAME, NAME),
                                    TextStyle.FAIL))
         except Exception as exp:
+            collect(self, ctx, exp)
             raise exp
 
     def _check_for_new_version(self):
