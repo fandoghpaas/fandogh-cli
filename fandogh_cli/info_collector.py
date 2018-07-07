@@ -4,7 +4,7 @@ import click
 
 from fandogh_cli import VERSION
 from fandogh_cli.utils import format_text, TextStyle
-from fandogh_cli.fandogh_client.report_client import report
+from fandogh_cli.fandogh_client.error_report_client import report
 
 _static_info = {
     'python_version': platform.sys.version,
