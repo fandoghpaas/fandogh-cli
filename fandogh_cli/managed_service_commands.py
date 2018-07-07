@@ -25,4 +25,17 @@ def deploy(name, version, configs):
     click.echo(response.get('message'))
 
 
+@click.command("help", cls=FandoghCommand)
+@login_required
+def help():
+    """Display Help for Managed Service"""
+    token = get_user_config().get('token')
+    managed_services = help_managed_service(token)
+    for managed_service in managed_services:
+        click.echo("\t{}".format(managed_service['name']))
+        for parameter_name, description in managed_service['options'].items():
+            click.echo("\t\t{}:\t{}".format(parameter_name.ljust(20), description))
+
+
+managed_service.add_command(help)
 managed_service.add_command(deploy)
