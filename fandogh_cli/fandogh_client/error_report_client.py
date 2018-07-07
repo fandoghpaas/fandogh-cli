@@ -2,7 +2,7 @@ import requests
 
 from fandogh_cli.fandogh_client import base_url, get_exception
 
-base_reports_url = '%sreports' % base_url
+base_reports_url = '%serrors' % base_url
 
 
 def report(info):
