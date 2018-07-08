@@ -18,16 +18,15 @@ class FandoghCommand(Command):
     def invoke(self, ctx):
         try:
             self._check_for_new_version()
+            self._check_for_error_collection_permission()
             return super(FandoghCommand, self).invoke(ctx)
         except (FandoghAPIError, AuthenticationError) as exp:
-            collect(self, ctx, exp)
             debug('APIError. status code: {}, content: {}'.format(
                 exp.response.status_code,
                 exp.response.content))
             click.echo(format_text(exp.message, TextStyle.FAIL), err=True)
             exit(1)
         except VersionException as exp:
-            collect(self, ctx, exp)
             click.echo(format_text("New Version of {} is available, please update to continue "
                                    "using Fandogh services using : `pip install {} --upgrade`".format(NAME, NAME),
                                    TextStyle.FAIL))
@@ -49,7 +48,7 @@ class FandoghCommand(Command):
             raise VersionException()
 
     def _get_latest_version(self):
-        cached_version_info = get_user_config().get("version_info")
+        cached_version_info = get_user_config().get('version_info')
         if cached_version_info is None:
             latest_version = get_latest_version()
             last_check = datetime.now()
@@ -61,3 +60,12 @@ class FandoghCommand(Command):
                 last_check = datetime.now()
         get_user_config().set("version_info", dict(last_check=last_check, latest_version=str(latest_version)), )
         return latest_version
+
+    def _check_for_error_collection_permission(self):
+        collect_error = get_user_config().get('collect_error')
+        if collect_error is None:
+            confirmed = click.confirm('Would you like to let Fandogh CLI to send context information in case any unhandled error happens?')
+            if confirmed:
+                get_user_config().set("collect_error", 'YES')
+            else:
+                get_user_config().set("collect_error", 'NO')
