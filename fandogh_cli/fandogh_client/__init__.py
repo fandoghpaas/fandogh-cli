@@ -135,7 +135,7 @@ def _parse_key_values(envs):
     return env_variables
 
 
-def deploy_service(image_name, version, service_name, envs, port, token, internal):
+def deploy_service(image_name, version, service_name, envs, port, token, internal, https, http):
     env_variables = _parse_key_values(envs)
     response = requests.post(base_services_url,
                              json={'image_name': image_name,
@@ -143,7 +143,9 @@ def deploy_service(image_name, version, service_name, envs, port, token, interna
                                    'service_name': service_name,
                                    'environment_variables': env_variables,
                                    'internal': internal,
-                                   'port': port},
+                                   'port': port,
+                                   'https': https,
+                                   'http': http},
                              headers={'Authorization': 'JWT ' + token}
                              )
     if response.status_code != 200:
