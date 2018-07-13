@@ -1,0 +1,40 @@
+swagger: "2.0"
+info:
+  description: "Service manfiest proposal"
+  version: "1.0.0"
+  title: "Fandogh Service manifest"
+definitions:
+  Services:
+    type: array
+    items:
+      $ref: "#/definitions/Service"
+  Image:
+    type: object
+    properties:
+      name:
+        type: string
+      version:
+        type: string
+  ParameterItem:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+  Service:
+    type: object
+    properties:
+      type: 
+        type: string
+        enum:
+          - "user"
+          - "managed-service"
+      image:
+        $ref: "#/definitions/Image"
+      service_name:
+        type: string
+      parameters:
+        type: array
+        items:
+          $ref: "#/definitions/ParameterItem"
