@@ -30,10 +30,19 @@ def deploy(image, version, name, port, envs, internal):
         if not image:
             click.echo('please declare the image name', err=True)
 
-    pre = '''Your service deployed successfully.
-The service is accessible via following link:
-'''
-    message = present(lambda: deploy_service(image, version, name, envs, port, token, internal), pre=pre, field='url')
+    deployment_result = deploy_service(image, version, name, envs, port, token, internal)
+    message = "\nCongratulation, Your service is running ^_^\n"
+    if str(deployment_result['service_type']).lower() == "external":
+        message += "Your service is accessible using the following URLs:\n{}".format(
+            "\n".join([" - {}".format(url) for url in deployment_result['urls']])
+        )
+    else:
+        message += """
+Since your service is internal, it's not accessible from outside your fandogh private network, 
+but other services inside your private network will be able to find it using it'a name: '{}'
+        """.strip().format(
+            deployment_result['name']
+        )
     click.echo(message)
 
 
