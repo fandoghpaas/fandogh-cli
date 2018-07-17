@@ -7,6 +7,8 @@ from fandogh_cli.fandogh_client import FandoghAPIError, AuthenticationError
 from fandogh_cli.utils import debug, TextStyle, format_text
 from fandogh_cli.version_check import get_latest_version, get_current_version, Version
 from fandogh_cli.config import get_user_config
+from fandogh_cli.info_collector import collect
+import os
 
 
 class VersionException(Exception):
@@ -17,6 +19,7 @@ class FandoghCommand(Command):
     def invoke(self, ctx):
         try:
             self._check_for_new_version()
+            self._check_for_error_collection_permission()
             return super(FandoghCommand, self).invoke(ctx)
         except (FandoghAPIError, AuthenticationError) as exp:
             debug('APIError. status code: {}, content: {}'.format(
@@ -29,6 +32,7 @@ class FandoghCommand(Command):
                                    "using Fandogh services using : `pip install {} --upgrade`".format(NAME, NAME),
                                    TextStyle.FAIL))
         except Exception as exp:
+            collect(self, ctx, exp)
             raise exp
 
     def _check_for_new_version(self):
@@ -45,7 +49,7 @@ class FandoghCommand(Command):
             raise VersionException()
 
     def _get_latest_version(self):
-        cached_version_info = get_user_config().get("version_info")
+        cached_version_info = get_user_config().get('version_info')
         if cached_version_info is None:
             latest_version = get_latest_version()
             last_check = datetime.now()
@@ -57,3 +61,15 @@ class FandoghCommand(Command):
                 last_check = datetime.now()
         get_user_config().set("version_info", dict(last_check=last_check, latest_version=str(latest_version)), )
         return latest_version
+
+    def _check_for_error_collection_permission(self):
+        collect_error = get_user_config().get('collect_error')
+        if collect_error is None:
+            if os.environ.get('COLLECT_ERROR', False):
+                get_user_config().set('collect_error', 'YES')
+            else:
+                confirmed = click.confirm('Would you like to let Fandogh CLI to send context information in case any unhandled error happens?')
+                if confirmed:
+                    get_user_config().set("collect_error", 'YES')
+                else:
+                    get_user_config().set("collect_error", 'NO')
