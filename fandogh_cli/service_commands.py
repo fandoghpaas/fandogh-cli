@@ -39,7 +39,7 @@ def deploy(image, version, name, port, envs, internal):
     else:
         message += """
 Since your service is internal, it's not accessible from outside your fandogh private network, 
-but other services inside your private network will be able to find it using it'a name: '{}'
+but other services inside your private network will be able to find it using it's name: '{}'
         """.strip().format(
             deployment_result['name']
         )
