@@ -42,8 +42,8 @@ def list():
     token = get_user_config().get('token')
     table = present(lambda: list_domains(token),
                     renderer='table',
-                    headers=['Name', 'Creation Date'],
-                    columns=['name', 'created_at'])
+                    headers=['Domain name', 'Verified'],
+                    columns=['name', 'verified'])
 
     click.echo(table)
 
