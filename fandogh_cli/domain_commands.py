@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 import click
 
+from .fandogh_client.domain_client import *
 from .base_commands import FandoghCommand
 from .config import *
-from .fandogh_client import *
 from .presenter import present
 from .utils import login_required, format_text, TextStyle
 
@@ -24,22 +24,13 @@ def add(name):
     Upload project on the server
     """
     token = get_user_config().get('token')
-    try:
-        response = add_domain(name, token)
-    except FandoghBadRequest as exp:
-        if name in {x['name'].split("/")[1] if '/' in x['name'] else x['name'] for x in get_images(token)}:
-            click.echo(
-                format_text("You already have an image named '{}', "
-                            "choose another name if this is not the same workspace".format(name), TextStyle.WARNING)
-            )
-        else:
-            raise
-    except Exception:
-        raise
-    else:
-        click.echo(response)
-
-    get_project_config().set('image.name', name)
+    response = add_domain(name, token)
+    click.echo('The domain has been added.')
+    click.echo('Now you just need to help us that you have ownership of this domain.')
+    click.echo('please add a TXT record with the following key to your name server in order to help us verify your ownership.')
+    click.echo('Key:' + format_text(response['verification_key'], TextStyle.OKGREEN))
+    click.echo('Once you added the record please run the following command')
+    click.echo(format_text('fandogh domain verify --name={}'.format(name), TextStyle.BOLD))
 
 
 @click.command('list', cls=FandoghCommand)
@@ -49,7 +40,7 @@ def list():
     List images
     """
     token = get_user_config().get('token')
-    table = present(lambda: get_images(token),
+    table = present(lambda: list_domains(token),
                     renderer='table',
                     headers=['Name', 'Creation Date'],
                     columns=['name', 'created_at'])
@@ -65,10 +56,15 @@ def verify(name):
     Verify domain ownership
     """
     token = get_user_config().get('token')
-    result = verify_domain(name, token)
-    if result['verified']:
+    response = verify_domain(name, token)
+    if response['verified']:
         click.echo('Domain {} ownership verified successfully.'.format(name))
-
+    else:
+        click.echo('It seems the key is not set correctly in TXT.'.format(name))
+        click.echo('please add a TXT record with the following key to your name server in order to help us verify your ownership.')
+        click.echo('Key:' + format_text(response['verification_key'], TextStyle.OKGREEN))
+        click.echo('Once you added the record please run the following command')
+        click.echo(format_text('fandogh domain verify --name={}'.format(name), TextStyle.BOLD))
 
 
 domain.add_command(add)
