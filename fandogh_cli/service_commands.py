@@ -18,11 +18,12 @@ def service():
 @click.option('--version', '-v', prompt='The image version', help='The image version you want to deploy')
 @click.option('--name', prompt='Your service name', help='Choose a unique name for your service')
 @click.option('--env', '-e', 'envs', help='Environment variables (format: VARIABLE_NAME=VARIABLE_VALUE)', multiple=True)
+@click.option('--hosts', '-h', 'hosts', help='Custom hosts that service should be accessible through', multiple=True)
 @click.option('--port', '-p', 'port', help='The service port that will be exposed on port 80 to worldwide', default=80)
 @click.option('--internal', help='This is an internal service like a DB and the port should '
                                  'not be exposed publicly', default=False, is_flag=True)
 @login_required
-def deploy(image, version, name, port, envs, internal):
+def deploy(image, version, name, port, envs, hosts, internal):
     """Deploy service"""
     token = get_user_config().get('token')
     if not image:
@@ -30,7 +31,7 @@ def deploy(image, version, name, port, envs, internal):
         if not image:
             click.echo('please declare the image name', err=True)
 
-    deployment_result = deploy_service(image, version, name, envs, port, token, internal)
+    deployment_result = deploy_service(image, version, name, envs, hosts, port, token, internal)
     message = "\nCongratulation, Your service is running ^_^\n"
     if str(deployment_result['service_type']).lower() == "external":
         message += "Your service is accessible using the following URLs:\n{}".format(

@@ -135,13 +135,14 @@ def _parse_key_values(envs):
     return env_variables
 
 
-def deploy_service(image_name, version, service_name, envs, port, token, internal):
+def deploy_service(image_name, version, service_name, envs, hosts, port, token, internal):
     env_variables = _parse_key_values(envs)
-    body ={'image_name': image_name,
-                                   'image_version': version,
-                                   'service_name': service_name,
-                                   'environment_variables': env_variables,
-                                   'port': port}
+    body = {'image_name': image_name,
+            'image_version': version,
+            'service_name': service_name,
+            'environment_variables': env_variables,
+            'port': port,
+            'hosts': hosts}
     if internal:
         body['service_type'] = "INTERNAL"
 
