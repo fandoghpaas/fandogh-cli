@@ -16,6 +16,17 @@ def domain():
     pass
 
 
+def _verify_ownership(name, token):
+    response = verify_domain(name, token)
+    if response['verified']:
+        click.echo('Domain {} ownership verified successfully.'.format(name))
+    else:
+        click.echo('It seems the key is not set correctly as value of a TXT record for domain {}.'.format(name))
+        click.echo('please add a TXT record with the following key to your name server in order to help us verify your ownership.')
+        click.echo('Key:' + format_text(response['verification_key'], TextStyle.OKGREEN))
+    return response
+
+
 @click.command("add", cls=FandoghCommand)
 @click.option('--name', prompt='domain name', help='your domain name')
 @login_required
@@ -29,8 +40,15 @@ def add(name):
     click.echo('Now you just need to help us that you have ownership of this domain.')
     click.echo('please add a TXT record with the following key to your name server in order to help us verify your ownership.')
     click.echo('Key:' + format_text(response['verification_key'], TextStyle.OKGREEN))
-    click.echo('Once you added the record please run the following command')
-    click.echo(format_text('fandogh domain verify --name={}'.format(name), TextStyle.BOLD))
+    while not response['verified']:
+        confirmed = click.confirm('I added the record')
+        if confirmed:
+            response = _verify_ownership(name, token)
+        else:
+            click.echo('You can verify the ownership later on')
+            click.echo('Once you added the record please run the following command')
+            click.echo(format_text('fandogh domain verify --name={}'.format(name), TextStyle.BOLD))
+            return
 
 
 @click.command('list', cls=FandoghCommand)
@@ -56,15 +74,7 @@ def verify(name):
     Verify domain ownership
     """
     token = get_user_config().get('token')
-    response = verify_domain(name, token)
-    if response['verified']:
-        click.echo('Domain {} ownership verified successfully.'.format(name))
-    else:
-        click.echo('It seems the key is not set correctly in TXT.'.format(name))
-        click.echo('please add a TXT record with the following key to your name server in order to help us verify your ownership.')
-        click.echo('Key:' + format_text(response['verification_key'], TextStyle.OKGREEN))
-        click.echo('Once you added the record please run the following command')
-        click.echo(format_text('fandogh domain verify --name={}'.format(name), TextStyle.BOLD))
+    _verify_ownership(name, token)
 
 
 domain.add_command(add)
