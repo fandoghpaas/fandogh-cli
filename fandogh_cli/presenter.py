@@ -19,7 +19,12 @@ def table_renderer(data, **kwargs):
     for item in data:
         row = []
         for cn in column_names:
-            row.append(item.get(cn))
+            if item.get(cn) is True:
+                row.append('Yes')
+            elif item.get(cn) is False:
+                row.append('No')
+            else:
+                row.append(item.get(cn))
         table.append_row(row)
     return table
 
