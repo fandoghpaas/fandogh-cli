@@ -140,4 +140,4 @@ in order to do this you need to submit and verify your domain in fandogh, it's e
 pointing your domain to actual service address, for example `service-name-namespace.fandogh.cloud`
 if everything goes well, you should be able to use your domain to access your service.
 
-**Remember**, if you use a domain like `api.my-company.org`, then you should set TXT record on `api.my-company.org` not `my-company.org`.
+**Remember**, if you use a domain like `api.somedomain.com`, then you should set TXT record on `api.somedomain.com` not `somedomain.com`.
