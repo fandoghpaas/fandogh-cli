@@ -136,7 +136,7 @@ in order to do this you need to submit and verify your domain in fandogh, it's e
 1. first ran `fandogh domain add --name=somedomain.com`
 2. it will stop and show you a *key*, you need to create a TXT record in your domain with the *key* value.
 3. after you added the record, press **y** and enter so fandogh server verify your TXT record.
-if everything goes well, your domain will be added as a CNAME to your service,
+if everything goes well, you should be able to use your domain to access your service.
 and you can use your own domain for verification
 
 **Remember**, if you use a domain like `api.my-company.org`, then you should set TXT record on `api.my-company.org` not `my-company.org`.
