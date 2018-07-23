@@ -133,7 +133,7 @@ $ fandogh managed-service deploy mysql 9.4 -c service_name=test-dbms -c phpmyadm
 Normally your external services is accessible via `service-name-namespace.fandogh.cloud` on HTTP and HTTPS,
 but you might like to use your custom domain name, like somedomain.com.
 in order to do this you need to submit and verify your domain in fandogh, it's easy :
-1. first ran `fandogh domain add --name=somedomain.com`
+1. first run `fandogh domain add --name=somedomain.com`
 2. it will stop and show you a *key*, you need to create a TXT record in your domain with the *key* value.
 3. after you added the record, press **y** and enter so fandogh server verify your TXT record.
 4. Now we route all traffic with `somedomain.com` in Host header to your service, you just need to add a CNAME record
