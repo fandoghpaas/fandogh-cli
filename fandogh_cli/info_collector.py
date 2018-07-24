@@ -27,5 +27,5 @@ def collect(cmd, ctx, exception=None):
 
     except Exception as e:
         click.echo(format_text('Error in reporting problem. Please share this error with to help us to improve the service.', TextStyle.FAIL), err=True)
-        click.echo(format_text('Caused by {}'.format(exception.message), TextStyle.FAIL), err=True)
+        click.echo(format_text('Caused by {}'.format(exception), TextStyle.FAIL), err=True)
         click.echo(format_text('Report error: {}'.format(e), TextStyle.FAIL), err=True)
