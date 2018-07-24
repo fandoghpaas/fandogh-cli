@@ -21,7 +21,7 @@ def collect(cmd, ctx, exception=None):
             info = dict(_static_info)
             info['cmd'] = cmd.name
             info['params'] = ctx.params
-            info['error'] = exception.message if exception.message else str(exception)
+            info['error'] = exception.message if hasattr(exception, 'message') else str(exception)
 
             report(info)
 
