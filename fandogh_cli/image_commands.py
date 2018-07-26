@@ -18,14 +18,7 @@ def image():
     pass
 
 
-@click.command("init", cls=FandoghCommand)
-@click.option('--name', prompt='image name', help='your image name')
-@login_required
-def init(name):
-    """
-    Upload project on the server
-    """
-    token = get_user_config().get('token')
+def init_image(name, token):
     try:
         response = create_image(name, token)
     except FandoghBadRequest as exp:
@@ -40,8 +33,18 @@ def init(name):
         raise
     else:
         click.echo(response['message'])
-
     get_project_config().set('image.name', name)
+
+
+@click.command("init", cls=FandoghCommand)
+@click.option('--name', prompt='image name', help='your image name')
+@login_required
+def init(name):
+    """
+    Upload project on the server
+    """
+    token = get_user_config().get('token')
+    init_image(name, token)
 
 
 @click.command('list', cls=FandoghCommand)
@@ -95,13 +98,26 @@ def publish(version, detach):
     """
     token = get_user_config().get('token')
     image_name = get_project_config().get('image.name')
+    if not image_name:
+        click.echo("It looks you are either not in a fandogh workspace or you didn't init yet.")
+        click.echo("If you are sure that you are in the right directory then please input the image name.")
+        image_name = click.prompt("Image name")
+        if image_name:
+            init_image(image_name, token)
+        else:
+            return
     workspace = Workspace()
+
+    if not workspace.has_docker_file:
+        click.echo("In order to publish your image you must have a Dockerfile in the current directory")
+        return
     if workspace.zip_file_size > max_workspace_size:
         click.echo(format_text(
             "The workspace size should not be larger than {}MB, its {}MB.".format(max_workspace_size,
                                                                                   round(workspace.zip_file_size, 2)),
             TextStyle.WARNING
         ))
+
         if not workspace.has_docker_ignore:
             click.echo(format_text(
                 "[perhaps you may be able to take advantage of '.dockerignore' "
