@@ -39,7 +39,7 @@ def init(name):
     except Exception:
         raise
     else:
-        click.echo(response)
+        click.echo(response['message'])
 
     get_project_config().set('image.name', name)
 
@@ -120,7 +120,7 @@ def publish(version, detach):
     try:
         response = create_version(image_name, version, str(workspace), monitor_callback, token)
         bar.render_finish()
-        click.echo(response)
+        click.echo(response['message'])
     finally:
         workspace.clean()
     if detach:

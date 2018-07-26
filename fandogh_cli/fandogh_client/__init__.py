@@ -70,7 +70,7 @@ def create_image(image_name, token):
     if response.status_code != 200:
         raise get_exception(response)
     else:
-        return response.text
+        return response.json()
 
 
 def get_images(token):
@@ -115,7 +115,7 @@ def create_version(image_name, version, workspace_path, monitor_callback, token)
         if response.status_code != 200:
             raise get_exception(response)
         else:
-            return response.text
+            return response.json()
 
 
 def list_versions(image_name, token):
