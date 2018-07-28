@@ -125,7 +125,10 @@ There are couple of configuration that you can pass to Fandogh when you are depl
     
 Example:
 ```bash
-$ fandogh managed-service deploy mysql 9.4 -c service_name=test-dbms -c phpmyadmin_enabled=false -c mysql_root_password=test123
+$ fandogh managed-service deploy mysql 9.4 \
+      -c service_name=test-dbms \
+      -c phpmyadmin_enabled=false \
+      -c mysql_root_password=test123
 ```
 
 ### Postgresql Service
@@ -167,7 +170,10 @@ There are couple of configuration that you can pass to Fandogh when you are depl
     
 Example:
 ```bash
-$ fandogh managed-service deploy postgresql 10.4 -c service_name=test-dbms -c adminer_enabled=false -c postgres_password=test123
+$ fandogh managed-service deploy postgresql 10.4 \
+       -c service_name=test-dbms \ 
+       -c adminer_enabled=false \
+       -c postgres_password=test123
 ```
 
 
