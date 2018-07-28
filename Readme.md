@@ -153,7 +153,7 @@ http://postgresql.your_namespace.fandogh.cloud
 From your services you can access to the service by using `postgresql:5432` address. 
 
 ##### Configuration
-There are couple of configuration that you can pass to Fandogh when you are deploying a Mysql service:
+There are couple of configuration that you can pass to Fandogh when you are deploying a Postgresql service:
 
 * `service_name default: postgresql` 
 
