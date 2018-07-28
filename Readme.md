@@ -108,7 +108,7 @@ http://mysql.your_namespace.fandogh.cloud
 
 From your services you can access to the Mysql by using `mysql:3306` address. 
 
-#### Configuration
+##### Configuration
 There are couple of configuration that you can pass to Fandogh when you are deploying a Mysql service:
 
 * `service_name default: mysql` 
@@ -126,6 +126,48 @@ There are couple of configuration that you can pass to Fandogh when you are depl
 Example:
 ```bash
 $ fandogh managed-service deploy mysql 9.4 -c service_name=test-dbms -c phpmyadmin_enabled=false -c mysql_root_password=test123
+```
+
+### Postgresql Service
+
+The Postgresql Managed Service on Fandogh consist of Postgresql RDBMS itself and Web UI (Adminer) that let you to manage your DBMS as easy as possible.
+In order to log into the Adminer UI you can use the `postgres` user credentials.
+ 
+Username: postgres
+
+password: postgres (can be changed through config options)
+
+You can deploy a Postgresql Server in your namespace by running the following command:
+
+```bash
+$ fandogh managed-service deploy postgresql 10.4
+
+Your Postgresql service will be ready in a few seconds.
+You can have access to the Adminer via following link:
+http://postgresql.your_namespace.fandogh.cloud
+```  
+
+From your services you can access to the service by using `mysql:3306` address. 
+
+##### Configuration
+There are couple of configuration that you can pass to Fandogh when you are deploying a Mysql service:
+
+* `service_name default: postgresql` 
+
+    The value of this field will be the name of your DBMS. as the result this name will change the URL of your phpmyadmin panel. 
+    e.g. If you set `service_name=test-dbms` then the admin URL will be something like `http://test-dbms.your_namespace.fandogh.cloud`
+* `adminer_enabled default: true`  
+
+    This is a boolean field that indicates if you want to have adminer running for this RDBMS or not.
+    e.g. If you set `adminer_enabled=false` then the adminer panel won't be deployed for the given DBMS.
+    
+* `postgres_password default: postgres`
+ 
+    The value of this field will be the password of user `postgres`.
+    
+Example:
+```bash
+$ fandogh managed-service deploy postgresql 10.4 -c service_name=test-dbms -c adminer_enabled=false -c postgres_password=test123
 ```
 
 
