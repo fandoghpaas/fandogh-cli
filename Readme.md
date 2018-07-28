@@ -150,7 +150,7 @@ You can have access to the Adminer via following link:
 http://postgresql.your_namespace.fandogh.cloud
 ```  
 
-From your services you can access to the service by using `mysql:3306` address. 
+From your services you can access to the service by using `postgresql:5432` address. 
 
 ##### Configuration
 There are couple of configuration that you can pass to Fandogh when you are deploying a Mysql service:
