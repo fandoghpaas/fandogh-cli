@@ -174,7 +174,7 @@ def destroy_service(service_name, token):
     if response.status_code != 200:
         raise get_exception(response)
     else:
-        return response.json()
+        return response.json().get('message', "`{}` service has been destroyed successfully".format(service_name))
 
 
 def get_token(username, password):
