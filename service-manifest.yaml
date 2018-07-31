@@ -1,40 +1,82 @@
-swagger: "2.0"
-info:
-  description: "Service manfiest proposal"
-  version: "1.0.0"
-  title: "Fandogh Service manifest"
-definitions:
-  Services:
-    type: array
-    items:
-      $ref: "#/definitions/Service"
-  Image:
-    type: object
-    properties:
-      name:
-        type: string
-      version:
-        type: string
-  ParameterItem:
-    type: object
-    properties:
-      key:
-        type: string
-      value:
-        type: string
-  Service:
-    type: object
-    properties:
-      type: 
-        type: string
-        enum:
-          - "user"
-          - "managed-service"
-      image:
-        $ref: "#/definitions/Image"
-      service_name:
-        type: string
-      parameters:
-        type: array
-        items:
-          $ref: "#/definitions/ParameterItem"
+kind: ExternalService
+name: hello-world
+spec:
+  image: hello-world:v1
+  replica: 1
+  port: 8080
+  path: /v1/
+  env:
+    - name: VERSION
+      value: v1
+ 
+  domains: 
+     - name: api.hello-world.com # already created domain  
+       tls: api-hello-world-tls # already created certificate
+       allow_http: true
+
+
+  volumes:
+    - name: default # already created volume
+      mountPath: /mnt/data
+      subPath: test
+      
+    - name: MyLogs # already created volume
+      mountPath: /mnt/logs
+      
+
+  resources:
+    limit:
+      memory: 200Mi
+      cpu: 0.2
+      
+      
+
+kind: InternalService
+name: hello-world
+spec:
+  image: hello-world:v1
+  replica: 1
+  env:
+    - name: VERSION
+      value: v1
+
+  volumes:
+    - name: default # already created volume
+      mountPath: /mnt/data
+      subPath: test
+    - name: MyLogs # already created volume
+      mountPath: /mnt/logs
+      
+
+  resources:
+    limit:
+      memory: 200Mi
+      cpu: 0.2
+
+
+
+kind: ManagedService
+name: mysql-test # in mishe hostname service
+spec:
+  service_name: mysql
+  version: 9.4
+  parameters:
+    - name: phpmyadmin_enabled   
+      value: true
+ 		- name: data_path
+    	value: /mnt/data/mysql-test-path 
+    - name: log_path
+    	value: /mnt/logs/mysql
+  resources: #todo age chand ta container dasht pod chi? mesle mysql (badan be resources fek mikonim)
+    limit:
+      memory: 200Mi
+      cpu: 0.2
+
+  volumes:
+    - name: default # already created volume  
+      mountPath: /mnt/data
+      subPath: test
+    - name: MyLogs # already created volume
+      mountPath: /mnt/logs
+    
+
