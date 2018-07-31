@@ -1,7 +1,7 @@
 import requests
 import os
 
-fandogh_host = os.getenv('FANDOGH_HOST', 'http://fandogh.cloud:8080')
+fandogh_host = os.getenv('FANDOGH_HOST', 'https://api.fandogh.cloud')
 base_url = '%s/api/' % fandogh_host
 base_images_url = '%simages' % base_url
 base_services_url = '%sservices' % base_url
