@@ -63,10 +63,10 @@ spec:
   parameters:
     - name: phpmyadmin_enabled   
       value: true
- 		- name: data_path
-    	value: /mnt/data/mysql-test-path 
+    - name: data_path
+      value: /mnt/data/mysql-test-path
     - name: log_path
-    	value: /mnt/logs/mysql
+      value: /mnt/logs/mysql
   resources: #todo age chand ta container dasht pod chi? mesle mysql (badan be resources fek mikonim)
     limit:
       memory: 200Mi
