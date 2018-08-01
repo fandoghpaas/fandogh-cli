@@ -1,21 +1,22 @@
 #!/usr/bin/env python
 import click
-
-from .base_commands import FandoghCommand
-from .utils import login_required, format_text, TextStyle
+from .base_commands import FandoghCommand, FandoghGroupCommand
+from .utils import format_text, TextStyle, get_stored_token
 from .presenter import present
 from .config import *
 from .fandogh_client import *
 from time import sleep
 from .workspace import Workspace
 
+ctx = {}
 
-@click.group("image")
+
+@click.group("image", cls=FandoghGroupCommand)
 def image():
     """
     Image management commands
     """
-    pass
+    ctx['token'] = get_stored_token()
 
 
 def init_image(name, token):
@@ -38,23 +39,19 @@ def init_image(name, token):
 
 @click.command("init", cls=FandoghCommand)
 @click.option('--name', prompt='image name', help='your image name')
-@login_required
 def init(name):
     """
     Upload project on the server
     """
-    token = get_user_config().get('token')
-    init_image(name, token)
+    init_image(name, ctx['token'])
 
 
 @click.command('list', cls=FandoghCommand)
-@login_required
 def list_images():
     """
     List images
     """
-    token = get_user_config().get('token')
-    table = present(lambda: get_images(token),
+    table = present(lambda: get_images(ctx['token']),
                     renderer='table',
                     headers=['Name', 'Creation Date'],
                     columns=['name', 'created_at'])
@@ -63,11 +60,10 @@ def list_images():
 
 
 def show_image_logs(image_name, version):
-    token = get_user_config().get('token')
     if not image_name:
         image_name = get_project_config().get('image.name')
     while True:
-        response = get_image_build(image_name, version, token)
+        response = get_image_build(image_name, version, ctx['token'])
         click.clear()
         click.echo(response.get('logs'))
         if response.get('state') != 'BUILDING':
@@ -78,9 +74,9 @@ def show_image_logs(image_name, version):
 
 
 @click.command('logs', cls=FandoghCommand)
-@click.option('-i', '--image', 'image', prompt='Image name', help='The image name', default=lambda: get_project_config().get('image.name'))
+@click.option('-i', '--image', 'image', prompt='Image name', help='The image name',
+              default=lambda: get_project_config().get('image.name'))
 @click.option('--version', '-v', prompt='Image version', help='your image version')
-@login_required
 def logs(image, version):
     """
     Display image log
@@ -96,14 +92,13 @@ def publish(version, detach):
     """
     Publish new version of image
     """
-    token = get_user_config().get('token')
     image_name = get_project_config().get('image.name')
     if not image_name:
         click.echo("It looks you are either not in a fandogh workspace or you didn't init yet.")
         click.echo("If you are sure that you are in the right directory then please input the image name.")
         image_name = click.prompt("Image name")
         if image_name:
-            init_image(image_name, token)
+            init_image(image_name, ctx['token'])
         else:
             return
     workspace = Workspace()
@@ -134,7 +129,7 @@ def publish(version, detach):
         shared_values['diff'] += progress
 
     try:
-        response = create_version(image_name, version, str(workspace), monitor_callback, token)
+        response = create_version(image_name, version, str(workspace), monitor_callback, ctx['token'])
         bar.render_finish()
         click.echo(response['message'])
     finally:
@@ -146,15 +141,15 @@ def publish(version, detach):
 
 
 @click.command("versions", cls=FandoghCommand)
-@click.option('-i', '--image', 'image', prompt='Image name', help='The image name', default=lambda: get_project_config().get('image.name'))
+@click.option('-i', '--image', 'image', prompt='Image name', help='The image name',
+              default=lambda: get_project_config().get('image.name'))
 def versions(image):
     """
     List published versions of this image
     """
-    token = get_user_config().get('token')
     if not image:
         image = get_project_config().get('image.name')
-    table = present(lambda: list_versions(image, token),
+    table = present(lambda: list_versions(image, ctx['token']),
                     renderer='table',
                     headers=['version', 'state'],
                     columns=['version', 'state'])

@@ -1,5 +1,6 @@
 import click
 import os
+from fandogh_cli.exceptions import AuthenticationError
 
 FANDOGH_DEBUG = os.environ.get('FANDOGH_DEBUG', False)
 
@@ -14,18 +15,12 @@ def debug(msg):
         click.echo(msg)
 
 
-def login_required(fn):
-    # TODO: Move out of utils
+def get_stored_token():
     from fandogh_cli.config import get_user_config
-
-    def please_login_first(*args, **kwargs):
-        click.echo("Please login first. You can do it by running 'fandogh login' command")
-
-    please_login_first.__doc__ = fn.__doc__
     token_obj = get_user_config().get('token')
     if token_obj is None:
-        return please_login_first
-    return fn
+        raise AuthenticationError()
+    return token_obj
 
 
 def makedirs(name, mode=0o770, exist_ok=True):
@@ -37,6 +32,7 @@ def makedirs(name, mode=0o770, exist_ok=True):
         except OSError as e:
             if not exist_ok:
                 raise e
+
 
 class TextStyle:
     HEADER = '\033[95m'

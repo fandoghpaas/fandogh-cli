@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
-
 import click
-from click import Command
+from click import Command, Group
 from fandogh_cli import NAME
-from fandogh_cli.fandogh_client import FandoghAPIError, AuthenticationError
+from fandogh_cli.fandogh_client import FandoghAPIError
+from fandogh_cli.exceptions import AuthenticationError
 from fandogh_cli.utils import debug, TextStyle, format_text
 from fandogh_cli.version_check import get_latest_version, get_current_version, Version
 from fandogh_cli.config import get_user_config
@@ -31,6 +31,10 @@ class FandoghCommand(Command):
             click.echo(format_text("New Version of {} is available, please update to continue "
                                    "using Fandogh services using : `pip install {} --upgrade`".format(NAME, NAME),
                                    TextStyle.FAIL))
+        except AuthenticationError:
+            click.echo(format_text(
+                "Please login first. You can do it by running 'fandogh login' command", TextStyle.FAIL
+            ))
         except Exception as exp:
             collect(self, ctx, exp)
             raise exp
@@ -68,8 +72,19 @@ class FandoghCommand(Command):
             if os.environ.get('COLLECT_ERROR', False):
                 get_user_config().set('collect_error', 'YES')
             else:
-                confirmed = click.confirm('Would you like to let Fandogh CLI to send context information in case any unhandled error happens?')
+                confirmed = click.confirm(
+                    'Would you like to let Fandogh CLI to send context information in case any unhandled error happens?')
                 if confirmed:
                     get_user_config().set("collect_error", 'YES')
                 else:
                     get_user_config().set("collect_error", 'NO')
+
+
+class FandoghGroupCommand(Group):
+    def invoke(self, ctx):
+        try:
+            return super(FandoghGroupCommand, self).invoke(ctx)
+        except AuthenticationError:
+            click.echo(format_text(
+                "Please login first. You can do it by running 'fandogh login' command", TextStyle.FAIL
+            ))
