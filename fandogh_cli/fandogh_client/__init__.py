@@ -1,6 +1,8 @@
 import requests
 import os
 
+from fandogh_cli.utils import get_stored_token  # TODO: don't depend on other module inside fandogh_client
+
 fandogh_host = os.getenv('FANDOGH_HOST', 'https://api.fandogh.cloud')
 base_url = '%s/api/' % fandogh_host
 base_images_url = '%simages' % base_url
@@ -63,7 +65,8 @@ def get_exception(response):
     return exception_class(response)
 
 
-def create_image(image_name, token):
+def create_image(image_name):
+    token = get_stored_token()
     response = requests.post(base_images_url,
                              json={'name': image_name},
                              headers={'Authorization': 'JWT ' + token})
@@ -73,7 +76,8 @@ def create_image(image_name, token):
         return response.json()
 
 
-def get_images(token):
+def get_images():
+    token = get_stored_token()
     response = requests.get(base_images_url,
                             headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
@@ -82,7 +86,8 @@ def get_images(token):
         return response.json()
 
 
-def get_image_build(image_name, version, token):
+def get_image_build(image_name, version):
+    token = get_stored_token()
     response = requests.get(base_images_url + '/' + image_name + '/versions/' + version + '/builds',
                             headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
@@ -94,7 +99,8 @@ def get_image_build(image_name, version, token):
 from requests_toolbelt.multipart import encoder
 
 
-def create_version(image_name, version, workspace_path, monitor_callback, token):
+def create_version(image_name, version, workspace_path, monitor_callback):
+    token = get_stored_token()
     with open(workspace_path, 'rb') as file:
         e = encoder.MultipartEncoder(
             fields={'version': version,
@@ -118,7 +124,8 @@ def create_version(image_name, version, workspace_path, monitor_callback, token)
             return response.json()
 
 
-def list_versions(image_name, token):
+def list_versions(image_name):
+    token = get_stored_token()
     response = requests.get(base_images_url + '/' + image_name + '/versions',
                             headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
@@ -135,7 +142,8 @@ def _parse_key_values(envs):
     return env_variables
 
 
-def deploy_service(image_name, version, service_name, envs, hosts, port, token, internal):
+def deploy_service(image_name, version, service_name, envs, hosts, port, internal):
+    token = get_stored_token()
     env_variables = _parse_key_values(envs)
     body = {'image_name': image_name,
             'image_version': version,
@@ -156,7 +164,8 @@ def deploy_service(image_name, version, service_name, envs, hosts, port, token, 
         return response.json()
 
 
-def list_services(token, show_all):
+def list_services(show_all):
+    token = get_stored_token()
     response = requests.get(base_services_url,
                             headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
@@ -168,7 +177,8 @@ def list_services(token, show_all):
         return [item for item in json_result if item.get('state', None) == 'RUNNING']
 
 
-def destroy_service(service_name, token):
+def destroy_service(service_name):
+    token = get_stored_token()
     response = requests.delete(base_services_url + '/' + service_name,
                                headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
@@ -185,7 +195,8 @@ def get_token(username, password):
         return response.json()
 
 
-def get_logs(service_name, token):
+def get_logs(service_name):
+    token = get_stored_token()
     response = requests.get(base_services_url + '/' + service_name + '/logs',
                             headers={'Authorization': 'JWT ' + token})
     if response.status_code == 200:
@@ -194,7 +205,8 @@ def get_logs(service_name, token):
         raise get_exception(response)
 
 
-def deploy_managed_service(service_name, version, configs, token):
+def deploy_managed_service(service_name, version, configs):
+    token = get_stored_token()
     configution = _parse_key_values(configs)
     response = requests.post(base_managed_services_url,
                              json={'name': service_name,
@@ -208,7 +220,8 @@ def deploy_managed_service(service_name, version, configs, token):
         return response.json()
 
 
-def help_managed_service(token):
+def help_managed_service():
+    token = get_stored_token()
     response = requests.get(
         base_managed_services_url,
         headers=dict(Authorization='JWT ' + token)
