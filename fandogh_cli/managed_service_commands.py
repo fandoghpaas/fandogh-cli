@@ -1,15 +1,12 @@
 import click
 from .fandogh_client import *
-from .utils import format_text, TextStyle, get_stored_token
-from .base_commands import FandoghCommand, FandoghGroupCommand
-
-ctx = {}
+from .utils import format_text, TextStyle
+from .base_commands import FandoghCommand
 
 
-@click.group("managed-service", cls=FandoghGroupCommand)
+@click.group("managed-service")
 def managed_service():
     """Service management commands"""
-    ctx['token'] = get_stored_token()
 
 
 @click.command("deploy", cls=FandoghCommand)
@@ -20,7 +17,7 @@ def managed_service():
 def deploy(name, version, configs):
     """Deploy Managed Service"""
     try:
-        response = deploy_managed_service(name, version, configs, ctx['token'])
+        response = deploy_managed_service(name, version, configs)
         click.echo(response.get('message'))
     except FandoghBadRequest:
         click.echo(format_text(
@@ -33,7 +30,7 @@ def deploy(name, version, configs):
 @click.command("help", cls=FandoghCommand)
 def help():
     """Display Help for Managed Service"""
-    managed_services = help_managed_service(ctx['token'])
+    managed_services = help_managed_service()
     click.echo(format_text(
         "List of Fandogh managed services:", TextStyle.OKBLUE
     ))

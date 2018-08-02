@@ -1,18 +1,14 @@
 import click
-
-from fandogh_cli.utils import get_stored_token
 from .fandogh_client import *
 from .config import get_project_config
 from .presenter import present
-from .base_commands import FandoghCommand, FandoghGroupCommand
+from .utils import format_text, TextStyle
+from .base_commands import FandoghCommand
 
-ctx = {}
 
-
-@click.group("service", cls=FandoghGroupCommand)
+@click.group("service")
 def service():
     """Service management commands"""
-    ctx['token'] = get_stored_token()
 
 
 @click.command("deploy", cls=FandoghCommand)
@@ -29,9 +25,9 @@ def deploy(image, version, name, port, envs, hosts, internal):
     if not image:
         image = get_project_config().get('image.name')
         if not image:
-            click.echo('please declare the image name', err=True)
+            click.echo(format_text('please declare the image name', TextStyle.FAIL), err=True)
 
-    deployment_result = deploy_service(image, version, name, envs, hosts, port, ctx['token'], internal)
+    deployment_result = deploy_service(image, version, name, envs, hosts, port, internal)
     message = "\nCongratulation, Your service is running ^_^\n"
     if str(deployment_result['service_type']).lower() == "external":
         message += "Your service is accessible using the following URLs:\n{}".format(
@@ -52,7 +48,7 @@ but other services inside your private network will be able to find it using it'
               help='show all the services regardless if it\'s running or not')
 def service_list(show_all):
     """List available service for this image"""
-    table = present(lambda: list_services(ctx['token'], show_all),
+    table = present(lambda: list_services(show_all),
                     renderer='table',
                     headers=['Service Name', 'URL', 'Service Type', 'Started at', 'State'],
                     columns=['name', 'url', 'service_type', 'start_date', 'state'])
@@ -63,7 +59,7 @@ def service_list(show_all):
 @click.option('--name', 'service_name', prompt='Name of the service you want to destroy', )
 def service_destroy(service_name):
     """Destroy service"""
-    message = present(lambda: destroy_service(service_name, ctx['token']))
+    message = present(lambda: destroy_service(service_name))
     click.echo(message)
 
 
@@ -71,7 +67,7 @@ def service_destroy(service_name):
 @click.option('--name', 'service_name', prompt='service_name', help="Service name")
 def service_logs(service_name):
     """Display service logs"""
-    logs = present(lambda: get_logs(service_name, ctx['token']))
+    logs = present(lambda: get_logs(service_name))
     click.echo(logs)
 
 

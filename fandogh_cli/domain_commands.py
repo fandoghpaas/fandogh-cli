@@ -2,23 +2,20 @@
 import click
 
 from .fandogh_client.domain_client import *
-from .base_commands import FandoghCommand, FandoghGroupCommand
+from .base_commands import FandoghCommand
 from .presenter import present
-from .utils import format_text, TextStyle, get_stored_token
-
-ctx = {}
+from .utils import format_text, TextStyle
 
 
-@click.group("domain", cls=FandoghGroupCommand)
+@click.group("domain")
 def domain():
     """
     Domain management commands
     """
-    ctx['token'] = get_stored_token()
 
 
-def _verify_ownership(name, token):
-    response = verify_domain(name, token)
+def _verify_ownership(name):
+    response = verify_domain(name)
     if response['verified']:
         click.echo('Domain {} ownership verified successfully.'.format(name))
     else:
@@ -35,7 +32,7 @@ def add(name):
     """
     Upload project on the server
     """
-    response = add_domain(name, ctx['token'])
+    response = add_domain(name)
     click.echo('The domain has been added.')
     click.echo('Now you just need to help us that you have ownership of this domain.')
     click.echo(
@@ -44,7 +41,7 @@ def add(name):
     while not response['verified']:
         confirmed = click.confirm('I added the record')
         if confirmed:
-            response = _verify_ownership(name, ctx['token'])
+            response = _verify_ownership(name)
         else:
             click.echo('You can verify the ownership later on')
             click.echo('Once you added the record please run the following command')
@@ -57,7 +54,7 @@ def list():
     """
     List images
     """
-    table = present(lambda: list_domains(ctx['token']),
+    table = present(lambda: list_domains(),
                     renderer='table',
                     headers=['Domain name', 'Verified'],
                     columns=['name', 'verified'])
@@ -71,7 +68,7 @@ def verify(name):
     """
     Verify domain ownership
     """
-    _verify_ownership(name, ctx['token'])
+    _verify_ownership(name)
 
 
 domain.add_command(add)

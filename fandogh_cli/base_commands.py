@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 import click
-from click import Command, Group
+from click import Command
 from fandogh_cli import NAME
 from fandogh_cli.fandogh_client import FandoghAPIError
 from fandogh_cli.exceptions import AuthenticationError
@@ -21,7 +21,7 @@ class FandoghCommand(Command):
             self._check_for_new_version()
             self._check_for_error_collection_permission()
             return super(FandoghCommand, self).invoke(ctx)
-        except (FandoghAPIError, AuthenticationError) as exp:
+        except FandoghAPIError as exp:
             debug('APIError. status code: {}, content: {}'.format(
                 exp.response.status_code,
                 exp.response.content))
@@ -30,11 +30,11 @@ class FandoghCommand(Command):
         except VersionException as exp:
             click.echo(format_text("New Version of {} is available, please update to continue "
                                    "using Fandogh services using : `pip install {} --upgrade`".format(NAME, NAME),
-                                   TextStyle.FAIL))
+                                   TextStyle.FAIL), err=True)
         except AuthenticationError:
             click.echo(format_text(
                 "Please login first. You can do it by running 'fandogh login' command", TextStyle.FAIL
-            ))
+            ), err=True)
         except Exception as exp:
             collect(self, ctx, exp)
             raise exp
@@ -78,13 +78,3 @@ class FandoghCommand(Command):
                     get_user_config().set("collect_error", 'YES')
                 else:
                     get_user_config().set("collect_error", 'NO')
-
-
-class FandoghGroupCommand(Group):
-    def invoke(self, ctx):
-        try:
-            return super(FandoghGroupCommand, self).invoke(ctx)
-        except AuthenticationError:
-            click.echo(format_text(
-                "Please login first. You can do it by running 'fandogh login' command", TextStyle.FAIL
-            ))

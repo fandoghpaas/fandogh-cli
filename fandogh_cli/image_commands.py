@@ -1,29 +1,26 @@
 #!/usr/bin/env python
 import click
-from .base_commands import FandoghCommand, FandoghGroupCommand
-from .utils import format_text, TextStyle, get_stored_token
+from .base_commands import FandoghCommand
+from .utils import format_text, TextStyle
 from .presenter import present
 from .config import *
 from .fandogh_client import *
 from time import sleep
 from .workspace import Workspace
 
-ctx = {}
 
-
-@click.group("image", cls=FandoghGroupCommand)
+@click.group("image")
 def image():
     """
     Image management commands
     """
-    ctx['token'] = get_stored_token()
 
 
-def init_image(name, token):
+def init_image(name):
     try:
-        response = create_image(name, token)
+        response = create_image(name)
     except FandoghBadRequest as exp:
-        if name in {x['name'].split("/")[1] if '/' in x['name'] else x['name'] for x in get_images(token)}:
+        if name in {x['name'].split("/")[1] if '/' in x['name'] else x['name'] for x in get_images()}:
             click.echo(
                 format_text("You already have an image named '{}', "
                             "choose another name if this is not the same workspace".format(name), TextStyle.WARNING)
@@ -43,7 +40,7 @@ def init(name):
     """
     Upload project on the server
     """
-    init_image(name, ctx['token'])
+    init_image(name)
 
 
 @click.command('list', cls=FandoghCommand)
@@ -51,7 +48,7 @@ def list_images():
     """
     List images
     """
-    table = present(lambda: get_images(ctx['token']),
+    table = present(lambda: get_images(),
                     renderer='table',
                     headers=['Name', 'Creation Date'],
                     columns=['name', 'created_at'])
@@ -63,7 +60,7 @@ def show_image_logs(image_name, version):
     if not image_name:
         image_name = get_project_config().get('image.name')
     while True:
-        response = get_image_build(image_name, version, ctx['token'])
+        response = get_image_build(image_name, version)
         click.clear()
         click.echo(response.get('logs'))
         if response.get('state') != 'BUILDING':
@@ -98,7 +95,7 @@ def publish(version, detach):
         click.echo("If you are sure that you are in the right directory then please input the image name.")
         image_name = click.prompt("Image name")
         if image_name:
-            init_image(image_name, ctx['token'])
+            init_image(image_name)
         else:
             return
     workspace = Workspace()
@@ -129,7 +126,7 @@ def publish(version, detach):
         shared_values['diff'] += progress
 
     try:
-        response = create_version(image_name, version, str(workspace), monitor_callback, ctx['token'])
+        response = create_version(image_name, version, str(workspace), monitor_callback)
         bar.render_finish()
         click.echo(response['message'])
     finally:
@@ -149,7 +146,7 @@ def versions(image):
     """
     if not image:
         image = get_project_config().get('image.name')
-    table = present(lambda: list_versions(image, ctx['token']),
+    table = present(lambda: list_versions(image),
                     renderer='table',
                     headers=['version', 'state'],
                     columns=['version', 'state'])
