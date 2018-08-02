@@ -34,8 +34,8 @@ class ConfigRepository:
         if save:
             self.save()
 
-    def get(self, key):
-        return self._configs.get(key, None)
+    def get(self, key, default=None):
+        return self._configs.get(key, default)
 
     def save(self):
         if self.configuration_file:

@@ -2,9 +2,11 @@
 
 import click
 
+from .domain_commands import domain
 from .image_commands import image
 from .service_commands import service
 from .managed_service_commands import managed_service
+
 from .base_commands import FandoghCommand
 from .presenter import present
 from .config import *
@@ -34,6 +36,7 @@ base.add_command(login)
 base.add_command(image)
 base.add_command(service)
 base.add_command(managed_service)
+base.add_command(domain)
 
 if __name__ == '__main__':
 

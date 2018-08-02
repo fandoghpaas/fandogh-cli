@@ -1,7 +1,7 @@
 import requests
 import os
 
-fandogh_host = os.getenv('FANDOGH_HOST', 'http://fandogh.cloud:8080')
+fandogh_host = os.getenv('FANDOGH_HOST', 'https://api.fandogh.cloud')
 base_url = '%s/api/' % fandogh_host
 base_images_url = '%simages' % base_url
 base_services_url = '%sservices' % base_url
@@ -70,7 +70,7 @@ def create_image(image_name, token):
     if response.status_code != 200:
         raise get_exception(response)
     else:
-        return response.text
+        return response.json()
 
 
 def get_images(token):
@@ -115,7 +115,7 @@ def create_version(image_name, version, workspace_path, monitor_callback, token)
         if response.status_code != 200:
             raise get_exception(response)
         else:
-            return response.text
+            return response.json()
 
 
 def list_versions(image_name, token):
@@ -135,13 +135,14 @@ def _parse_key_values(envs):
     return env_variables
 
 
-def deploy_service(image_name, version, service_name, envs, port, token, internal):
+def deploy_service(image_name, version, service_name, envs, hosts, port, token, internal):
     env_variables = _parse_key_values(envs)
-    body ={'image_name': image_name,
-                                   'image_version': version,
-                                   'service_name': service_name,
-                                   'environment_variables': env_variables,
-                                   'port': port}
+    body = {'image_name': image_name,
+            'image_version': version,
+            'service_name': service_name,
+            'environment_variables': env_variables,
+            'port': port,
+            'hosts': hosts}
     if internal:
         body['service_type'] = "INTERNAL"
 
@@ -173,7 +174,7 @@ def destroy_service(service_name, token):
     if response.status_code != 200:
         raise get_exception(response)
     else:
-        return response.json()
+        return response.json().get('message', "`{}` service has been destroyed successfully".format(service_name))
 
 
 def get_token(username, password):
