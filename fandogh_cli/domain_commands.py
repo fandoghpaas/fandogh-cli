@@ -33,6 +33,9 @@ def add(name):
     Upload project on the server
     """
     response = add_domain(name)
+    if response['verified'] is True:
+        click.echo(format_text("Your domain has been added and doesn't need verification", TextStyle.OKGREEN))
+        return
     click.echo('The domain has been added.')
     click.echo('Now you just need to help us that you have ownership of this domain.')
     click.echo(
