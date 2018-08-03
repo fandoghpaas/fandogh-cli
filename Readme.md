@@ -182,10 +182,12 @@ Normally your external services is accessible via `service-name-namespace.fandog
 but you might like to use your custom domain name, like somedomain.com.
 in order to do this you need to submit and verify your domain in fandogh, it's easy :
 1. first run `fandogh domain add --name=somedomain.com`
-2. it will stop and show you a *key*, you need to create a TXT record in your domain with the *key* value.
-3. after you added the record, press **y** and enter so fandogh server verify your TXT record.
-4. Now we route all traffic with `somedomain.com` in Host header to your service, you just need to add a CNAME record
+2. if you're adding a subdomain of a verified domain you don't need verification, for example if you already verified `tehran.myservice.com` then `api.tehran.myservice.com` doesn't need verification, you just need to add it.
+3. if your domain needs verification, it will stop and show you a *key*, you need to create a TXT record in your domain with the *key* value.
+4. after you added the record, press **y** and enter so fandogh server verify your TXT record.
+5. Now we route all traffic with `somedomain.com` in Host header to your service, you just need to add a CNAME record
 pointing your domain to actual service address, for example `service-name-namespace.fandogh.cloud`
 if everything goes well, you should be able to use your domain to access your service.
 
+**Tip: If you verify a domain, all subdomains of that domain will not require verification, but you should add them before using them**    
 **Remember**, if you use a domain like `api.somedomain.com`, then you should set TXT record on `api.somedomain.com` not `somedomain.com`.
