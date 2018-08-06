@@ -67,8 +67,8 @@ def service_destroy(service_name):
 @click.option('--name', 'service_name', prompt='service_name', help="Service name")
 def service_logs(service_name):
     """Display service logs"""
-    logs = present(lambda: get_logs(service_name))
-    click.echo(logs)
+    logs_response = get_logs(service_name)
+    click.echo(logs_response['logs'])
 
 
 service.add_command(deploy)
