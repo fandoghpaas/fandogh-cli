@@ -60,6 +60,7 @@ def get_stored_token():
         raise AuthenticationError()
     return token_obj
 
+
 def get_exception(response):
     exception_class = {
         404: ResourceNotFoundError,
@@ -79,6 +80,14 @@ def create_image(image_name):
         raise get_exception(response)
     else:
         return response.json()
+
+
+def delete_image(image_name):
+    token = get_stored_token()
+    response = requests.delete(base_images_url + '/' + image_name,
+                               headers={'Authorization': 'JWT ' + token})
+    if response.status_code != 204:
+        raise get_exception(response)
 
 
 def get_images():

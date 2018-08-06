@@ -156,8 +156,17 @@ def versions(image):
         click.echo("There is no version available for '{}'".format(image))
 
 
+@click.command("delete", cls=FandoghCommand)
+@click.option('-i', '--image', 'image', prompt='Image name', help='The image name',
+              default=lambda: get_project_config().get('image.name'))
+def delete(image):
+    delete_image(image)
+    click.echo('Your image has been deleted successfully')
+
+
 image.add_command(init)
 image.add_command(publish)
 image.add_command(versions)
 image.add_command(list_images)
 image.add_command(logs)
+image.add_command(delete)
