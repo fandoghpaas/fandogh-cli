@@ -1,7 +1,6 @@
 import requests
 import os
-
-from fandogh_cli.utils import get_stored_token  # TODO: don't depend on other module inside fandogh_client
+from fandogh_cli.config import get_user_config
 
 fandogh_host = os.getenv('FANDOGH_HOST', 'https://api.fandogh.cloud')
 base_url = '%s/api/' % fandogh_host
@@ -54,6 +53,12 @@ class FandoghBadRequest(FandoghAPIError):
         except AttributeError:
             self.message = response.text
 
+
+def get_stored_token():
+    token_obj = get_user_config().get('token')
+    if token_obj is None:
+        raise AuthenticationError()
+    return token_obj
 
 def get_exception(response):
     exception_class = {

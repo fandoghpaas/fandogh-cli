@@ -3,7 +3,7 @@ import click
 from click import Command
 from fandogh_cli import NAME
 from fandogh_cli.fandogh_client import FandoghAPIError
-from fandogh_cli.exceptions import AuthenticationError
+from fandogh_cli.fandogh_client import AuthenticationError
 from fandogh_cli.utils import debug, TextStyle, format_text
 from fandogh_cli.version_check import get_latest_version, get_current_version, Version
 from fandogh_cli.config import get_user_config

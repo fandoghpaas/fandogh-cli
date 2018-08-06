@@ -1,6 +1,5 @@
 import click
 import os
-from fandogh_cli.exceptions import AuthenticationError
 
 FANDOGH_DEBUG = os.environ.get('FANDOGH_DEBUG', False)
 
@@ -13,14 +12,6 @@ def is_python2():
 def debug(msg):
     if FANDOGH_DEBUG:
         click.echo(msg)
-
-
-def get_stored_token():
-    from fandogh_cli.config import get_user_config
-    token_obj = get_user_config().get('token')
-    if token_obj is None:
-        raise AuthenticationError()
-    return token_obj
 
 
 def makedirs(name, mode=0o770, exist_ok=True):
