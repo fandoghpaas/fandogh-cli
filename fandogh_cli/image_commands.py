@@ -148,8 +148,8 @@ def versions(image):
         image = get_project_config().get('image.name')
     table = present(lambda: list_versions(image),
                     renderer='table',
-                    headers=['version', 'state'],
-                    columns=['version', 'state'])
+                    headers=['version', 'size', 'state'],
+                    columns=['version', 'size', 'state'])
     if len(table.strip()):
         click.echo(table)
     else:

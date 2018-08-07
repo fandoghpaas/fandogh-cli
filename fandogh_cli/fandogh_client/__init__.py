@@ -145,7 +145,10 @@ def list_versions(image_name):
     if response.status_code != 200:
         raise get_exception(response)
     else:
-        return response.json()
+        result = response.json()
+        for item in result:
+            item['size'] = str(item.get('size') / 1000 / 1000) + 'MB'
+        return result
 
 
 def _parse_key_values(envs):
