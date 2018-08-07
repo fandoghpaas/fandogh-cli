@@ -86,7 +86,7 @@ def delete_image(image_name):
     token = get_stored_token()
     response = requests.delete(base_images_url + '/' + image_name,
                                headers={'Authorization': 'JWT ' + token})
-    if response.status_code != 204:
+    if response.status_code != 200:
         raise get_exception(response)
 
 
