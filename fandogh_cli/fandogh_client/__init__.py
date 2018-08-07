@@ -97,7 +97,12 @@ def get_images():
     if response.status_code != 200:
         raise get_exception(response)
     else:
-        return response.json()
+        result = response.json()
+        for item in result:
+            print(item)
+            item['last_version_version'] = (item.get('last_version', {}) or {}).get('version', '--')
+            item['last_version_date'] = (item.get('last_version', {}) or {}).get('date', '--')
+        return result
 
 
 def get_image_build(image_name, version):

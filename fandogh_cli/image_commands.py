@@ -50,8 +50,8 @@ def list_images():
     """
     table = present(lambda: get_images(),
                     renderer='table',
-                    headers=['Name', 'Creation Date'],
-                    columns=['name', 'created_at'])
+                    headers=['Name', 'Last Version', 'Last Version Publication Date'],
+                    columns=['name', 'last_version_version', 'last_version_date'])
 
     click.echo(table)
 
