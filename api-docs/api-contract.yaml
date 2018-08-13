@@ -520,6 +520,7 @@ definitions:
     properties:
       name:
         type: string
+        description: "image name, in form of ^[A-Za-z0-9-_]+$"
   ImageModel:
     type: object
     properties:
