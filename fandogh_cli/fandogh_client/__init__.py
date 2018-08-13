@@ -186,7 +186,7 @@ def deploy_service(image_name, version, service_name, envs, hosts, port, interna
         return response.json()
 
 
-def list_services(show_all):
+def list_services():
     token = get_stored_token()
     response = requests.get(base_services_url,
                             headers={'Authorization': 'JWT ' + token})
@@ -194,9 +194,7 @@ def list_services(show_all):
         raise get_exception(response)
     else:
         json_result = response.json()
-        if show_all:
-            return json_result
-        return [item for item in json_result if item.get('state', None) == 'RUNNING']
+        return json_result
 
 
 def destroy_service(service_name):

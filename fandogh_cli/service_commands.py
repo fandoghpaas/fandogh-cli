@@ -44,11 +44,9 @@ but other services inside your private network will be able to find it using it'
 
 
 @click.command('list', cls=FandoghCommand)
-@click.option('-a', 'show_all', is_flag=True, default=False,
-              help='show all the services regardless if it\'s running or not')
-def service_list(show_all):
-    """List available service for this image"""
-    table = present(lambda: list_services(show_all),
+def service_list():
+    """List all services for this image"""
+    table = present(lambda: list_services(),
                     renderer='table',
                     headers=['Service Name', 'URL', 'Service Type', 'Started at', 'State'],
                     columns=['name', 'url', 'service_type', 'start_date', 'state'])
