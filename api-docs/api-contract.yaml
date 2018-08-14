@@ -520,7 +520,7 @@ definitions:
     properties:
       name:
         type: string
-        description: "image name, in form of ^[A-Za-z0-9-_]+$"
+        pattern: "^[A-Za-z0-9-_]+$"
   ImageModel:
     type: object
     properties:
@@ -580,6 +580,7 @@ definitions:
         type: string
       service_name:
         type: string
+        pattern: "^[a-z]+(-*[a-z0-9]+)*$"
       environment_variables:
         type: object
         additionalProperties:
@@ -620,6 +621,7 @@ definitions:
     properties:
       name:
         type: string
+        description: "a valid domain name"
   DomainModel:
     type: object
     properties:
