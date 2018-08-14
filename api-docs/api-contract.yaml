@@ -574,7 +574,11 @@ definitions:
         format: datetime
   ServiceDeploymentModel:
     type: object
-    required: ["image_name", "image_version", "service_name", "environment_variables"]
+    required:
+      - image_name
+      - image_version
+      - service_name
+      - environment_variables
     properties:
       image_name:
         type: string
@@ -609,7 +613,10 @@ definitions:
           type: string
   ManagedServiceDeploymentModel:
     type: object
-    required: ["name", "version", "config"]
+    required:
+      - name
+      - version
+      - config
     properties:
       name:
         type: string
@@ -638,7 +645,9 @@ definitions:
         type: boolean
   UserCredentials:
     type: object
-    required: ["username", "password"]
+    required:
+      - username
+      - password
     properties:
       username:
         type: string
