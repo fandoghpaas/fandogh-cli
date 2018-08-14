@@ -225,6 +225,12 @@ def get_logs(service_name):
         raise get_exception(response)
 
 
+def get_details(service_name):
+    services = list_services()
+    for service in services:
+        if service['name'] == service_name:
+            return service
+
 def deploy_managed_service(service_name, version, configs):
     token = get_stored_token()
     configution = _parse_key_values(configs)

@@ -54,7 +54,7 @@ def service_list():
 
 
 @click.command('destroy', cls=FandoghCommand)
-@click.option('--name', 'service_name', prompt='Name of the service you want to destroy', )
+@click.option('--name', 'service_name', prompt='Service name', help='Name of the service you want to destroy')
 def service_destroy(service_name):
     """Destroy service"""
     message = present(lambda: destroy_service(service_name))
@@ -62,14 +62,30 @@ def service_destroy(service_name):
 
 
 @click.command('logs', cls=FandoghCommand)
-@click.option('--name', 'service_name', prompt='service_name', help="Service name")
+@click.option('--name', 'service_name', prompt='Service name', help="Service name")
 def service_logs(service_name):
     """Display service logs"""
     logs_response = get_logs(service_name)
     click.echo(logs_response['logs'])
 
 
+@click.command('details', cls=FandoghCommand)
+@click.option('--name', 'service_name', prompt='Service name')
+def service_details(service_name):
+    """Display service details"""
+    details = get_details(service_name)
+
+    if not details:
+        return
+
+    click.echo('Containers:')
+    for pod in details['pods']:
+        for container in pod['containers']:
+            click.echo('  {} is {}'.format(container['name'], 'Ready' if container['ready'] else container['waiting']['reason']))
+
+
 service.add_command(deploy)
 service.add_command(service_list)
 service.add_command(service_destroy)
 service.add_command(service_logs)
+service.add_command(service_details)
