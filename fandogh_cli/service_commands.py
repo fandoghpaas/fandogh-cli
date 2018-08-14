@@ -78,10 +78,12 @@ def service_details(service_name):
     if not details:
         return
 
-    click.echo('Containers:')
+    click.echo('Pods:')
     for pod in details['pods']:
+        click.echo('  Nmae:{}'.format(pod['name']))
+        click.echo('  Containers:')
         for container in pod['containers']:
-            click.echo('  {} is {}'.format(container['name'], 'Ready' if container['ready'] else container['waiting']['reason']))
+            click.echo('    {} is {}'.format(container['name'], 'Ready' if container['ready'] else container['waiting']['reason']))
 
 
 service.add_command(deploy)
