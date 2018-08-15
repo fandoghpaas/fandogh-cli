@@ -80,7 +80,12 @@ def service_details(service_name):
 
     click.echo('Pods:')
     for pod in details['pods']:
-        click.echo('  Nmae:{}'.format(pod['name']))
+        click.echo('  Name: {}'.format(pod['name']))
+        click.echo('  Phase: {}'.format(
+            format_text(pod['phase'], TextStyle.OKGREEN)
+            if pod['phase'] == 'Running'
+            else format_text(pod['phase'], TextStyle.WARNING)
+        ))
         click.echo('  Containers:')
         for container in pod['containers']:
             click.echo('    Name: {}'.format(container['name']))
