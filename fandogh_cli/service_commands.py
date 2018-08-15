@@ -83,7 +83,11 @@ def service_details(service_name):
         click.echo('  Nmae:{}'.format(pod['name']))
         click.echo('  Containers:')
         for container in pod['containers']:
-            click.echo('    {} is {}'.format(container['name'], format_text('Ready', TextStyle.OKGREEN) if container['ready'] else format_text(container['waiting']['reason'], TextStyle.WARNING)))
+            click.echo('    Name: {}'.format(container['name']))
+            click.echo('    Image: {}'.format(container['image']))
+            click.echo('    Staus: {}'.format(format_text('Ready', TextStyle.OKGREEN) if container['ready']
+                                              else format_text(container['waiting']['reason'], TextStyle.WARNING)))
+            click.echo('    ---------------------')
 
 
 service.add_command(deploy)
