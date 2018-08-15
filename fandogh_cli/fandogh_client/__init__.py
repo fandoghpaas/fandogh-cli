@@ -99,7 +99,6 @@ def get_images():
     else:
         result = response.json()
         for item in result:
-            print(item)
             item['last_version_version'] = (item.get('last_version', {}) or {}).get('version', '--')
             item['last_version_date'] = (item.get('last_version', {}) or {}).get('date', '--')
         return result
