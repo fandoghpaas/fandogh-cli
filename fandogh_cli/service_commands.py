@@ -95,7 +95,28 @@ def service_details(service_name):
             click.echo('    ---------------------')
 
 
+@click.command('apply', cls=FandoghCommand)
+@click.option('-f', '--file', 'file', prompt='File address')
+def service_apply(file):
+    try:
+        with open(file, mode='r') as manifest:
+            manifest_content = manifest.read()
+            click.echo(manifest_content)
+    except FileNotFoundError as e:
+        click.echo(format_text(e.strerror, TextStyle.FAIL), err=True)
+        return
+
+    from yaml import load
+
+    yml = load(manifest_content)
+    print(yml)
+    # post to backend
+    # parse response
+    pass
+
+
 service.add_command(deploy)
+service.add_command(service_apply)
 service.add_command(service_list)
 service.add_command(service_destroy)
 service.add_command(service_logs)
