@@ -230,6 +230,7 @@ def get_details(service_name):
         if service['name'] == service_name:
             return service
 
+
 def deploy_managed_service(service_name, version, configs):
     token = get_stored_token()
     configution = _parse_key_values(configs)
@@ -251,6 +252,18 @@ def help_managed_service():
         base_managed_services_url,
         headers=dict(Authorization='JWT ' + token)
     )
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        return response.json()
+
+
+def deploy_manifest(manifest):
+    token = get_stored_token()
+    response = requests.post(base_services_url + '/manifests',
+                             json=manifest,
+                             headers={'Authorization': 'JWT ' + token}
+                             )
     if response.status_code != 200:
         raise get_exception(response)
     else:

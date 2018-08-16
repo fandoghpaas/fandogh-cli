@@ -109,10 +109,21 @@ def service_apply(file):
     from yaml import load
 
     yml = load(manifest_content)
-    print(yml)
-    # post to backend
-    # parse response
-    pass
+
+    deployment_result = deploy_manifest(yml)
+    message = "\nCongratulation, Your service is running ^_^\n"
+    if str(deployment_result['service_type']).lower() == "external":
+        message += "Your service is accessible using the following URLs:\n{}".format(
+            "\n".join([" - {}".format(url) for url in deployment_result['urls']])
+        )
+    else:
+        message += """
+    Since your service is internal, it's not accessible from outside your fandogh private network, 
+    but other services inside your private network will be able to find it using it's name: '{}'
+            """.strip().format(
+            deployment_result['name']
+        )
+    click.echo(message)
 
 
 service.add_command(deploy)
