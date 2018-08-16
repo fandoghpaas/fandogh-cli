@@ -497,7 +497,9 @@ definitions:
   ErrorItem:
     type: object
     additionalProperties:
-      type: string
+      type: array
+      items:
+        type: string
       # in form of "field name": ["error1", "error2",..]
 
   ErrorResponse:
