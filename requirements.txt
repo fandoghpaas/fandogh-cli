@@ -3,3 +3,5 @@ requests[security]
 beautifultable
 pyyaml
 requests-toolbelt
+pytz
+tzlocal
