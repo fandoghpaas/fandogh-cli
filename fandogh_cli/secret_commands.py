@@ -1,10 +1,6 @@
 import click
-
 from fandogh_cli.fandogh_client.secrets_client import list_secret, create_secret
-from .fandogh_client import *
-from .config import get_project_config
 from .presenter import present
-from .utils import format_text, TextStyle
 from .base_commands import FandoghCommand
 
 
@@ -14,17 +10,21 @@ def secret():
 
 
 @click.command("list", cls=FandoghCommand)
-@click.option('--type', '-t', 'secret_type', help='type of secret to list', default="dockerconfigjson")
+@click.option('--type', '-t', 'secret_type', help='type of secret to list', default="docker-registry")
 def list(secret_type):
     """list secrets filtered by type"""
-    data = list_secret(secret_type)
-    print(data)
+    table = present(lambda: list_secret(secret_type),
+                    renderer='table',
+                    headers=['Name', 'Secret Type', 'Created at'],
+                    columns=['name', 'type', 'created_at'])
+
+    click.echo(table)
 
 
 @click.command("create", cls=FandoghCommand)
 @click.option('--name', '-n', 'secret_name', help='a unique name for secret', prompt='Name for the secret', )
 @click.option('--type', '-t', 'secret_type', help='type of secret to list', prompt='Type of the secret',
-              default="REGISTRY_SECRET")
+              default="docker-registry")
 @click.option('--field', '-f', 'fields', help='fields to store in secret', multiple=True)
 def create(secret_type, fields, secret_name):
     """list secrets filtered by type"""

@@ -8,7 +8,7 @@ base_secrets_url = '%ssecrets' % base_url
 
 def list_secret(secret_type):
     token = get_stored_token()
-    response = requests.get(base_secrets_url,
+    response = requests.get("{}?secret_type={}".format(base_secrets_url, secret_type),
                             headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
         raise get_exception(response)
