@@ -6,9 +6,9 @@ from fandogh_cli.fandogh_client import get_stored_token
 base_secrets_url = '%ssecrets' % base_url
 
 
-def list_secret(secret_type):
+def list_secret():
     token = get_stored_token()
-    response = requests.get("{}?secret_type={}".format(base_secrets_url, secret_type),
+    response = requests.get(base_secrets_url,
                             headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
         raise get_exception(response)
