@@ -15,6 +15,8 @@ setup(
                       "requests[security]",
                       "requests-toolbelt",
                       "beautifultable",
+                      "pytz",
+                      "tzlocal"
                       "pyyaml"],
     author_email='soroosh.sarabadani@gmail.com',
     url='https://github.com/fandoghpaas/fandogh-cli',
