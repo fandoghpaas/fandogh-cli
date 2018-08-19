@@ -1,7 +1,13 @@
 import click
 import os
 
+from datetime import datetime
+
+import pytz
+import tzlocal
+
 FANDOGH_DEBUG = os.environ.get('FANDOGH_DEBUG', False)
+USER_TIMEZONE = pytz.timezone(tzlocal.get_localzone().zone)
 
 
 def is_python2():
@@ -38,3 +44,7 @@ class TextStyle:
 
 def format_text(text, style):
     return "{}{}{}".format(style, text, TextStyle.ENDC)
+
+
+def convert_datetime(datetime_value):
+    return str(USER_TIMEZONE.fromutc(datetime.strptime(datetime_value, "%Y-%m-%dT%H:%M:%SZ")))

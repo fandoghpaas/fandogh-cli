@@ -163,7 +163,7 @@ def _parse_key_values(envs):
     return env_variables
 
 
-def deploy_service(image_name, version, service_name, envs, hosts, port, internal):
+def deploy_service(image_name, version, service_name, envs, hosts, port, internal, registry_secret):
     token = get_stored_token()
     env_variables = _parse_key_values(envs)
     body = {'image_name': image_name,
@@ -171,6 +171,7 @@ def deploy_service(image_name, version, service_name, envs, hosts, port, interna
             'service_name': service_name,
             'environment_variables': env_variables,
             'port': port,
+            'registry_secret': registry_secret,
             'hosts': hosts}
     if internal:
         body['service_type'] = "INTERNAL"

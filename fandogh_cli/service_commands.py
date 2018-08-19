@@ -18,16 +18,28 @@ def service():
 @click.option('--env', '-e', 'envs', help='Environment variables (format: VARIABLE_NAME=VARIABLE_VALUE)', multiple=True)
 @click.option('--hosts', '-h', 'hosts', help='Custom hosts that service should be accessible through', multiple=True)
 @click.option('--port', '-p', 'port', help='The service port that will be exposed on port 80 to worldwide', default=80)
+@click.option('--registry-secret', '-s', 'registry_secret',
+              help='Name of the secret containing require credentials to access registry', default=None)
 @click.option('--internal', help='This is an internal service like a DB and the port should '
                                  'not be exposed publicly', default=False, is_flag=True)
-def deploy(image, version, name, port, envs, hosts, internal):
+def deploy(image, version, name, port, envs, hosts, internal, registry_secret):
     """Deploy service"""
     if not image:
         image = get_project_config().get('image.name')
         if not image:
-            click.echo(format_text('please declare the image name', TextStyle.FAIL), err=True)
-
-    deployment_result = deploy_service(image, version, name, envs, hosts, port, internal)
+            click.echo(format_text("You're not in a fandogh directory and didn't provide an image name using --image"
+                                   ", please provide an image name, it could \nbe a full image name tagged with a "
+                                   "repository or simply name of one of the images you already published.\nfor example:\n"
+                                   "- myprivate.repository.com:5000/mynamespace/imagename <-- full image name\n"
+                                   "- some-image-name <-- image you already published on fandogh\n"
+                                   "- myusername/image-name <-- image from docker hub\n", TextStyle.OKBLUE))
+            image = click.prompt("Image name: ").strip()
+            if not image:
+                click.echo(
+                    format_text("It's not possible to perform deploy operation withou image name", TextStyle.FAIL),
+                    err=True)
+                exit(-1)
+    deployment_result = deploy_service(image, version, name, envs, hosts, port, internal, registry_secret)
     message = "\nCongratulation, Your service is running ^_^\n"
     if str(deployment_result['service_type']).lower() == "external":
         message += "Your service is accessible using the following URLs:\n{}".format(
