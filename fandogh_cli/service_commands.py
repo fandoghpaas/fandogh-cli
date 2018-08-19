@@ -27,8 +27,18 @@ def deploy(image, version, name, port, envs, hosts, internal, registry_secret):
     if not image:
         image = get_project_config().get('image.name')
         if not image:
-            click.echo(format_text('please declare the image name', TextStyle.FAIL), err=True)
-
+            click.echo(format_text("You're not in a fandogh directory and didn't provide an image name using --image"
+                                   ", please provide an image name, it could \nbe a full image name tagged with a "
+                                   "repository or simply name of one of the images you already published.\nfor example:\n"
+                                   "- myprivate.repository.com:5000/mynamespace/imagename <-- full image name\n"
+                                   "- some-image-name <-- image you already publish on fandogh\n"
+                                   "- myusername/image-name <-- image from docker hub\n", TextStyle.OKBLUE))
+            image = click.prompt("Image name: ").strip()
+            if not image:
+                click.echo(
+                    format_text("It's not possible to perform deploy operation withou image name", TextStyle.FAIL),
+                    err=True)
+                exit(-1)
     deployment_result = deploy_service(image, version, name, envs, hosts, port, internal, registry_secret)
     message = "\nCongratulation, Your service is running ^_^\n"
     if str(deployment_result['service_type']).lower() == "external":
