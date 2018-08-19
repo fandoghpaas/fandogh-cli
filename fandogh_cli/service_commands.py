@@ -18,7 +18,7 @@ def service():
 @click.option('--env', '-e', 'envs', help='Environment variables (format: VARIABLE_NAME=VARIABLE_VALUE)', multiple=True)
 @click.option('--hosts', '-h', 'hosts', help='Custom hosts that service should be accessible through', multiple=True)
 @click.option('--port', '-p', 'port', help='The service port that will be exposed on port 80 to worldwide', default=80)
-@click.option('--registry_secret', '-r', 'registry_secret',
+@click.option('--registry-secret', '-s', 'registry_secret',
               help='Name of the secret containing require credentials to access registry', default=None)
 @click.option('--internal', help='This is an internal service like a DB and the port should '
                                  'not be exposed publicly', default=False, is_flag=True)
