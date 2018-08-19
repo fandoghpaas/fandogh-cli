@@ -31,7 +31,7 @@ def deploy(image, version, name, port, envs, hosts, internal, registry_secret):
                                    ", please provide an image name, it could \nbe a full image name tagged with a "
                                    "repository or simply name of one of the images you already published.\nfor example:\n"
                                    "- myprivate.repository.com:5000/mynamespace/imagename <-- full image name\n"
-                                   "- some-image-name <-- image you already publish on fandogh\n"
+                                   "- some-image-name <-- image you already published on fandogh\n"
                                    "- myusername/image-name <-- image from docker hub\n", TextStyle.OKBLUE))
             image = click.prompt("Image name: ").strip()
             if not image:
