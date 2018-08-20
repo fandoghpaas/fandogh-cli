@@ -14,7 +14,13 @@ def list_secret():
     if response.status_code != 200:
         raise get_exception(response)
     else:
-        return [{**s, "created_at": convert_datetime(s["created_at"])} for s in response.json()]
+        result = []
+        for secret in response.json():
+            secret["created_at"] = convert_datetime(s["created_at"])
+            result.append(
+                secret
+            )
+        return result
 
 
 def create_secret(name, secret_type, fields):
