@@ -57,10 +57,13 @@ def list_images():
 
 
 def show_image_logs(image_name, version):
+    image_offset = 0
+
     if not image_name:
         image_name = get_project_config().get('image.name')
     while True:
-        response = get_image_build(image_name, version)
+        response = get_image_build(image_name, version, image_offset)
+        image_offset = len(response.get('logs').split('\n'))
         click.clear()
         click.echo(response.get('logs'))
         if response.get('state') != 'BUILDING':
