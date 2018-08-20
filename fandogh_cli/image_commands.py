@@ -64,7 +64,6 @@ def show_image_logs(image_name, version):
     while True:
         response = get_image_build(image_name, version, image_offset)
         image_offset = response.get('lines_count')
-        click.clear()
         click.echo(response.get('logs'))
         if response.get('state') != 'BUILDING':
             break
