@@ -163,7 +163,7 @@ def _parse_key_values(envs):
     return env_variables
 
 
-def deploy_service(image_name, version, service_name, envs, hosts, port, internal, registry_secret):
+def deploy_service(image_name, version, service_name, envs, hosts, port, internal, registry_secret, image_pull_policy):
     token = get_stored_token()
     env_variables = _parse_key_values(envs)
     body = {'image_name': image_name,
@@ -172,7 +172,8 @@ def deploy_service(image_name, version, service_name, envs, hosts, port, interna
             'environment_variables': env_variables,
             'port': port,
             'registry_secret': registry_secret,
-            'hosts': hosts}
+            'hosts': hosts,
+            'image_pull_policy': image_pull_policy}
     if internal:
         body['service_type'] = "INTERNAL"
 
@@ -230,6 +231,7 @@ def get_details(service_name):
     for service in services:
         if service['name'] == service_name:
             return service
+
 
 def deploy_managed_service(service_name, version, configs):
     token = get_stored_token()

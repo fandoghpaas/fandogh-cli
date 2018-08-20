@@ -22,7 +22,8 @@ def service():
               help='Name of the secret containing require credentials to access registry', default=None)
 @click.option('--internal', help='This is an internal service like a DB and the port should '
                                  'not be exposed publicly', default=False, is_flag=True)
-def deploy(image, version, name, port, envs, hosts, internal, registry_secret):
+@click.option('--image-pull-policy', 'image_pull_policy', default='IfNotPresent')
+def deploy(image, version, name, port, envs, hosts, internal, registry_secret, image_pull_policy):
     """Deploy service"""
     if not image:
         image = get_project_config().get('image.name')
@@ -39,7 +40,7 @@ def deploy(image, version, name, port, envs, hosts, internal, registry_secret):
                     format_text("It's not possible to perform deploy operation withou image name", TextStyle.FAIL),
                     err=True)
                 exit(-1)
-    deployment_result = deploy_service(image, version, name, envs, hosts, port, internal, registry_secret)
+    deployment_result = deploy_service(image, version, name, envs, hosts, port, internal, registry_secret, image_pull_policy)
     message = "\nCongratulation, Your service is running ^_^\n"
     if str(deployment_result['service_type']).lower() == "external":
         message += "Your service is accessible using the following URLs:\n{}".format(
