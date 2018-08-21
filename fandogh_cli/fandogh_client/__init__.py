@@ -185,22 +185,23 @@ def _parse_key_values(envs):
 
 def parse_port_mapping(port_mapping):
     # validate and convert outside:inside:protocol to a nice dict
+    port_mapping = port_mapping.upper()
     parts = port_mapping.split(":")
     if len(parts) == 3:
         outside, inside, protocol = parts
-        if protocol not in ('tcp', 'udp'):
+        if protocol not in ('TCP', 'UDP'):
             raise CommandParameterException(
                 {"internal_ports": [
                     "%s is not a valid protocol in %s, protocol can ba tcp or udp" % (protocol, port_mapping)]})
     elif len(parts) == 2:
-        protocol = "tcp"
+        protocol = "TCP"
         outside, inside = parts
     else:
         raise CommandParameterException(
             {"internal_ports": ["{} is not a valid port mapping, use this form outsidePort:insidePort:protocol, "
                                 "which protocol is optional and default protocol is tcp".format(port_mapping)]})
     try:
-        return dict(outside=int(outside), inside=int(inside), protocol=protocol.lower())
+        return dict(outside=int(outside), inside=int(inside), protocol=protocol)
     except ValueError:
         raise CommandParameterException(
             {"internal_ports": ["{} is not a valid port mapping, port numbers should be numbers".format(port_mapping)]})
