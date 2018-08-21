@@ -16,7 +16,7 @@ def service():
 @click.option('--version', '-v', prompt='The image version', help='The image version you want to deploy')
 @click.option('--name', prompt='Your service name', help='Choose a unique name for your service')
 @click.option('--env', '-e', 'envs', help='Environment variables (format: VARIABLE_NAME=VARIABLE_VALUE)', multiple=True)
-@click.option('--internal-ports', '-m', 'internal_ports', help='Expose other ports internally', multiple=True)
+@click.option('--internal-port', '-m', 'internal_ports', help='Expose other ports internally', multiple=True)
 @click.option('--hosts', '-h', 'hosts', help='Custom hosts that service should be accessible through', multiple=True)
 @click.option('--port', '-p', 'port', help='The service port that will be exposed on port 80 to worldwide', default=80)
 @click.option('--registry-secret', '-s', 'registry_secret',
