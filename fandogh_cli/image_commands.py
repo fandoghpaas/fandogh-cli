@@ -52,8 +52,12 @@ def list_images():
                     renderer='table',
                     headers=['Name', 'Last Version', 'Last Version Publication Date'],
                     columns=['name', 'last_version_version', 'last_version_date'])
-
-    click.echo(table)
+    if table:
+        click.echo(table)
+    else:
+        click.echo('\nYou have no images to show, why don\'t you try building one? \n'
+                   'have fun and follow the link below:\n')
+        click.echo('https://docs.fandogh.cloud/docs/images.html\n')
 
 
 def show_image_logs(image_name, version):
