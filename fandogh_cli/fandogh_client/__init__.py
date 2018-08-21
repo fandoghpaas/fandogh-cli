@@ -36,7 +36,7 @@ class ResourceNotFoundError(FandoghAPIError):
         if message:
             self.message = message
 
-        if self.response.json():
+        if hasattr(self.response, 'json'):
             if self.response.json()['message']:
                 self.message = self.response.json()['message']
 
@@ -94,7 +94,7 @@ def delete_image(image_name):
     if response.status_code != 200:
         raise get_exception(response)
 
-    return response.json()['message']
+    return response.json()
 
 
 def get_images():
