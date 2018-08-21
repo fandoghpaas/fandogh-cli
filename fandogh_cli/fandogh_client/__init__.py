@@ -104,10 +104,13 @@ def get_images():
         return result
 
 
-def get_image_build(image_name, version):
+def get_image_build(image_name, version, image_offset):
     token = get_stored_token()
-    response = requests.get(base_images_url + '/' + image_name + '/versions/' + version + '/builds',
-                            headers={'Authorization': 'JWT ' + token})
+
+    response = requests.get(
+        base_images_url + '/' + image_name + '/versions/' + version + '/builds', params={'image_offset': image_offset},
+        headers={'Authorization': 'JWT ' + token})
+
     if response.status_code != 200:
         raise get_exception(response)
     else:
