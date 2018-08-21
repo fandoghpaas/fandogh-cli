@@ -32,6 +32,12 @@ def login(username, password):
     message = present(lambda: handle_token(), post='Logged in successfully')
     click.echo(message)
 
+    #TODO
+# click.echo(" ___  _   _  _  __   _   __  _ _ ")
+#         click.echo("| __|/ \ | \| ||  \ / \ / _|| U |")
+#         click.echo("| _|| o || \  || o | o | |_n|   |")
+#         click.echo("|_| |_n_||_|\_||__/ \_/ \__/|_n_|")
+#         click.echo("                                 ")
 
 base.add_command(login)
 base.add_command(image)

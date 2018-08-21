@@ -63,7 +63,12 @@ def service_list():
                     renderer='table',
                     headers=['Service Name', 'URL', 'Service Type', 'Started at', 'State'],
                     columns=['name', 'url', 'service_type', 'start_date', 'state'])
-    click.echo(table)
+    if table:
+        click.echo(table)
+    else:
+        click.echo('\nYou have no running services right now, why don\'t you try deploying one? \n'
+                   'have fun and follow the link below:\n')
+        click.echo('https://docs.fandogh.cloud/docs/services.html\n')
 
 
 @click.command('destroy', cls=FandoghCommand)
