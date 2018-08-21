@@ -37,8 +37,7 @@ class ResourceNotFoundError(FandoghAPIError):
             self.message = message
 
         if hasattr(self.response, 'json'):
-            if self.response.json()['message']:
-                self.message = self.response.json()['message']
+            self.message = self.response.json().get('message', self.message)
 
 
 class FandoghInternalError(FandoghAPIError):
