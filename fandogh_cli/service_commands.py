@@ -16,6 +16,7 @@ def service():
 @click.option('--version', '-v', prompt='The image version', help='The image version you want to deploy')
 @click.option('--name', prompt='Your service name', help='Choose a unique name for your service')
 @click.option('--env', '-e', 'envs', help='Environment variables (format: VARIABLE_NAME=VARIABLE_VALUE)', multiple=True)
+@click.option('--internal-ports', '-m', 'internal_ports', help='Expose other ports internally', multiple=True)
 @click.option('--hosts', '-h', 'hosts', help='Custom hosts that service should be accessible through', multiple=True)
 @click.option('--port', '-p', 'port', help='The service port that will be exposed on port 80 to worldwide', default=80)
 @click.option('--registry-secret', '-s', 'registry_secret',
@@ -23,7 +24,7 @@ def service():
 @click.option('--internal', help='This is an internal service like a DB and the port should '
                                  'not be exposed publicly', default=False, is_flag=True)
 @click.option('--image-pull-policy', 'image_pull_policy', default='IfNotPresent')
-def deploy(image, version, name, port, envs, hosts, internal, registry_secret, image_pull_policy):
+def deploy(image, version, name, port, envs, hosts, internal, registry_secret, image_pull_policy, internal_ports):
     """Deploy service"""
     if not image:
         image = get_project_config().get('image.name')
@@ -40,7 +41,7 @@ def deploy(image, version, name, port, envs, hosts, internal, registry_secret, i
                     format_text("It's not possible to perform deploy operation withou image name", TextStyle.FAIL),
                     err=True)
                 exit(-1)
-    deployment_result = deploy_service(image, version, name, envs, hosts, port, internal, registry_secret, image_pull_policy)
+    deployment_result = deploy_service(image, version, name, envs, hosts, port, internal, registry_secret, image_pull_policy, internal_ports)
     message = "\nCongratulation, Your service is running ^_^\n"
     if str(deployment_result['service_type']).lower() == "external":
         message += "Your service is accessible using the following URLs:\n{}".format(

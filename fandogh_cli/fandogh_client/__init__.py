@@ -172,9 +172,27 @@ def _parse_key_values(envs):
     return env_variables
 
 
-def deploy_service(image_name, version, service_name, envs, hosts, port, internal, registry_secret, image_pull_policy):
+def _parse_ports(internal_ports):
+    # [3030:3030, 8001:8002]
+    try:
+        result = []
+        for port_mapping in internal_ports:
+            left, right = port_mapping.split(":")
+            result.append(
+                {
+                    "left": left,
+                    "right": right
+                }
+            )
+        return result
+    except Exception as exp:
+        raise
+
+
+def deploy_service(image_name, version, service_name, envs, hosts, port, internal, registry_secret, image_pull_policy, internal_ports):
     token = get_stored_token()
     env_variables = _parse_key_values(envs)
+    internal_port_mapping = _parse_ports(internal_ports)
     body = {'image_name': image_name,
             'image_version': version,
             'service_name': service_name,
@@ -182,6 +200,7 @@ def deploy_service(image_name, version, service_name, envs, hosts, port, interna
             'port': port,
             'registry_secret': registry_secret,
             'hosts': hosts,
+            'internal_port_mapping': internal_port_mapping,
             'image_pull_policy': image_pull_policy}
     if internal:
         body['service_type'] = "INTERNAL"
