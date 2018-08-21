@@ -63,7 +63,7 @@ class CommandParameterException(Exception):
     def __init__(self, error_dict):
         try:
             self.message = "Errors: \n{}".format(
-                "\n".join([" -> {}: {}".format(k, v) for k, v in error_dict]))
+                "\n".join([" -> {}: {}".format(k, v) for k, v in error_dict.items()]))
         except AttributeError:
             self.message = json.dumps(error_dict, indent=' ')
 
@@ -190,8 +190,8 @@ def parse_port_mapping(port_mapping):
         outside, inside, protocol = parts
         if protocol not in ('tcp', 'udp'):
             raise CommandParameterException(
-                {"internal_ports": ["{} is not a valid protocol in {}, protocol can ba tcp or udp",
-                                    format(protocol, port_mapping)]})
+                {"internal_ports": [
+                    "%s is not a valid protocol in %s, protocol can ba tcp or udp" % (protocol, port_mapping)]})
     elif len(parts) == 2:
         protocol = "tcp"
         outside, inside = parts
@@ -203,7 +203,7 @@ def parse_port_mapping(port_mapping):
         return dict(outside=int(outside), inside=int(inside), protocol=protocol.lower())
     except ValueError:
         raise CommandParameterException(
-            {"internal_ports": ["{} is not a valid port mapping, port numbers should numbers".format(port_mapping)]})
+            {"internal_ports": ["{} is not a valid port mapping, port numbers should be numbers".format(port_mapping)]})
 
 
 def deploy_service(image_name, version, service_name, envs, hosts, port, internal, registry_secret, image_pull_policy,
