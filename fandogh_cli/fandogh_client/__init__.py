@@ -172,35 +172,40 @@ def _parse_key_values(envs):
     return env_variables
 
 
-def _parse_ports(internal_ports):
-    # [3030:3030, 8001:8002]
+def parse_port_mapping(port_mapping):
+    # validate and convert outside:inside:protocol to a nice dict
+    parts = port_mapping.split(":")
+    if len(parts) == 3:
+        outside, inside, protocol = parts
+        if protocol not in ('tcp', 'udp'):
+            raise ValueError("{} is not a valid protocol in {}, protocol can ba tcp or udp",
+                             format(protocol, port_mapping))
+    elif len(parts) == 2:
+        protocol = "tcp"
+        outside, inside = parts
+    else:
+        raise ValueError(
+            "{} is not a valid port mapping, use this form outsidePort:insidePort:protocol, "
+            "which protocol is optional and default protocol is tcp".format(port_mapping))
     try:
-        result = []
-        for port_mapping in internal_ports:
-            left, right = port_mapping.split(":")
-            result.append(
-                {
-                    "port": left,
-                    "target_port": right
-                }
-            )
-        return result
-    except Exception as exp:
-        raise
+        return dict(outside=int(outside), inside=int(inside), protocol=protocol.lower())
+    except ValueError:
+        raise ValueError("{} is not a valid port mapping, port numbers should numbers".format(port_mapping))
 
 
-def deploy_service(image_name, version, service_name, envs, hosts, port, internal, registry_secret, image_pull_policy, internal_ports):
+def deploy_service(image_name, version, service_name, envs, hosts, port, internal, registry_secret, image_pull_policy,
+                   internal_ports):
     token = get_stored_token()
     env_variables = _parse_key_values(envs)
-    internal_port_mapping = _parse_ports(internal_ports)
+    internal_ports.append("{}:{}".format(port, port))
     body = {'image_name': image_name,
             'image_version': version,
             'service_name': service_name,
             'environment_variables': env_variables,
-            'port': port,
+            'port': port,  # TODO: remove this later
             'registry_secret': registry_secret,
             'hosts': hosts,
-            'internal_port_mapping': internal_port_mapping,
+            'internal_port_mapping': [parse_port_mapping(port_mapping) for port_mapping in internal_ports],
             'image_pull_policy': image_pull_policy}
     if internal:
         body['service_type'] = "INTERNAL"
