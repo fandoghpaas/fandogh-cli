@@ -180,8 +180,8 @@ def _parse_ports(internal_ports):
             left, right = port_mapping.split(":")
             result.append(
                 {
-                    "left": left,
-                    "right": right
+                    "port": left,
+                    "target_port": right
                 }
             )
         return result
