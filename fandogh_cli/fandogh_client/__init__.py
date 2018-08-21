@@ -89,6 +89,7 @@ def delete_image(image_name):
     if response.status_code != 200:
         raise get_exception(response)
 
+    return response.json()['message']
 
 def get_images():
     token = get_stored_token()
