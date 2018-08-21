@@ -210,6 +210,7 @@ def deploy_service(image_name, version, service_name, envs, hosts, port, interna
                    internal_ports):
     token = get_stored_token()
     env_variables = _parse_key_values(envs)
+    internal_ports = list(internal_ports)
     internal_ports.append("{}:{}".format(port, port))
     body = {'image_name': image_name,
             'image_version': version,
