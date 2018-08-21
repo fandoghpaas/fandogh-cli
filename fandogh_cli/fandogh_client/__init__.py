@@ -36,6 +36,9 @@ class ResourceNotFoundError(FandoghAPIError):
         if message:
             self.message = message
 
+        if hasattr(self.response, 'json'):
+            self.message = self.response.json().get('message', self.message)
+
 
 class FandoghInternalError(FandoghAPIError):
     message = "Sorry, there is an internal error, the incident has been logged and we will fix it ASAP"
@@ -86,8 +89,11 @@ def delete_image(image_name):
     token = get_stored_token()
     response = requests.delete(base_images_url + '/' + image_name,
                                headers={'Authorization': 'JWT ' + token})
+
     if response.status_code != 200:
         raise get_exception(response)
+
+    return response.json()
 
 
 def get_images():
