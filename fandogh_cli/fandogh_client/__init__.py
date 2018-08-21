@@ -1,3 +1,5 @@
+import json
+
 import requests
 import os
 from fandogh_cli.config import get_user_config
@@ -55,6 +57,15 @@ class FandoghBadRequest(FandoghAPIError):
                 "\n".join([" -> {}: {}".format(k, v) for k, v in response.json().items()]))
         except AttributeError:
             self.message = response.text
+
+
+class CommandParameterException(Exception):
+    def __init__(self, error_dict):
+        try:
+            self.message = "Errors: \n{}".format(
+                "\n".join([" -> {}: {}".format(k, v) for k, v in error_dict]))
+        except AttributeError:
+            self.message = json.dumps(error_dict, indent=' ')
 
 
 def get_stored_token():
@@ -178,19 +189,21 @@ def parse_port_mapping(port_mapping):
     if len(parts) == 3:
         outside, inside, protocol = parts
         if protocol not in ('tcp', 'udp'):
-            raise ValueError("{} is not a valid protocol in {}, protocol can ba tcp or udp",
-                             format(protocol, port_mapping))
+            raise CommandParameterException(
+                {"internal_ports": ["{} is not a valid protocol in {}, protocol can ba tcp or udp",
+                                    format(protocol, port_mapping)]})
     elif len(parts) == 2:
         protocol = "tcp"
         outside, inside = parts
     else:
-        raise ValueError(
-            "{} is not a valid port mapping, use this form outsidePort:insidePort:protocol, "
-            "which protocol is optional and default protocol is tcp".format(port_mapping))
+        raise CommandParameterException(
+            {"internal_ports": ["{} is not a valid port mapping, use this form outsidePort:insidePort:protocol, "
+                                "which protocol is optional and default protocol is tcp".format(port_mapping)]})
     try:
         return dict(outside=int(outside), inside=int(inside), protocol=protocol.lower())
     except ValueError:
-        raise ValueError("{} is not a valid port mapping, port numbers should numbers".format(port_mapping))
+        raise CommandParameterException(
+            {"internal_ports": ["{} is not a valid port mapping, port numbers should numbers".format(port_mapping)]})
 
 
 def deploy_service(image_name, version, service_name, envs, hosts, port, internal, registry_secret, image_pull_policy,
