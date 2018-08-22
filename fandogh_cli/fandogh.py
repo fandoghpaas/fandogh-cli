@@ -32,7 +32,6 @@ def login(username, password):
 
     message = present(lambda: handle_token(), post='Logged in successfully')
 
-    click.clear()
     click.echo(" ___  _   _  _  __   _   __  _ _    __  _   _  _ _  __  ")
     click.echo("| __|/ \ | \| ||  \ / \ / _|| U |  / _|| | / \| | ||  \ ")
     click.echo("| _|| o || \  || o | o | |_n|   | ( (_ | |( o ) U || o )")
@@ -41,13 +40,6 @@ def login(username, password):
     click.echo(message + '\n')
     click.echo('Welcome to Fandogh Cloud, you can start using our PaaS as quickly as a link click, Try it below:\n')
     click.echo('https://docs.fandogh.cloud/docs/getting-started.html\n')
-
-    #TODO
-# click.echo(" ___  _   _  _  __   _   __  _ _ ")
-#         click.echo("| __|/ \ | \| ||  \ / \ / _|| U |")
-#         click.echo("| _|| o || \  || o | o | |_n|   |")
-#         click.echo("|_| |_n_||_|\_||__/ \_/ \__/|_n_|")
-#         click.echo("                                 ")
 
 base.add_command(login)
 base.add_command(image)
