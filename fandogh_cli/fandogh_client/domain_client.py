@@ -27,7 +27,15 @@ def list_domains():
     if response.status_code != 200:
         raise get_exception(response)
     else:
-        return response.json()
+        result = []
+        for domain in response.json():
+            cert = domain.get('certificate', None)
+            if cert is None:
+                domain['certificate'] = "No Certificate"
+            else:
+                domain['certificate'] = cert.get("state", "UNKNOWN")
+            result.append(domain)
+        return result
 
 
 def verify_domain(name):
