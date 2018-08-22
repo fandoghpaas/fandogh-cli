@@ -167,7 +167,7 @@ def list_versions(image_name):
 def _parse_key_values(envs):
     env_variables = {}
     for env in envs:
-        (k, v) = env.split('=')
+        (k, v) = env.split('=', 1)
         env_variables[k] = v
     return env_variables
 
