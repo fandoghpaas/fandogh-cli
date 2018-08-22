@@ -217,7 +217,7 @@ def deploy_service(image_name, version, service_name, envs, hosts, port, interna
             'image_version': version,
             'service_name': service_name,
             'environment_variables': env_variables,
-            'port': port,  # TODO: remove this later
+            'port': port,
             'registry_secret': registry_secret,
             'hosts': hosts,
             'internal_port_mapping': [parse_port_mapping(port_mapping) for port_mapping in internal_ports],
