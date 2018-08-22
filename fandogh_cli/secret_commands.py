@@ -7,7 +7,7 @@ from .base_commands import FandoghCommand
 
 @click.group("secret")
 def secret():
-    """Service management commands"""
+    """Secret management commands"""
 
 
 @click.command("list", cls=FandoghCommand)
