@@ -1,3 +1,5 @@
+import json
+
 import requests
 import os
 from fandogh_cli.config import get_user_config
@@ -55,6 +57,15 @@ class FandoghBadRequest(FandoghAPIError):
                 "\n".join([" -> {}: {}".format(k, v) for k, v in response.json().items()]))
         except AttributeError:
             self.message = response.text
+
+
+class CommandParameterException(Exception):
+    def __init__(self, error_dict):
+        try:
+            self.message = "Errors: \n{}".format(
+                "\n".join([" -> {}: {}".format(k, v) for k, v in error_dict.items()]))
+        except AttributeError:
+            self.message = json.dumps(error_dict, indent=' ')
 
 
 def get_stored_token():
@@ -172,9 +183,36 @@ def _parse_key_values(envs):
     return env_variables
 
 
-def deploy_service(image_name, version, service_name, envs, hosts, port, internal, registry_secret, image_pull_policy):
+def parse_port_mapping(port_mapping):
+    # validate and convert outside:inside:protocol to a nice dict
+    port_mapping = port_mapping.upper()
+    parts = port_mapping.split(":")
+    if len(parts) == 3:
+        outside, inside, protocol = parts
+        if protocol not in ('TCP', 'UDP'):
+            raise CommandParameterException(
+                {"internal_ports": [
+                    "%s is not a valid protocol in %s, protocol can ba tcp or udp" % (protocol, port_mapping)]})
+    elif len(parts) == 2:
+        protocol = "TCP"
+        outside, inside = parts
+    else:
+        raise CommandParameterException(
+            {"internal_ports": ["{} is not a valid port mapping, use this form outsidePort:insidePort:protocol, "
+                                "which protocol is optional and default protocol is tcp".format(port_mapping)]})
+    try:
+        return dict(outside=int(outside), inside=int(inside), protocol=protocol)
+    except ValueError:
+        raise CommandParameterException(
+            {"internal_ports": ["{} is not a valid port mapping, port numbers should be numbers".format(port_mapping)]})
+
+
+def deploy_service(image_name, version, service_name, envs, hosts, port, internal, registry_secret, image_pull_policy,
+                   internal_ports):
     token = get_stored_token()
     env_variables = _parse_key_values(envs)
+    internal_ports = list(internal_ports)
+    internal_ports.append("{}:{}".format(port, port))
     body = {'image_name': image_name,
             'image_version': version,
             'service_name': service_name,
@@ -182,6 +220,7 @@ def deploy_service(image_name, version, service_name, envs, hosts, port, interna
             'port': port,
             'registry_secret': registry_secret,
             'hosts': hosts,
+            'internal_port_mapping': [parse_port_mapping(port_mapping) for port_mapping in internal_ports],
             'image_pull_policy': image_pull_policy}
     if internal:
         body['service_type'] = "INTERNAL"

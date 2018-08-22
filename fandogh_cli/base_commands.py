@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import click
 from click import Command
 from fandogh_cli import NAME
-from fandogh_cli.fandogh_client import FandoghAPIError
+from fandogh_cli.fandogh_client import FandoghAPIError, CommandParameterException
 from fandogh_cli.fandogh_client import AuthenticationError
 from fandogh_cli.utils import debug, TextStyle, format_text
 from fandogh_cli.version_check import get_latest_version, get_current_version, Version
@@ -21,6 +21,9 @@ class FandoghCommand(Command):
             self._check_for_new_version()
             self._check_for_error_collection_permission()
             return super(FandoghCommand, self).invoke(ctx)
+        except CommandParameterException as exp:
+            click.echo(format_text(exp.message, TextStyle.FAIL), err=True)
+            exit(1)
         except FandoghAPIError as exp:
             debug('APIError. status code: {}, content: {}'.format(
                 exp.response.status_code,
