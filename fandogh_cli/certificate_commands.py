@@ -36,13 +36,13 @@ def details(domain_name):
 @click.option('--domain', '-d', 'domain_name', help='domain name', prompt='Domain name')
 def create(domain_name):
     """Request a certificate for a domain"""
-    result = create_certificate(domain_name)
+    create_certificate(domain_name)
     while True:
-        _display_domain_details(result)
-        time.sleep(5)
         result = detail_certificate(domain_name)
+        _display_domain_details(result)
         if result['state'] != "PENDING":
             break
+        time.sleep(5)
 
 
 ssl.add_command(create)
