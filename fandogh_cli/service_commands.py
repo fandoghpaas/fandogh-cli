@@ -112,17 +112,25 @@ def service_apply(file):
 
     deployment_result = deploy_manifest(yml)
     message = "\nCongratulation, Your service is running ^_^\n"
-    if str(deployment_result['service_type']).lower() == "external":
+    service_type = str(deployment_result.get('service_type', '')).lower()
+    print('service_type is {}'.format(service_type))
+
+    if service_type == 'external':
         message += "Your service is accessible using the following URLs:\n{}".format(
             "\n".join([" - {}".format(url) for url in deployment_result['urls']])
         )
-    else:
+    elif service_type == 'internal':
         message += """
     Since your service is internal, it's not accessible from outside your fandogh private network, 
     but other services inside your private network will be able to find it using it's name: '{}'
             """.strip().format(
             deployment_result['name']
         )
+    elif service_type == 'managed':
+        message += """
+        Managed service deployed successfully
+        """
+
     click.echo(message)
 
 
