@@ -1,5 +1,5 @@
 import click
-from fandogh_cli.fandogh_client.certificate_client import detail_certificate, create_certificate
+from fandogh_cli.fandogh_client.delete_later import detail_certificate, create_certificate
 from .utils import format_text, TextStyle
 from .base_commands import FandoghCommand
 import time
