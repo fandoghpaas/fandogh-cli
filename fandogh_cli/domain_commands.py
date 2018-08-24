@@ -130,4 +130,5 @@ def _display_domain_details(domain_details, clear=True):
 domain.add_command(add)
 domain.add_command(list)
 domain.add_command(verify)
+domain.add_command(details)
 domain.add_command(request_certificate)
