@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 import click
-
-from fandogh_cli.certificate_commands import ssl
 from fandogh_cli.secret_commands import secret
 from .domain_commands import domain
 from .image_commands import image
@@ -47,7 +45,6 @@ base.add_command(image)
 base.add_command(service)
 base.add_command(managed_service)
 base.add_command(domain)
-base.add_command(ssl)
 base.add_command(secret)
 
 if __name__ == '__main__':
