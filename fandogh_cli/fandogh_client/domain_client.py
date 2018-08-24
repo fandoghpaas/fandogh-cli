@@ -58,7 +58,7 @@ def details_domain(name):
         return response.json()
 
 
-def request_certificate(name):
+def create_certificate(name):
     token = get_stored_token()
     response = requests.post(base_domains_url + '/' + name + '/certificate',
                              headers={'Authorization': 'JWT ' + token})

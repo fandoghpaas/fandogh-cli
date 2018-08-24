@@ -81,7 +81,7 @@ def request_certificate(name):
     """
     Request a Let's Encrypt SSL/TLS Certificate for a domain
     """
-    request_certificate(name)
+    create_certificate(name)
     while True:
         details = details_domain(name)
         _display_domain_details(details)
