@@ -264,7 +264,7 @@ def get_token(username, password):
         return response.json()
 
 
-def get_logs(service_name):
+def get_logs(service_name, follow):
     token = get_stored_token()
     response = requests.get(base_services_url + '/' + service_name + '/logs',
                             headers={'Authorization': 'JWT ' + token})

@@ -82,10 +82,15 @@ def service_destroy(service_name):
 
 @click.command('logs', cls=FandoghCommand)
 @click.option('--name', 'service_name', prompt='Service name', help="Service name")
-def service_logs(service_name):
+@click.option('--follow', '-f', is_flag=True, default=False, help='Monitoring service real-time logs')
+def service_logs(service_name, follow):
     """Display service logs"""
-    logs_response = get_logs(service_name)
-    click.echo(logs_response['logs'])
+
+    while True:
+        logs_response = get_logs(service_name, follow)
+        click.echo(logs_response['logs'])
+        if not follow:
+            break
 
 
 @click.command('details', cls=FandoghCommand)
