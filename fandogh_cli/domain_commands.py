@@ -110,14 +110,18 @@ def _display_domain_details(domain_details, clear=True):
     if domain_details.get('certificate', None) is None:
         click.echo("\tCertificate: {}".format(format_text("Not requested", TextStyle.OKBLUE)))
     else:
-        status = domain_details['certificate']['status']
+        certificate_details = domain_details['certificate'].get('details')
+        status = certificate_details['status']
         if status == 'PENDING':
             click.echo("\tCertificate: {}".format(format_text('Trying to get a certificate', TextStyle.OKBLUE)))
         elif status == 'ERROR':
             click.echo("\tCertificate: {}".format(format_text('Getting certificate failed', TextStyle.FAIL)))
-            info = domain_details['certificate'].get("info", False)
+            info = certificate_details.get("info", False)
             if info:
                 click.echo("\tInfo: {}".format(format_text(info, TextStyle.FAIL)))
+            click.echo("\tEvents:")
+            for condition in certificate_details.get("events", []):
+                click.echo("\t + {}".format(condition))
         elif status == 'READY':
             click.echo("\tCertificate: {}".format(format_text('Certificate is ready to use', TextStyle.OKGREEN)))
         else:
