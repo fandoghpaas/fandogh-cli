@@ -107,7 +107,7 @@ def _display_domain_details(domain_details, clear=True):
         click.echo("\tVerified: {}".format(format_text("Yes", TextStyle.OKGREEN)))
     else:
         click.echo("\tVerified: {}".format(format_text("Yes", TextStyle.FAIL)))
-    if domain_details['certificate'] is None:
+    if domain_details.get("certificate", None) is None:
         click.echo("\tCertificate: {}".format(format_text("Not requested", TextStyle.OKBLUE)))
     else:
         status = domain_details['certificate']['status']
