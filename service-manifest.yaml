@@ -57,7 +57,16 @@ spec:
       subPath: test
     - name: MyLogs # already created volume
       mountPath: /mnt/logs
-      
+
+  port_mapping:
+    - port: 80
+      targetPort: 80
+      # default protocol is tcp
+
+    - port: 12490
+      targetPort: 12490
+      protocol: udp
+
 
   resources:
     limit:
