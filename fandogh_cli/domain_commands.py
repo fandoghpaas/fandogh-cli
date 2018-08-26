@@ -83,7 +83,8 @@ def request_certificate(name):
     """
     create_certificate(name)
     click.echo("Your request has been submitted and we are trying to get a certificate from Let's Encrypt for your"
-               "domain, you can follow up using `fandogh domain details --name {}`".format(name))
+               "domain, it might get a few minutes to complete.\n"
+               "you can follow up using `fandogh domain details --name {}`.\n".format(name))
 
 
 @click.command('details', cls=FandoghCommand)
