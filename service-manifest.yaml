@@ -2,6 +2,7 @@ kind: ExternalService
 name: hello-world
 spec:
   image: hello-world:v1
+  image_pull_policy: Always # or default is IfNotPresent
   replica: 1
   port: 8080
   path: /v1/
@@ -23,11 +24,11 @@ spec:
       mountPath: /mnt/logs
   port_mapping:
     - port: 8081
-      targetPort: 81
+      target_port: 81
       protocol: tcp
 
     - port: 12490
-      targetPort: 12490
+      target_port: 12490
       protocol: udp
 
     - port: 3312
@@ -46,6 +47,7 @@ kind: InternalService
 name: hello-world
 spec:
   image: hello-world:v1
+  image_pull_policy: Always # or default is IfNotPresent
   replica: 1
   env:
     - name: VERSION
@@ -53,18 +55,18 @@ spec:
 
   volumes:
     - name: default # already created volume
-      mountPath: /mnt/data
-      subPath: test
+      mount_path: /mnt/data
+      sub_path: test
     - name: MyLogs # already created volume
-      mountPath: /mnt/logs
+      moun_path: /mnt/logs
 
   port_mapping:
     - port: 80
-      targetPort: 80
+      target_port: 80
       # default protocol is tcp
 
     - port: 12490
-      targetPort: 12490
+      target_port: 12490
       protocol: udp
 
 
@@ -94,9 +96,9 @@ spec:
 
   volumes:
     - name: default # already created volume  
-      mountPath: /mnt/data
-      subPath: test
+      mount_path: /mnt/data
+      sub_path: test
     - name: MyLogs # already created volume
-      mountPath: /mnt/logs
+      mount_path: /mnt/logs
     
 
