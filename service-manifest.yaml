@@ -5,6 +5,7 @@ spec:
   replica: 1
   port: 8080
   path: /v1/
+  allow_http: true
   env:
     - name: VERSION
       value: v1
@@ -12,8 +13,6 @@ spec:
   domains: 
      - name: api.hello-world.com # already created domain  
        tls: api-hello-world-tls # already created certificate
-       allow_http: true
-
 
   volumes:
     - name: default # already created volume
@@ -22,7 +21,19 @@ spec:
       
     - name: MyLogs # already created volume
       mountPath: /mnt/logs
-      
+  port_mapping:
+    - port: 8081
+      targetPort: 81
+      protocol: tcp
+
+    - port: 12490
+      targetPort: 12490
+      protocol: udp
+
+    - port: 3312
+      targetPort: 1790
+      # default protocol is tcp
+
 
   resources:
     limit:
