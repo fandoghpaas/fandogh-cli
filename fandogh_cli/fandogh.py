@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import click
-
 from fandogh_cli.secret_commands import secret
 from .domain_commands import domain
 from .image_commands import image

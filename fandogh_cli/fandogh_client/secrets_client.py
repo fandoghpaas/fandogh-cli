@@ -16,7 +16,7 @@ def list_secret():
     else:
         result = []
         for secret in response.json():
-            secret["created_at"] = convert_datetime(s["created_at"])
+            secret["created_at"] = convert_datetime(secret["created_at"])
             result.append(
                 secret
             )

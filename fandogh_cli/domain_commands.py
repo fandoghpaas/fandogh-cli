@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import click
+import time
 
 from .fandogh_client.domain_client import *
 from .base_commands import FandoghCommand
@@ -7,7 +8,7 @@ from .presenter import present
 from .utils import format_text, TextStyle
 
 
-@click.group("domain")
+@click.group('domain')
 def domain():
     """
     Domain management commands
@@ -26,7 +27,7 @@ def _verify_ownership(name):
     return response
 
 
-@click.command("add", cls=FandoghCommand)
+@click.command('add', cls=FandoghCommand)
 @click.option('--name', prompt='domain name', help='your domain name')
 def add(name):
     """
@@ -59,8 +60,8 @@ def list():
     """
     table = present(lambda: list_domains(),
                     renderer='table',
-                    headers=['Domain name', 'Verified'],
-                    columns=['name', 'verified'])
+                    headers=['Domain name', 'Verified', 'Certificate'],
+                    columns=['name', 'verified', 'certificate'])
 
     click.echo(table)
 
@@ -74,6 +75,64 @@ def verify(name):
     _verify_ownership(name)
 
 
+@click.command('request-certificate', cls=FandoghCommand)
+@click.option('--name', 'name', prompt='Domain name', help='The domain name')
+def request_certificate(name):
+    """
+    Request a Let's Encrypt SSL/TLS Certificate for a domain
+    """
+    create_certificate(name)
+    while True:
+        details = details_domain(name)
+        _display_domain_details(details)
+        certificate_details = details.get('certificate', {}).get('details', {})
+        if certificate_details.get("status") not in ('PENDING', 'UNKNOWN'):
+            break
+        time.sleep(2)
+
+
+@click.command('details', cls=FandoghCommand)
+@click.option('--name', 'name', prompt='Domain name', help='The domain name')
+def details(name):
+    """
+    Get details of a domain
+    """
+    _display_domain_details(details_domain(name), clear=False)
+
+
+def _display_domain_details(domain_details, clear=True):
+    if clear:
+        click.clear()
+    click.echo('Domain: {}'.format(format_text(domain_details['name'], TextStyle.HEADER)))
+    if domain_details['verified'] is True:
+        click.echo('\tVerified: {}'.format(format_text("Yes", TextStyle.OKGREEN)))
+    else:
+        click.echo('\tVerified: {}'.format(format_text("Yes", TextStyle.FAIL)))
+    if domain_details.get('certificate', None) is None:
+        click.echo("\tCertificate: {}".format(format_text("Not requested", TextStyle.OKBLUE)))
+    else:
+        certificate_details = domain_details['certificate'].get('details')
+        status = certificate_details['status']
+        if status == 'PENDING':
+            click.echo("\tCertificate: {}".format(format_text('Trying to get a certificate', TextStyle.OKBLUE)))
+        elif status == 'ERROR':
+            click.echo("\tCertificate: {}".format(format_text('Getting certificate failed', TextStyle.FAIL)))
+        elif status == 'READY':
+            click.echo("\tCertificate: {}".format(format_text('Certificate is ready to use', TextStyle.OKGREEN)))
+        else:
+            click.echo('\tCertificate: {}'.format(format_text('Certificate status is unknown', TextStyle.WARNING)))
+
+        info = certificate_details.get("info", False)
+        if info:
+            click.echo('\tInfo: {}'.format(format_text(info, TextStyle.WARNING)))
+        if len(certificate_details.get('events', [])) > 0:
+            click.echo("\tEvents:")
+            for condition in certificate_details.get("events", []):
+                click.echo("\t + {}".format(condition))
+
+
 domain.add_command(add)
 domain.add_command(list)
 domain.add_command(verify)
+domain.add_command(details)
+domain.add_command(request_certificate)
