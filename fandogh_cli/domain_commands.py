@@ -82,13 +82,10 @@ def request_certificate(name):
     Request a Let's Encrypt SSL/TLS Certificate for a domain
     """
     create_certificate(name)
-    while True:
-        details = details_domain(name)
-        _display_domain_details(details)
-        certificate_details = details.get('certificate', {}).get('details', {})
-        if certificate_details.get("status") not in ('PENDING', 'UNKNOWN'):
-            break
-        time.sleep(2)
+    command = format_text("fandogh domain details --name {}".format(name), TextStyle.OKBLUE)
+    click.echo("Your request has been submitted and we are trying to get a certificate from Let's Encrypt for your"
+               "domain, it might get a few minutes to complete.\n"
+               "you can follow up your request using {}".format(command))
 
 
 @click.command('details', cls=FandoghCommand)
