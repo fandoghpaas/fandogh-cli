@@ -37,3 +37,14 @@ def create_secret(name, secret_type, fields):
         raise get_exception(response)
     else:
         return response.json()
+
+
+def delete_secret(name, ):
+    token = get_stored_token()
+    response = requests.delete(base_secrets_url + "/" + name,
+                               headers={'Authorization': 'JWT ' + token},
+                               )
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        return response.json()
