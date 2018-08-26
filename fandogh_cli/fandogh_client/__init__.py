@@ -264,10 +264,12 @@ def get_token(username, password):
         return response.json()
 
 
-def get_logs(service_name, follow):
+def get_logs(service_name, last_logged_time):
     token = get_stored_token()
+
     response = requests.get(base_services_url + '/' + service_name + '/logs',
-                            headers={'Authorization': 'JWT ' + token})
+                            headers={'Authorization': 'JWT ' + token}, params={'last_logged_time': last_logged_time})
+
     if response.status_code == 200:
         return response.json()
     else:

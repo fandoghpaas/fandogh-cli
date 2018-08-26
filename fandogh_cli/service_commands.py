@@ -4,7 +4,7 @@ from .config import get_project_config
 from .presenter import present
 from .utils import format_text, TextStyle
 from .base_commands import FandoghCommand
-
+from time import sleep
 
 @click.group("service")
 def service():
@@ -85,12 +85,18 @@ def service_destroy(service_name):
 @click.option('--follow', '-f', is_flag=True, default=False, help='Monitoring service real-time logs')
 def service_logs(service_name, follow):
     """Display service logs"""
+    last_logged_time = 0
 
     while True:
-        logs_response = get_logs(service_name, follow)
+        logs_response = get_logs(service_name, last_logged_time)
         click.echo(logs_response['logs'])
+
+        if follow:
+            last_logged_time = logs_response['last_logged_time']
+
         if not follow:
             break
+        sleep(3)
 
 
 @click.command('details', cls=FandoghCommand)
