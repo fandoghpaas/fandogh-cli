@@ -3,6 +3,7 @@ name: hello-world
 spec:
   image: hello-world:v1
   image_pull_policy: Always # or default is IfNotPresent
+  image_pull_secret: "my-private-registry-secret"
   replica: 1
   port: 8080
   path: /v1/
@@ -48,6 +49,7 @@ name: hello-world
 spec:
   image: hello-world:v1
   image_pull_policy: Always # or default is IfNotPresent
+  image_pull_secret: "my-private-registry-secret"
   replica: 1
   env:
     - name: VERSION
