@@ -85,7 +85,8 @@ def request_certificate(name):
     while True:
         details = details_domain(name)
         _display_domain_details(details)
-        if details['certificate']['status'] != 'PENDING':
+        certificate_details = details.get('certificate', {}).get('details', {})
+        if certificate_details.get("status") not in ('PENDING', 'UNKNOWN'):
             break
         time.sleep(2)
 
@@ -116,19 +117,18 @@ def _display_domain_details(domain_details, clear=True):
             click.echo("\tCertificate: {}".format(format_text('Trying to get a certificate', TextStyle.OKBLUE)))
         elif status == 'ERROR':
             click.echo("\tCertificate: {}".format(format_text('Getting certificate failed', TextStyle.FAIL)))
-            info = certificate_details.get("info", False)
-            if info:
-                click.echo("\tInfo: {}".format(format_text(info, TextStyle.FAIL)))
-            click.echo("\tEvents:")
-            for condition in certificate_details.get("events", []):
-                click.echo("\t + {}".format(condition))
         elif status == 'READY':
             click.echo("\tCertificate: {}".format(format_text('Certificate is ready to use', TextStyle.OKGREEN)))
         else:
             click.echo('\tCertificate: {}'.format(format_text('Certificate status is unknown', TextStyle.WARNING)))
-            info = domain_details['certificate'].get("info", False)
-            if info:
-                click.echo('\tInfo: {}'.format(format_text(info, TextStyle.WARNING)))
+
+        info = certificate_details.get("info", False)
+        if info:
+            click.echo('\tInfo: {}'.format(format_text(info, TextStyle.WARNING)))
+        if len(certificate_details.get('events', [])) > 0:
+            click.echo("\tEvents:")
+            for condition in certificate_details.get("events", []):
+                click.echo("\t + {}".format(condition))
 
 
 domain.add_command(add)
