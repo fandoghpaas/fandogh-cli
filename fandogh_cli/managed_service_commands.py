@@ -1,15 +1,12 @@
 import click
-
 from .fandogh_client import *
-from .utils import login_required, format_text, TextStyle
-from .config import get_user_config
+from .utils import format_text, TextStyle
 from .base_commands import FandoghCommand
 
 
 @click.group("managed-service")
 def managed_service():
     """Service management commands"""
-    pass
 
 
 @click.command("deploy", cls=FandoghCommand)
@@ -17,12 +14,10 @@ def managed_service():
 @click.argument('version', nargs=1)
 @click.option('-c', '--config', 'configs', help='Managed service configuration (format: VARIABLE_NAME=VARIABLE_VALUE)',
               multiple=True)
-@login_required
 def deploy(name, version, configs):
     """Deploy Managed Service"""
     try:
-        token = get_user_config().get('token')
-        response = deploy_managed_service(name, version, configs, token)
+        response = deploy_managed_service(name, version, configs)
         click.echo(response.get('message'))
     except FandoghBadRequest:
         click.echo(format_text(
@@ -32,13 +27,10 @@ def deploy(name, version, configs):
         raise
 
 
-
 @click.command("help", cls=FandoghCommand)
-@login_required
 def help():
     """Display Help for Managed Service"""
-    token = get_user_config().get('token')
-    managed_services = help_managed_service(token)
+    managed_services = help_managed_service()
     click.echo(format_text(
         "List of Fandogh managed services:", TextStyle.OKBLUE
     ))

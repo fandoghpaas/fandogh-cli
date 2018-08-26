@@ -108,7 +108,7 @@ http://mysql.your_namespace.fandogh.cloud
 
 From your services you can access to the Mysql by using `mysql:3306` address. 
 
-#### Configuration
+##### Configuration
 There are couple of configuration that you can pass to Fandogh when you are deploying a Mysql service:
 
 * `service_name default: mysql` 
@@ -125,5 +125,69 @@ There are couple of configuration that you can pass to Fandogh when you are depl
     
 Example:
 ```bash
-$ fandogh managed-service deploy mysql 9.4 -c service_name=test-dbms -c phpmyadmin_enabled=false -c mysql_root_password=test123
+$ fandogh managed-service deploy mysql 9.4 \
+      -c service_name=test-dbms \
+      -c phpmyadmin_enabled=false \
+      -c mysql_root_password=test123
 ```
+
+### Postgresql Service
+
+The Postgresql Managed Service on Fandogh consist of Postgresql RDBMS itself and Web UI (Adminer) that let you to manage your DBMS as easy as possible.
+In order to log into the Adminer UI you can use the `postgres` user credentials.
+ 
+Username: postgres
+
+password: postgres (can be changed through config options)
+
+You can deploy a Postgresql Server in your namespace by running the following command:
+
+```bash
+$ fandogh managed-service deploy postgresql 10.4
+
+Your Postgresql service will be ready in a few seconds.
+You can have access to the Adminer via following link:
+http://postgresql.your_namespace.fandogh.cloud
+```  
+
+From your services you can access to the service by using `postgresql:5432` address. 
+
+##### Configuration
+There are couple of configuration that you can pass to Fandogh when you are deploying a Postgresql service:
+
+* `service_name default: postgresql` 
+
+    The value of this field will be the name of your DBMS. as the result this name will change the URL of your phpmyadmin panel. 
+    e.g. If you set `service_name=test-dbms` then the admin URL will be something like `http://test-dbms.your_namespace.fandogh.cloud`
+* `adminer_enabled default: true`  
+
+    This is a boolean field that indicates if you want to have adminer running for this RDBMS or not.
+    e.g. If you set `adminer_enabled=false` then the adminer panel won't be deployed for the given DBMS.
+    
+* `postgres_password default: postgres`
+ 
+    The value of this field will be the password of user `postgres`.
+    
+Example:
+```bash
+$ fandogh managed-service deploy postgresql 10.4 \
+       -c service_name=test-dbms \ 
+       -c adminer_enabled=false \
+       -c postgres_password=test123
+```
+
+
+## Custom domain
+Normally your external services is accessible via `service-name-namespace.fandogh.cloud` on HTTP and HTTPS,
+but you might like to use your custom domain name, like somedomain.com.
+in order to do this you need to submit and verify your domain in fandogh, it's easy :
+1. first run `fandogh domain add --name=somedomain.com`
+2. if you're adding a subdomain of a verified domain you don't need verification, for example if you already verified `tehran.myservice.com` then `api.tehran.myservice.com` doesn't need verification, you just need to add it.
+3. if your domain needs verification, it will stop and show you a *key*, you need to create a TXT record in your domain with the *key* value.
+4. after you added the record, press **y** and enter so fandogh server verify your TXT record.
+5. Now we route all traffic with `somedomain.com` in Host header to your service, you just need to add a CNAME record
+pointing your domain to actual service address, for example `service-name-namespace.fandogh.cloud`
+if everything goes well, you should be able to use your domain to access your service.
+
+**Tip: If you verify a domain, all subdomains of that domain will not require verification, but you should add them before using them**    
+**Remember**, if you use a domain like `api.somedomain.com`, then you should set TXT record on `api.somedomain.com` not `somedomain.com`.

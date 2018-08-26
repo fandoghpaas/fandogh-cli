@@ -1,2 +1,2 @@
-VERSION = "0.3.16"
+VERSION = "0.5.9"
 NAME = "fandogh_cli"

@@ -34,8 +34,8 @@ class ConfigRepository:
         if save:
             self.save()
 
-    def get(self, key):
-        return self._configs.get(key, None)
+    def get(self, key, default=None):
+        return self._configs.get(key, default)
 
     def save(self):
         if self.configuration_file:
@@ -43,19 +43,18 @@ class ConfigRepository:
                 cfile.write(dump(self._configs, default_flow_style=False))
 
 
-def _initialize_configuration():
-    return {
-        'project': ConfigRepository(os.path.join(os.getcwd(), '.fandogh', 'config.yml')),
-        'user': ConfigRepository(os.path.join(os.path.expanduser('~'), '.fandogh', 'credentials.yml'))
-    }
-
-
-_config_repository = _initialize_configuration()
+_config_repository = {}
 
 
 def get_project_config():
+    if 'project' not in _config_repository:
+        _config_repository['project'] = ConfigRepository(os.path.join(os.getcwd(), '.fandogh', 'config.yml'))
     return _config_repository['project']
 
 
 def get_user_config():
+    if 'user' not in _config_repository:
+        _config_repository['user'] = ConfigRepository(
+            os.path.join(os.path.expanduser('~'), '.fandogh', 'credentials.yml')
+        )
     return _config_repository['user']

@@ -21,11 +21,11 @@ def collect(cmd, ctx, exception=None):
             info = dict(_static_info)
             info['cmd'] = cmd.name
             info['params'] = ctx.params
-            info['error'] = exception.message if exception else ''
+            info['error'] = exception.message if hasattr(exception, 'message') else str(exception)
 
             report(info)
 
     except Exception as e:
         click.echo(format_text('Error in reporting problem. Please share this error with to help us to improve the service.', TextStyle.FAIL), err=True)
-        click.echo(format_text('Caused by {}'.format(exception.message), TextStyle.FAIL), err=True)
+        click.echo(format_text('Caused by {}'.format(exception), TextStyle.FAIL), err=True)
         click.echo(format_text('Report error: {}'.format(e), TextStyle.FAIL), err=True)

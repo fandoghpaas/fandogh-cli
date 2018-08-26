@@ -1,16 +1,14 @@
 import click
-
 from .fandogh_client import *
-from .utils import login_required
-from .config import get_project_config, get_user_config
+from .config import get_project_config
 from .presenter import present
+from .utils import format_text, TextStyle
 from .base_commands import FandoghCommand
 
 
 @click.group("service")
 def service():
     """Service management commands"""
-    pass
 
 
 @click.command("deploy", cls=FandoghCommand)
@@ -18,19 +16,18 @@ def service():
 @click.option('--version', '-v', prompt='The image version', help='The image version you want to deploy')
 @click.option('--name', prompt='Your service name', help='Choose a unique name for your service')
 @click.option('--env', '-e', 'envs', help='Environment variables (format: VARIABLE_NAME=VARIABLE_VALUE)', multiple=True)
+@click.option('--hosts', '-h', 'hosts', help='Custom hosts that service should be accessible through', multiple=True)
 @click.option('--port', '-p', 'port', help='The service port that will be exposed on port 80 to worldwide', default=80)
 @click.option('--internal', help='This is an internal service like a DB and the port should '
                                  'not be exposed publicly', default=False, is_flag=True)
-@login_required
-def deploy(image, version, name, port, envs, internal):
+def deploy(image, version, name, port, envs, hosts, internal):
     """Deploy service"""
-    token = get_user_config().get('token')
     if not image:
         image = get_project_config().get('image.name')
         if not image:
-            click.echo('please declare the image name', err=True)
+            click.echo(format_text('please declare the image name', TextStyle.FAIL), err=True)
 
-    deployment_result = deploy_service(image, version, name, envs, port, token, internal)
+    deployment_result = deploy_service(image, version, name, envs, hosts, port, internal)
     message = "\nCongratulation, Your service is running ^_^\n"
     if str(deployment_result['service_type']).lower() == "external":
         message += "Your service is accessible using the following URLs:\n{}".format(
@@ -47,13 +44,9 @@ but other services inside your private network will be able to find it using it'
 
 
 @click.command('list', cls=FandoghCommand)
-@click.option('-a', 'show_all', is_flag=True, default=False,
-              help='show all the services regardless if it\'s running or not')
-@login_required
-def service_list(show_all):
-    """List available service for this image"""
-    token = get_user_config().get('token')
-    table = present(lambda: list_services(token, show_all),
+def service_list():
+    """List all services for this image"""
+    table = present(lambda: list_services(),
                     renderer='table',
                     headers=['Service Name', 'URL', 'Service Type', 'Started at', 'State'],
                     columns=['name', 'url', 'service_type', 'start_date', 'state'])
@@ -61,26 +54,89 @@ def service_list(show_all):
 
 
 @click.command('destroy', cls=FandoghCommand)
-@login_required
-@click.option('--name', 'service_name', prompt='Name of the service you want to destroy', )
+@click.option('--name', 'service_name', prompt='Service name', help='Name of the service you want to destroy')
 def service_destroy(service_name):
     """Destroy service"""
-    token = get_user_config().get('token')
-    message = present(lambda: destroy_service(service_name, token))
+    message = present(lambda: destroy_service(service_name))
     click.echo(message)
 
 
 @click.command('logs', cls=FandoghCommand)
-@click.option('--name', 'service_name', prompt='service_name', help="Service name")
-@login_required
+@click.option('--name', 'service_name', prompt='Service name', help="Service name")
 def service_logs(service_name):
     """Display service logs"""
-    token_obj = get_user_config().get('token')
-    logs = present(lambda: get_logs(service_name, token_obj))
-    click.echo(logs)
+    logs_response = get_logs(service_name)
+    click.echo(logs_response['logs'])
+
+
+@click.command('details', cls=FandoghCommand)
+@click.option('--name', 'service_name', prompt='Service name')
+def service_details(service_name):
+    """Display service details"""
+    details = get_details(service_name)
+
+    if not details:
+        return
+
+    click.echo('Pods:')
+    for pod in details['pods']:
+        click.echo('  Name: {}'.format(pod['name']))
+        click.echo('  Phase: {}'.format(
+            format_text(pod['phase'], TextStyle.OKGREEN)
+            if pod['phase'] == 'Running'
+            else format_text(pod['phase'], TextStyle.WARNING)
+        ))
+        click.echo('  Containers:')
+        for container in pod['containers']:
+            click.echo('    Name: {}'.format(container['name']))
+            click.echo('    Image: {}'.format(container['image']))
+            click.echo('    Staus: {}'.format(format_text('Ready', TextStyle.OKGREEN) if container['ready']
+                                              else format_text(container['waiting']['reason'], TextStyle.WARNING)))
+            click.echo('    ---------------------')
+
+
+@click.command('apply', cls=FandoghCommand)
+@click.option('-f', '--file', 'file', prompt='File address')
+def service_apply(file):
+    try:
+        with open(file, mode='r') as manifest:
+            manifest_content = manifest.read()
+            click.echo(manifest_content)
+    except FileNotFoundError as e:
+        click.echo(format_text(e.strerror, TextStyle.FAIL), err=True)
+        return
+
+    from yaml import load
+
+    yml = load(manifest_content)
+
+    deployment_result = deploy_manifest(yml)
+    message = "\nCongratulation, Your service is running ^_^\n"
+    service_type = str(deployment_result.get('service_type', '')).lower()
+    print('service_type is {}'.format(service_type))
+
+    if service_type == 'external':
+        message += "Your service is accessible using the following URLs:\n{}".format(
+            "\n".join([" - {}".format(url) for url in deployment_result['urls']])
+        )
+    elif service_type == 'internal':
+        message += """
+    Since your service is internal, it's not accessible from outside your fandogh private network, 
+    but other services inside your private network will be able to find it using it's name: '{}'
+            """.strip().format(
+            deployment_result['name']
+        )
+    elif service_type == 'managed':
+        message += """
+        Managed service deployed successfully
+        """
+
+    click.echo(message)
 
 
 service.add_command(deploy)
+service.add_command(service_apply)
 service.add_command(service_list)
 service.add_command(service_destroy)
 service.add_command(service_logs)
+service.add_command(service_details)
