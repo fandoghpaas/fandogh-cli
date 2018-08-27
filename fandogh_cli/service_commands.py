@@ -6,6 +6,7 @@ from .utils import format_text, TextStyle
 from .base_commands import FandoghCommand
 from time import sleep
 
+
 @click.group("service")
 def service():
     """Service management commands"""
@@ -41,7 +42,8 @@ def deploy(image, version, name, port, envs, hosts, internal, registry_secret, i
                     format_text("It's not possible to perform deploy operation withou image name", TextStyle.FAIL),
                     err=True)
                 exit(-1)
-    deployment_result = deploy_service(image, version, name, envs, hosts, port, internal, registry_secret, image_pull_policy, internal_ports)
+    deployment_result = deploy_service(image, version, name, envs, hosts, port, internal, registry_secret,
+                                       image_pull_policy, internal_ports)
     message = "\nCongratulation, Your service is running ^_^\n"
     if str(deployment_result['service_type']).lower() == "external":
         message += "Your service is accessible using the following URLs:\n{}".format(
@@ -89,7 +91,9 @@ def service_logs(service_name, follow):
 
     while True:
         logs_response = get_logs(service_name, last_logged_time)
-        click.echo(logs_response['logs'])
+
+        if logs_response['logs']:
+            click.echo(logs_response['logs'])
 
         if follow:
             last_logged_time = logs_response['last_logged_time']
