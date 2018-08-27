@@ -75,7 +75,7 @@ def service_list():
 
 
 @click.command('destroy', cls=FandoghCommand)
-@click.option('--name', 'service_name', prompt='Service name', help='Name of the service you want to destroy')
+@click.option('--name', '-s', '--service', 'service_name', prompt='Service name', help='Name of the service you want to destroy')
 def service_destroy(service_name):
     """Destroy service"""
     message = present(lambda: destroy_service(service_name))
