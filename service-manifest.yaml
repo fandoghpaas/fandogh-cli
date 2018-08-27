@@ -38,10 +38,9 @@ spec:
 
 
   resources:
-    limit:
-      memory: 200Mi
-      cpu: 0.2
-      
+    memory: 200Mi
+    cpu: 0.2
+
       
 
 kind: InternalService
@@ -73,9 +72,8 @@ spec:
 
 
   resources:
-    limit:
-      memory: 200Mi
-      cpu: 0.2
+    memory: 200Mi
+    cpu: 0.2
 
 
 
