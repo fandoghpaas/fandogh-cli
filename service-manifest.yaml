@@ -4,7 +4,7 @@ spec:
   image: hello-world:v1
   image_pull_policy: Always # or default is IfNotPresent
   image_pull_secret: "my-private-registry-secret"
-  replica: 1
+  replicas: 1
   port: 8080
   path: /v1/
   allow_http: true
@@ -50,7 +50,7 @@ spec:
   image: hello-world:v1
   image_pull_policy: Always # or default is IfNotPresent
   image_pull_secret: "my-private-registry-secret"
-  replica: 1
+  replicas: 1
   env:
     - name: VERSION
       value: v1
