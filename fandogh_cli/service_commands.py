@@ -129,7 +129,47 @@ def service_details(service_name):
             click.echo('    ---------------------')
 
 
+@click.command('apply', cls=FandoghCommand)
+@click.option('-f', '--file', 'file', prompt='File address')
+def service_apply(file):
+    """Deploys a service defined as a manifest"""
+    try:
+        with open(file, mode='r') as manifest:
+            manifest_content = manifest.read()
+            click.echo(manifest_content)
+    except FileNotFoundError as e:
+        click.echo(format_text(e.strerror, TextStyle.FAIL), err=True)
+        return
+
+    from yaml import load
+
+    yml = load(manifest_content)
+
+    deployment_result = deploy_manifest(yml)
+    message = "\nCongratulation, Your service is running ^_^\n"
+    service_type = str(deployment_result.get('service_type', '')).lower()
+
+    if service_type == 'external':
+        message += "Your service is accessible using the following URLs:\n{}".format(
+            "\n".join([" - {}".format(url) for url in deployment_result['urls']])
+        )
+    elif service_type == 'internal':
+        message += """
+    Since your service is internal, it's not accessible from outside your fandogh private network, 
+    but other services inside your private network will be able to find it using it's name: '{}'
+            """.strip().format(
+            deployment_result['name']
+        )
+    elif service_type == 'managed':
+        message += """
+        Managed service deployed successfully
+        """
+
+    click.echo(message)
+
+
 service.add_command(deploy)
+service.add_command(service_apply)
 service.add_command(service_list)
 service.add_command(service_destroy)
 service.add_command(service_logs)

@@ -308,3 +308,15 @@ def help_managed_service():
         raise get_exception(response)
     else:
         return response.json()
+
+
+def deploy_manifest(manifest):
+    token = get_stored_token()
+    response = requests.post(base_services_url + '/manifests',
+                             json=manifest,
+                             headers={'Authorization': 'JWT ' + token}
+                             )
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        return response.json()
