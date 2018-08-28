@@ -98,6 +98,7 @@ def service_details(service_name):
 @click.command('apply', cls=FandoghCommand)
 @click.option('-f', '--file', 'file', prompt='File address')
 def service_apply(file):
+    """Deploys a service defined as a manifest"""
     try:
         with open(file, mode='r') as manifest:
             manifest_content = manifest.read()
@@ -113,7 +114,6 @@ def service_apply(file):
     deployment_result = deploy_manifest(yml)
     message = "\nCongratulation, Your service is running ^_^\n"
     service_type = str(deployment_result.get('service_type', '')).lower()
-    print('service_type is {}'.format(service_type))
 
     if service_type == 'external':
         message += "Your service is accessible using the following URLs:\n{}".format(
