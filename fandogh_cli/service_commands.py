@@ -75,7 +75,8 @@ def service_list():
 
 
 @click.command('destroy', cls=FandoghCommand)
-@click.option('--name', '-s', '--service', 'service_name', prompt='Service name', help='Name of the service you want to destroy')
+@click.option('--name', '-s', '--service', 'service_name', prompt='Service name',
+              help='Name of the service you want to destroy')
 def service_destroy(service_name):
     """Destroy service"""
     message = present(lambda: destroy_service(service_name))
@@ -125,8 +126,18 @@ def service_details(service_name):
             click.echo('    Name: {}'.format(container['name']))
             click.echo('    Image: {}'.format(container['image']))
             click.echo('    Staus: {}'.format(format_text('Ready', TextStyle.OKGREEN) if container['ready']
-                                              else format_text(container['waiting']['reason'], TextStyle.WARNING)))
+                                              else format_text(
+                (container.get('waiting', {}) or {}).get('reason', 'Pending'),
+                TextStyle.WARNING)))
             click.echo('    ---------------------')
+
+        if pod.get('events', []):
+            click.echo('    Events:')
+            click.echo(
+                present(lambda: pod.get('events'), renderer='table',
+                        headers=['Reason', 'Message', 'Count', 'First Seen', 'Last Seen'],
+                        columns=['reason', 'message', 'count', 'first_timestamp', 'last_timestamp'])
+            )
 
 
 @click.command('apply', cls=FandoghCommand)
