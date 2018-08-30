@@ -126,8 +126,9 @@ def service_details(service_name):
             click.echo('    Name: {}'.format(container['name']))
             click.echo('    Image: {}'.format(container['image']))
             click.echo('    Staus: {}'.format(format_text('Ready', TextStyle.OKGREEN) if container['ready']
-                                              else format_text(container.get('waiting', {}).get('reason', 'Pending'),
-                                                               TextStyle.WARNING)))
+                                              else format_text(
+                (container.get('waiting', {}) or {}).get('reason', 'Pending'),
+                TextStyle.WARNING)))
             click.echo('    ---------------------')
 
         if pod.get('events', []):
