@@ -62,25 +62,19 @@ def list_images():
 
 def show_image_logs(image_name, version):
     image_offset = 0
-    counter = 0
 
     if not image_name:
         image_name = get_project_config().get('image.name')
     while True:
         response = get_image_build(image_name, version, image_offset)
 
-        if response.get('state') == 'PENDING' and \
-                counter < 45:
-            counter += 1
-            sleep(4)
-            continue
-
         image_offset = response.get('lines_count')
         logs = response.get('logs')
 
         if logs.strip():
             click.echo(response.get('logs'))
-        if response.get('state') != 'BUILDING':
+        if response.get('state') != 'BUILDING' and \
+                response.get('state') != 'PENDING':
             break
         sleep(1)
     if response.get('state') == 'FAILED':
