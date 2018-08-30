@@ -121,6 +121,15 @@ def service_details(service_name):
             if pod['phase'] == 'Running'
             else format_text(pod['phase'], TextStyle.WARNING)
         ))
+        containers = pod.get('containers', [])
+        containers_length = len(containers)
+        ready_containers = list(filter(lambda c: c.get('ready', False), containers))
+        ready_containers_length = len(ready_containers)
+        if ready_containers_length != containers_length:
+            pod_ready_message = '  Ready containers:' + format_text(' {}/{}'.format(ready_containers_length, containers_length), TextStyle.WARNING)
+        else:
+            pod_ready_message = format_text('  Ready containers: {}/{}'.format(containers_length, containers_length), TextStyle.OKGREEN)
+        click.echo(pod_ready_message)
         click.echo('  Containers:')
         for container in pod['containers']:
             click.echo('    Name: {}'.format(container['name']))
@@ -131,7 +140,7 @@ def service_details(service_name):
                 TextStyle.WARNING)))
             click.echo('    ---------------------')
 
-        if pod.get('events', []):
+        if pod.get('events', []) and containers_length != ready_containers_length:
             click.echo('    Events:')
             click.echo(
                 present(lambda: pod.get('events'), renderer='table',
