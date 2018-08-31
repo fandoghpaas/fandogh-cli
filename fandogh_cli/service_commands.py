@@ -128,7 +128,7 @@ def service_details(service_name):
         if ready_containers_length != containers_length:
             pod_ready_message = '  Ready containers:' + format_text(' {}/{}'.format(ready_containers_length, containers_length), TextStyle.WARNING)
         else:
-            pod_ready_message = format_text('  Ready containers: {}/{}'.format(containers_length, containers_length), TextStyle.OKGREEN)
+            pod_ready_message = '  Ready containers:' + format_text(' {}/{}'.format(containers_length, containers_length), TextStyle.OKGREEN)
         click.echo(pod_ready_message)
         click.echo('  Containers:')
         for container in pod['containers']:
