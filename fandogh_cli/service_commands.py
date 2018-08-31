@@ -116,6 +116,7 @@ def service_details(service_name):
     click.echo('Pods:')
     for pod in details['pods']:
         click.echo('  Name: {}'.format(pod['name']))
+        click.echo('  Created at: {}'.format(pod.get("created_at", "UNKNOWN")))
         click.echo('  Phase: {}'.format(
             format_text(pod['phase'], TextStyle.OKGREEN)
             if pod['phase'] == 'Running'
