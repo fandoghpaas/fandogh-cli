@@ -46,8 +46,11 @@ def format_text(text, style):
     return "{}{}{}".format(style, text, TextStyle.ENDC)
 
 
+DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
+
+
 def convert_datetime(datetime_value):
-    return str(USER_TIMEZONE.fromutc(datetime.strptime(datetime_value, "%Y-%m-%dT%H:%M:%SZ")))
+    return str(USER_TIMEZONE.fromutc(datetime.strptime(datetime_value, DATETIME_FORMAT)))
 
 
 def get_window_width():
