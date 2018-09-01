@@ -55,7 +55,8 @@ def convert_datetime(datetime_value):
 
 def get_window_width():
     try:
-        columns = os.popen('stty size', 'r').read().split()[1]
-        return int(columns)
+        with os.popen('stty size', 'r') as  size:
+            columns = size.read().split()[1]
+            return int(columns)
     except Exception as exp:
         return None
