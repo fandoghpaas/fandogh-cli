@@ -3,6 +3,7 @@ import json
 import requests
 import os
 from fandogh_cli.config import get_user_config
+from fandogh_cli.utils import convert_datetime
 
 fandogh_host = os.getenv('FANDOGH_HOST', 'https://api.fandogh.cloud')
 base_url = '%s/api/' % fandogh_host
@@ -243,6 +244,11 @@ def list_services():
         raise get_exception(response)
     else:
         json_result = response.json()
+        for service in json_result:
+            if 'start_date' in service:
+                service['start_date'] = convert_datetime(service['start_date'])
+            if 'last_update' in service:
+                service['last_update'] = convert_datetime(service['last_update'])
         return json_result
 
 
