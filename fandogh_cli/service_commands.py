@@ -64,8 +64,8 @@ def service_list():
     """List all services for this image"""
     table = present(lambda: list_services(),
                     renderer='table',
-                    headers=['Service Name', 'URL', 'Service Type', 'Started at', 'State'],
-                    columns=['name', 'url', 'service_type', 'start_date', 'state'])
+                    headers=['Service Name', 'URL', 'Service Type', 'Started at', 'Updated at', 'State'],
+                    columns=['name', 'url', 'service_type', 'start_date', 'last_update', 'state', ])
     if table:
         click.echo(table)
     else:
