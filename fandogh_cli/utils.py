@@ -50,7 +50,9 @@ DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 
 
 def convert_datetime(datetime_value):
-    return str(USER_TIMEZONE.fromutc(datetime.strptime(datetime_value, DATETIME_FORMAT)))
+    if datetime_value:
+        return str(USER_TIMEZONE.fromutc(datetime.strptime(datetime_value, DATETIME_FORMAT)))
+    return None
 
 
 def get_window_width():
