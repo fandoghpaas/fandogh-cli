@@ -1,12 +1,15 @@
 from beautifultable import BeautifulTable
 import os
 
+from fandogh_cli.utils import get_window_width
 
 FANDOGH_DEBUG = os.environ.get('FANDOGH_DEBUG', False)
 
 
 def _create_table(columns):
-    table = BeautifulTable(max_width=120)
+    min_width = 80
+    width = max(min_width, get_window_width() or 160)
+    table = BeautifulTable(max_width=width)
     table.column_headers = columns
     table.row_separator_char = ''
     return table
