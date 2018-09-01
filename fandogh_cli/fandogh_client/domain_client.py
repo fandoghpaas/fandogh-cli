@@ -66,3 +66,13 @@ def create_certificate(name):
         raise get_exception(response)
     else:
         return response.json()
+
+
+def delete_certificate(name):
+    token = get_stored_token()
+    response = requests.delete(base_domains_url + '/' + name + '/certificate',
+                             headers={'Authorization': 'JWT ' + token})
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        return response.json()
