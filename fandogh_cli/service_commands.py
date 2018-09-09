@@ -26,7 +26,6 @@ def service():
                                  'not be exposed publicly', default=False, is_flag=True)
 @click.option('--image-pull-policy', 'image_pull_policy', default='IfNotPresent')
 def deploy(image, version, name, port, envs, hosts, internal, registry_secret, image_pull_policy, internal_ports):
-    """Deploy service"""
     if not image:
         image = get_project_config().get('image.name')
         if not image:
@@ -42,20 +41,29 @@ def deploy(image, version, name, port, envs, hosts, internal, registry_secret, i
                     format_text("It's not possible to perform deploy operation withou image name", TextStyle.FAIL),
                     err=True)
                 exit(-1)
-    deployment_result = deploy_service(image, version, name, envs, hosts, port, internal, registry_secret,
-                                       image_pull_policy, internal_ports)
+
+    deployment_result = deploy_manifest(_generate_manifest_yaml(image, version, name, port, envs, hosts, internal,
+                                                               registry_secret, image_pull_policy,
+                                                               internal_ports))
     message = "\nCongratulation, Your service is running ^_^\n"
-    if str(deployment_result['service_type']).lower() == "external":
+    service_type = str(deployment_result.get('service_type', '')).lower()
+
+    if service_type == 'external':
         message += "Your service is accessible using the following URLs:\n{}".format(
             "\n".join([" - {}".format(url) for url in deployment_result['urls']])
         )
-    else:
+    elif service_type == 'internal':
         message += """
-Since your service is internal, it's not accessible from outside your fandogh private network, 
-but other services inside your private network will be able to find it using it's name: '{}'
-        """.strip().format(
+    Since your service is internal, it's not accessible from outside your fandogh private network, 
+    but other services inside your private network will be able to find it using it's name: '{}'
+            """.strip().format(
             deployment_result['name']
         )
+    elif service_type == 'managed':
+        message += """
+        Managed service deployed successfully
+        """
+
     click.echo(message)
 
 
@@ -127,9 +135,11 @@ def service_details(service_name):
         ready_containers = list(filter(lambda c: c.get('ready', False), containers))
         ready_containers_length = len(ready_containers)
         if ready_containers_length != containers_length:
-            pod_ready_message = '  Ready containers:' + format_text(' {}/{}'.format(ready_containers_length, containers_length), TextStyle.WARNING)
+            pod_ready_message = '  Ready containers:' + format_text(
+                ' {}/{}'.format(ready_containers_length, containers_length), TextStyle.WARNING)
         else:
-            pod_ready_message = '  Ready containers:' + format_text(' {}/{}'.format(containers_length, containers_length), TextStyle.OKGREEN)
+            pod_ready_message = '  Ready containers:' + format_text(
+                ' {}/{}'.format(containers_length, containers_length), TextStyle.OKGREEN)
         click.echo(pod_ready_message)
         click.echo('  Containers:')
         for container in pod['containers']:
@@ -187,6 +197,47 @@ def service_apply(file):
         """
 
     click.echo(message)
+
+
+def _generate_manifest_yaml(image, version, name, port, envs, hosts, internal, registry_secret, image_pull_policy,
+                           internal_ports):
+    yaml = dict()
+
+    if internal:
+        yaml['kind'] = 'InternalService'
+    else:
+        yaml['kind'] = 'ExternalService'
+
+    if name:
+        yaml['name'] = name
+
+    spec = dict()
+
+    if image:
+        spec['image'] = '{}:{}'.format(image, version)
+
+    env_lis = []
+    if version:
+        env_lis.append({'name': 'VERSION', 'value': version})
+
+    if envs:
+        for env in envs:
+            env_lis.append({'name': env['name'], 'value': env['value']})
+
+    spec['env'] = env_lis
+
+    if port != 80:
+        port_list = [{'port': port, 'target_port': port}]
+        spec['port_mapping'] = port_list
+
+    if registry_secret:
+        spec['image_pull_secret'] = registry_secret
+
+    if image_pull_policy:
+        spec['image_pull_policy'] = image_pull_policy
+
+    yaml['spec'] = spec
+    return yaml
 
 
 service.add_command(deploy)
