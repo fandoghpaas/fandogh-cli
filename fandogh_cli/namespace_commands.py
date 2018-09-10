@@ -34,7 +34,7 @@ def details():
 
     click.echo(present(lambda: transform_response(result),
                        renderer='table',
-                       headers=['Consumer', 'Memory', 'CPU'],
+                       headers=['Service', 'Memory', 'CPU'],
                        columns=['name', 'memory', 'cpu']))
 
 
