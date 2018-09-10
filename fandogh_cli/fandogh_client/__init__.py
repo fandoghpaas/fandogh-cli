@@ -210,30 +210,9 @@ def parse_port_mapping(port_mapping):
 
 def deploy_service(image_name, version, service_name, envs, hosts, port, internal, registry_secret, image_pull_policy,
                    internal_ports):
-    token = get_stored_token()
-    env_variables = _parse_key_values(envs)
-    internal_ports = list(internal_ports)
-    internal_ports.append("{}:{}".format(port, port))
-    body = {'image_name': image_name,
-            'image_version': version,
-            'service_name': service_name,
-            'environment_variables': env_variables,
-            'port': port,
-            'registry_secret': registry_secret,
-            'hosts': hosts,
-            'internal_port_mapping': [parse_port_mapping(port_mapping) for port_mapping in internal_ports],
-            'image_pull_policy': image_pull_policy}
-    if internal:
-        body['service_type'] = "INTERNAL"
-
-    response = requests.post(base_services_url,
-                             json=body,
-                             headers={'Authorization': 'JWT ' + token}
-                             )
-    if response.status_code != 200:
-        raise get_exception(response)
-    else:
-        return response.json()
+    return deploy_manifest(
+        _generate_manifest_yaml(image_name, version, service_name, port, envs, hosts, internal, registry_secret,
+                                image_pull_policy, internal_ports))
 
 
 def list_services():
@@ -326,3 +305,50 @@ def deploy_manifest(manifest):
         raise get_exception(response)
     else:
         return response.json()
+
+
+def _generate_manifest_yaml(image, version, name, port, envs, hosts, internal, registry_secret, image_pull_policy,
+                            internal_ports):
+    yaml = dict()
+
+    if internal:
+        yaml['kind'] = 'InternalService'
+    else:
+        yaml['kind'] = 'ExternalService'
+
+    if name:
+        yaml['name'] = name
+
+    spec = dict()
+
+    if image:
+        spec['image'] = '{}:{}'.format(image, version)
+
+    env_lis = []
+    if version:
+        env_lis.append({'name': 'VERSION', 'value': version})
+
+    if envs:
+        env_variables = _parse_key_values(envs)
+        for env in env_variables:
+            env_lis.append({'name': env['name'], 'value': env['value']})
+
+    spec['env'] = env_lis
+
+    if port != 80:
+        port_list = [{'port': port, 'target_port': port}]
+        spec['port_mapping'] = port_list
+
+    if registry_secret:
+        spec['image_pull_secret'] = registry_secret
+
+    if image_pull_policy:
+        spec['image_pull_policy'] = image_pull_policy
+
+    if internal_ports:
+        internal_ports = list(internal_ports)
+        internal_ports.append("{}:{}".format(port, port))
+        spec['internal_port_mapping'] = [parse_port_mapping(port_mapping) for port_mapping in internal_ports]
+
+    yaml['spec'] = spec
+    return yaml
