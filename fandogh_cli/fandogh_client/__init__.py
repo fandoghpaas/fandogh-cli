@@ -330,8 +330,8 @@ def _generate_manifest_yaml(image, version, name, port, envs, hosts, internal, r
 
     if envs:
         env_variables = _parse_key_values(envs)
-        for env in env_variables:
-            env_lis.append({'name': env['name'], 'value': env['value']})
+        for key in env_variables:
+            env_lis.append({'name': key, 'value': env_variables[key]})
 
     spec['env'] = env_lis
 
