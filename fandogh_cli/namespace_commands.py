@@ -4,7 +4,7 @@ from .presenter import present
 from .base_commands import FandoghCommand
 
 
-@click.group("ns")
+@click.group("namespace")
 def namespace():
     """Namespace management commands"""
 
