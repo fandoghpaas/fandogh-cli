@@ -530,6 +530,8 @@ definitions:
     properties:
       name:
         type: string
+      namespace:
+        type: string
       owner:
         type: integer
       last_version:
@@ -563,6 +565,59 @@ definitions:
         format: datetime
       state:
         type: string
+
+  ContainerModel:
+    type: object
+    properties:
+      name:
+        type: string
+        example: "foo"
+      image:
+        type: string
+        example: "registry.hub.docker.com/library/nginx:stable-alpine"
+      ready:
+        type: boolean
+        example: true
+
+  PodEventModel:
+    type: object
+    properties:
+      message:
+        type: string
+      first_timestamp:
+        type: string
+        format: datetime
+        example: '2018-09-11T09:36:22Z'
+      last_timestamp:
+        type: string
+        format: datetime
+        example: '2018-09-11T09:36:22Z'
+      count:
+        type: integer
+        example: 1
+      reason:
+        type: string
+
+  PodModel:
+    type: object
+    properties:
+      name:
+        type: string
+        example: "foo-757f6849bd-4sfvf"
+      created_at:
+        type: string
+        format: string
+        example: "2018-09-11T09:36:22Z"
+      containers:
+        type: array
+        items:
+          $ref: "#/definitions/ContainerModel"
+      events:
+        type: array
+        items:
+          $ref: "#/definitions/PodEventModel"
+
+
   ServiceModel:
     type: object
     properties:
@@ -572,9 +627,24 @@ definitions:
         type: string
       service_type:
         type: string
+      url:
+        type: string
+      urls:
+        type: array
+        items:
+          type: string
+      pods:
+        type: array
+        items:
+          $ref: "#/definitions/PodModel"
       start_date:
         type: string
         format: datetime
+      last_update:
+        type: string
+        format: datetime
+
+
   ServiceDeploymentModel:
     type: object
     required:
