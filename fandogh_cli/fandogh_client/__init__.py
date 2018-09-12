@@ -335,15 +335,14 @@ def _generate_manifest_yaml(image, version, name, port, envs, hosts, internal, r
 
     spec['env'] = env_lis
 
-    if port != 80:
-        port_list = [{'port': port, 'target_port': port}]
-        spec['port_mapping'] = port_list
-
     if registry_secret:
         spec['image_pull_secret'] = registry_secret
 
     if image_pull_policy:
         spec['image_pull_policy'] = image_pull_policy
+
+    if hosts:
+        spec['domains'] = [{'name': host} for host in hosts]
 
     if internal_ports:
         internal_ports = list(internal_ports)
