@@ -351,3 +351,4 @@ def _generate_manifest_yaml(image, version, name, port, envs, hosts, internal, r
 
     yaml['spec'] = spec
     return yaml
+

@@ -17,8 +17,9 @@ def managed_service():
 def deploy(name, version, configs):
     """Deploy Managed Service"""
     try:
-        response = deploy_managed_service(name, version, configs)
-        click.echo(response.get('message'))
+        response = deploy_manifest(_generate_managed_manifest_yaml(name, version, configs))
+        click.echo(
+            'your managed service with name \'{}\' will be up and running in seconds'.format(response.get('name')))
     except FandoghBadRequest:
         click.echo(format_text(
             "please check `fandogh managed-service help` for more information "
@@ -38,6 +39,27 @@ def help():
         click.echo("\t* Service name: {}".format(managed_service['name']))
         for parameter_name, description in managed_service['options'].items():
             click.echo("\t\t. {}:\t{}".format(parameter_name.ljust(20), description))
+
+
+def _generate_managed_manifest_yaml(name, version, config):
+    yaml = dict()
+    yaml['kind'] = 'ManagedService'
+
+    spec = dict()
+    spec['service_name'] = name
+    spec['version'] = version
+
+    param_list = []
+    for param in config:
+        key, value = str(param).split('=')
+        if key == 'service_name':
+            yaml['name'] = value
+        else:
+            param_list.append({'name': key, 'value': value})
+
+    spec['parameters'] = param_list
+    yaml['spec'] = spec
+    return yaml
 
 
 managed_service.add_command(help)
