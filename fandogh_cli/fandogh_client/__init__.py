@@ -211,8 +211,8 @@ def parse_port_mapping(port_mapping):
 def deploy_service(image_name, version, service_name, envs, hosts, port, internal, registry_secret, image_pull_policy,
                    internal_ports):
     return deploy_manifest(
-        _generate_manifest_yaml(image_name, version, service_name, port, envs, hosts, internal, registry_secret,
-                                image_pull_policy, internal_ports))
+        _generate_manifest(image_name, version, service_name, port, envs, hosts, internal, registry_secret,
+                           image_pull_policy, internal_ports))
 
 
 def list_services():
@@ -307,33 +307,29 @@ def deploy_manifest(manifest):
         return response.json()
 
 
-def _generate_manifest_yaml(image, version, name, port, envs, hosts, internal, registry_secret, image_pull_policy,
-                            internal_ports):
-    yaml = dict()
+def _generate_manifest(image, version, name, port, envs, hosts, internal, registry_secret, image_pull_policy,
+                       internal_ports):
+    manifest = dict()
 
     if internal:
-        yaml['kind'] = 'InternalService'
+        manifest['kind'] = 'InternalService'
     else:
-        yaml['kind'] = 'ExternalService'
+        manifest['kind'] = 'ExternalService'
 
     if name:
-        yaml['name'] = name
+        manifest['name'] = name
 
     spec = dict()
 
     if image:
         spec['image'] = '{}:{}'.format(image, version)
 
-    env_lis = []
-    if version:
-        env_lis.append({'name': 'VERSION', 'value': version})
+    spec['env'].append({'name': 'VERSION', 'value': version})
 
     if envs:
         env_variables = _parse_key_values(envs)
         for key in env_variables:
-            env_lis.append({'name': key, 'value': env_variables[key]})
-
-    spec['env'] = env_lis
+            spec['env'].append({'name': key, 'value': env_variables[key]})
 
     if registry_secret:
         spec['image_pull_secret'] = registry_secret
@@ -349,6 +345,5 @@ def _generate_manifest_yaml(image, version, name, port, envs, hosts, internal, r
         internal_ports.append("{}:{}".format(port, port))
         spec['internal_port_mapping'] = [parse_port_mapping(port_mapping) for port_mapping in internal_ports]
 
-    yaml['spec'] = spec
-    return yaml
-
+    manifest['spec'] = spec
+    return manifest
