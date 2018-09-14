@@ -14,39 +14,20 @@ def namespace():
 def status():
     """list secrets filtered by type"""
     result = details_namespace()
-    print(result)
+    def print_value(name, current, total):
+        click.echo("{}: {} of {}".format(
+            format_text(name, TextStyle.HEADER),
+            format_text(current, TextStyle.OKGREEN),
+            format_text(total, TextStyle.OKGREEN),
+        ))
 
-    def transform_response(response: dict):
-        current_used_resources = response['current_used_resources']
-        transformed_result = []
-        for key, value in current_used_resources.get('deployments', {}).items():
-            transformed_result.append({
-                "name": key,
-                "memory": value.get('memory', 'N/A'),
-                "cpu": value.get('cpu', 'N/A'),
-
-            })
-        transformed_result.append(
-            {
-                "name": "Total",
-                "memory": current_used_resources.get('memory', 'N/A'),
-                "cpu": current_used_resources.get('cpu', 'N/A'),
-            })
-        return transformed_result
-
-    click.echo("{}: {}".format(
-        format_text("Name", TextStyle.HEADER),
-        format_text(result['name'], TextStyle.OKGREEN)
-    ))
-    click.echo("{}: {}".format(
-        format_text("Memory Limit", TextStyle.HEADER),
-        format_text(result.get('quota', {}).get("memory_limit", "N/A"), TextStyle.OKGREEN)
-    ))
-
-    click.echo(present(lambda: transform_response(result),
-                       renderer='table',
-                       headers=['Service', 'Memory', 'CPU'],
-                       columns=['name', 'memory', 'cpu']))
+    click.echo('Namespace: {}'.format(result['name']))
+    print_value('Service count', result['current_used_resources'].get('service_count'),
+                result['quota'].get('service_limit',
+                                    'N/A'))
+    print_value('Memory', result['current_used_resources'].get('memory_usage'), result['quota'].get('memory_limit',
+                                                                                                    'N/A'))
+    print_value('CPU', result['current_used_resources'].get('cpu_usage'), result['quota'].get('cpu_limit', 'N/A'))
 
 
 namespace.add_command(status)
