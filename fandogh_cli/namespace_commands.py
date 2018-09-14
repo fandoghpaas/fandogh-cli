@@ -14,6 +14,7 @@ def namespace():
 def status():
     """list secrets filtered by type"""
     result = details_namespace()
+
     def print_value(name, current, total):
         click.echo("{}: {} of {}".format(
             format_text(name, TextStyle.HEADER),
@@ -25,8 +26,11 @@ def status():
     print_value('Service count', result['current_used_resources'].get('service_count'),
                 result['quota'].get('service_limit',
                                     'N/A'))
-    print_value('Memory', result['current_used_resources'].get('memory_usage'), result['quota'].get('memory_limit',
-                                                                                                    'N/A'))
+    print_value(
+        name='Memory',
+        current="{} MB".format(result['current_used_resources'].get('memory_usage')),
+        total="{} MB".format(result['quota'].get('memory_limit', 'N/A'))
+    )
     print_value('CPU', result['current_used_resources'].get('cpu_usage'), result['quota'].get('cpu_limit', 'N/A'))
 
 
