@@ -331,9 +331,6 @@ def _generate_manifest(image, version, name, port, envs, hosts, internal, regist
         for key in env_variables:
             env_list.append({'name': key, 'value': env_variables[key]})
 
-    if 'HIDDEN' not in env_list:
-        env_list.append({'name': 'HIDDEN', 'value': False})
-
     spec['env'] = env_list
 
     if registry_secret:
