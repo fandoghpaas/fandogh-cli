@@ -330,6 +330,11 @@ paths:
         name: service-name
         required: true
         type: string
+      - in: "query"
+        name: "last_logged_time"
+        required: false
+        type: string
+        description: "some sort of cursor on log lines"
       - in: "header"
         name: "AUTHORIZATION"
         description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
@@ -743,5 +748,7 @@ definitions:
   ServiceLogResponse:
     type: object
     properties:
+      last_logged_time:
+        type: string
       logs:
         type: string
