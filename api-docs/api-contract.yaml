@@ -289,6 +289,41 @@ paths:
         500:
           description: "Server Error, Do not rely on response body"
 
+  /services/manifests:
+    post:
+      tags:
+      - "Services"
+      description: "To deploy new service using manifest"
+      operationId: "Deploy Service Manifest"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Service deployment context"
+        required: true
+        schema:
+          $ref: "#/definitions/ServiceDeploymentManifestModel"
+      - in: "header"
+        name: "AUTHORIZATION"
+        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+        type: string
+        required: true
+
+      responses:
+        200:
+          description: "Contains require messages"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        401:
+          description: "Authentication required"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        500:
+          description: "Server Error, Do not rely on response body"
+
   /services/{service-name}:
     delete:
       tags:
@@ -752,3 +787,7 @@ definitions:
         type: string
       logs:
         type: string
+  ServiceDeploymentManifestModel:
+    type: object
+    description: "Service manifest, please refer to https://docs.fandogh.cloud/docs/service-manifest.html for manifest details"
+
