@@ -642,12 +642,36 @@ paths:
           description: "Invalid input"
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /users/namespaces/{namespace}:
+    get:
+      tags:
+      - "Namespace"
+      description: "To get namespace status"
+      operationId: "Detail Services"
+      parameters:
+      - in: "path"
+        name: namespace
+        required: true
+        type: string
+      - in: "header"
+        name: "AUTHORIZATION"
+        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+        type: string
+        required: true
+      responses:
+        200:
+          description: "details of namespace"
+          schema:
+            $ref: "#/definitions/NamespaceModel"
         401:
           description: "Authentication required"
           schema:
             $ref: "#/definitions/MessageResponse"
-        500:
-          description: "Server Error, Do not rely on response body"
+        404:
+          description: "Service not found"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+
 definitions:
   ErrorItem:
     type: object
@@ -943,4 +967,34 @@ definitions:
       fields:
         type: object
         description: "depends on type of secret"
-
+  QuotaModel:
+    type: object
+    properties:
+      memory_limit:
+        type: integer
+      cpu_limit:
+        type: number
+      service_limit:
+        type: integer
+      max_replica:
+        type: integer
+      pending_certificate_limit:
+        type: integer
+  UsedResourcesModel:
+    type: object
+    properties:
+      service_count:
+        type: integer
+      memory_usage:
+        type: integer
+      cpu_usage:
+        type: number
+  NamespaceModel:
+    type: object
+    properties:
+      name:
+        type: string
+      quota:
+        $ref: "#/definitions/QuotaModel"
+      current_used_resources:
+        $ref: "#/definitions/UsedResourcesModel"
