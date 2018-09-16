@@ -44,11 +44,13 @@ def deploy(image, version, name, port, envs, hosts, internal, registry_secret, i
                 exit(-1)
     deployment_result = deploy_service(image, version, name, envs, hosts, port, internal, registry_secret,
                                        image_pull_policy, internal_ports)
-    message = "\nCongratulation, Your service is running ^_^\n"
-    if str(deployment_result['service_type']).lower() == "external":
+    message = "\nCongratulation, Your service is running ^_^\n\n"
+    if str(deployment_result['service_type']).lower() == 'external':
         message += "Your service is accessible using the following URLs:\n{}".format(
             "\n".join([" - {}".format(url) for url in deployment_result['urls']])
         )
+        message += '\n'
+        click.echo(message)
     else:
         message += """
 Since your service is internal, it's not accessible from outside your fandogh private network, 
@@ -56,7 +58,8 @@ but other services inside your private network will be able to find it using it'
         """.strip().format(
             deployment_result['name']
         )
-    click.echo(message)
+        message += '\n'
+        click.secho(message, bold=True, fg='yellow')
 
 
 @click.command('list', cls=FandoghCommand)
@@ -127,9 +130,11 @@ def service_details(service_name):
         ready_containers = list(filter(lambda c: c.get('ready', False), containers))
         ready_containers_length = len(ready_containers)
         if ready_containers_length != containers_length:
-            pod_ready_message = '  Ready containers:' + format_text(' {}/{}'.format(ready_containers_length, containers_length), TextStyle.WARNING)
+            pod_ready_message = '  Ready containers:' + format_text(
+                ' {}/{}'.format(ready_containers_length, containers_length), TextStyle.WARNING)
         else:
-            pod_ready_message = '  Ready containers:' + format_text(' {}/{}'.format(containers_length, containers_length), TextStyle.OKGREEN)
+            pod_ready_message = '  Ready containers:' + format_text(
+                ' {}/{}'.format(containers_length, containers_length), TextStyle.OKGREEN)
         click.echo(pod_ready_message)
         click.echo('  Containers:')
         for container in pod['containers']:
