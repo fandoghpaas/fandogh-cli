@@ -1,0 +1,86 @@
+kind: ExternalService
+name: hello-world
+spec:
+  image: hello-world:v1
+  image_pull_policy: Always # or default is IfNotPresent
+  image_pull_secret: "my-private-registry-secret"
+  replicas: 1
+  port: 8080
+  path: /v1/
+  allow_http: true
+  env:
+    - name: VERSION
+      value: v1
+
+  domains:
+     - name: api.hello-world.com # already created domain
+       tls: api-hello-world-tls # already created certificate
+  volumes:
+    - name: default # already created volume
+      mountPath: /mnt/data
+      subPath: test
+
+    - name: MyLogs # already created volume
+      mountPath: /mnt/logs
+  port_mapping:
+    - port: 8081
+      target_port: 81
+      protocol: tcp
+    - port: 12490
+      target_port: 12490
+      protocol: udp
+    - port: 3312
+      targetPort: 1790
+      # default protocol is tcp
+  resources:
+    memory: 200Mi
+    cpu: 0.2
+
+kind: InternalService
+name: hello-world
+spec:
+  image: hello-world:v1
+  image_pull_policy: Always # or default is IfNotPresent
+  image_pull_secret: "my-private-registry-secret"
+  replicas: 1
+  env:
+    - name: VERSION
+      value: v1
+  volumes:
+    - name: default # already created volume
+      mount_path: /mnt/data
+      sub_path: test
+    - name: MyLogs # already created volume
+      moun_path: /mnt/logs
+  port_mapping:
+    - port: 80
+      target_port: 80
+      # default protocol is tcp
+    - port: 12490
+      target_port: 12490
+      protocol: udp
+  resources:
+    memory: 200Mi
+    cpu: 0.2
+kind: ManagedService
+name: mysql-test # in mishe hostname service
+spec:
+  service_name: mysql
+  version: 9.4
+  parameters:
+    - name: phpmyadmin_enabled
+      value: true
+    - name: data_path
+      value: /mnt/data/mysql-test-path
+    - name: log_path
+      value: /mnt/logs/mysql
+  resources:
+    limit:
+      memory: 200Mi
+      cpu: 0.2
+  volumes:
+    - name: default # already created volume
+      mount_path: /mnt/data
+      sub_path: test
+    - name: MyLogs # already created volume
+      mount_path: /mnt/logs

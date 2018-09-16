@@ -289,6 +289,41 @@ paths:
         500:
           description: "Server Error, Do not rely on response body"
 
+  /services/manifests:
+    post:
+      tags:
+      - "Services"
+      description: "To deploy new service using manifest"
+      operationId: "Deploy Service Manifest"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Service deployment context"
+        required: true
+        schema:
+          $ref: "#/definitions/ServiceDeploymentManifestModel"
+      - in: "header"
+        name: "AUTHORIZATION"
+        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+        type: string
+        required: true
+
+      responses:
+        200:
+          description: "Contains require messages"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        401:
+          description: "Authentication required"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        500:
+          description: "Server Error, Do not rely on response body"
+
   /services/{service-name}:
     delete:
       tags:
@@ -330,6 +365,11 @@ paths:
         name: service-name
         required: true
         type: string
+      - in: "query"
+        name: "last_logged_time"
+        required: false
+        type: string
+        description: "some sort of cursor on log lines"
       - in: "header"
         name: "AUTHORIZATION"
         description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
@@ -492,6 +532,145 @@ paths:
         500:
           description: "Server Error, Do not rely on response body"
 
+  /domains/{domain_name}/certificate:
+    post:
+      tags:
+      - "Domains"
+      description: "To request certificate for a domain"
+      operationId: "Request Certificate"
+      parameters:
+      - in: "path"
+        name: "domain_name"
+        type: string
+        required: true
+      - in: "header"
+        name: "AUTHORIZATION"
+        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+        type: string
+        required: true
+      responses:
+        201:
+          description: "Request has been submitted and getting certificate is in progress "
+          schema:
+            $ref: "#/definitions/CertificateModel"
+        401:
+          description: "Authentication required"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        404:
+          description: "Domain not found"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        500:
+          description: "Server Error, Do not rely on response body"
+    delete:
+        tags:
+        - "Domains"
+        description: "To revoke a certificate for a domain"
+        operationId: "Revoke Certificate"
+        parameters:
+        - in: "path"
+          name: "domain_name"
+          type: string
+          required: true
+        - in: "header"
+          name: "AUTHORIZATION"
+          description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+          type: string
+          required: true
+        responses:
+          200:
+            description: "Request has been submitted and getting certificate is in progress "
+            schema:
+              $ref: "#/definitions/MessageResponse"
+          401:
+            description: "Authentication required"
+            schema:
+              $ref: "#/definitions/MessageResponse"
+          404:
+            description: "Domain not found"
+            schema:
+              $ref: "#/definitions/MessageResponse"
+          500:
+            description: "Server Error, Do not rely on response body"
+  /secrets:
+    get:
+      tags:
+      - "Secret"
+      description: "To get list of secrets"
+      operationId: "List secrets"
+      parameters:
+      - in: "header"
+        name: "AUTHORIZATION"
+        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+        type: string
+        required: true
+      responses:
+        200:
+          description: "List of secrets"
+          schema:
+            $ref: "#/definitions/SecretModel"
+        401:
+          description: "Authentication required"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        500:
+          description: "Server Error, Do not rely on response body"
+    post:
+      tags:
+      - "Secret"
+      description: "to create a secret"
+      operationId: "Create Secret"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Secret object"
+        required: true
+        schema:
+          $ref: "#/definitions/CreateSecretModel"
+      - in: "header"
+        name: "AUTHORIZATION"
+        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+        type: string
+        required: true
+      responses:
+        200:
+          description: "Response has been created"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /users/namespaces/{namespace}:
+    get:
+      tags:
+      - "Namespace"
+      description: "To get namespace status"
+      operationId: "Detail Services"
+      parameters:
+      - in: "path"
+        name: namespace
+        required: true
+        type: string
+      - in: "header"
+        name: "AUTHORIZATION"
+        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+        type: string
+        required: true
+      responses:
+        200:
+          description: "details of namespace"
+          schema:
+            $ref: "#/definitions/NamespaceModel"
+        401:
+          description: "Authentication required"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        404:
+          description: "Service not found"
+          schema:
+            $ref: "#/definitions/MessageResponse"
 
 definitions:
   ErrorItem:
@@ -530,6 +709,8 @@ definitions:
     properties:
       name:
         type: string
+      namespace:
+        type: string
       owner:
         type: integer
       last_version:
@@ -563,6 +744,59 @@ definitions:
         format: datetime
       state:
         type: string
+
+  ContainerModel:
+    type: object
+    properties:
+      name:
+        type: string
+        example: "foo"
+      image:
+        type: string
+        example: "registry.hub.docker.com/library/nginx:stable-alpine"
+      ready:
+        type: boolean
+        example: true
+
+  PodEventModel:
+    type: object
+    properties:
+      message:
+        type: string
+      first_timestamp:
+        type: string
+        format: datetime
+        example: '2018-09-11T09:36:22Z'
+      last_timestamp:
+        type: string
+        format: datetime
+        example: '2018-09-11T09:36:22Z'
+      count:
+        type: integer
+        example: 1
+      reason:
+        type: string
+
+  PodModel:
+    type: object
+    properties:
+      name:
+        type: string
+        example: "foo-757f6849bd-4sfvf"
+      created_at:
+        type: string
+        format: string
+        example: "2018-09-11T09:36:22Z"
+      containers:
+        type: array
+        items:
+          $ref: "#/definitions/ContainerModel"
+      events:
+        type: array
+        items:
+          $ref: "#/definitions/PodEventModel"
+
+
   ServiceModel:
     type: object
     properties:
@@ -572,9 +806,24 @@ definitions:
         type: string
       service_type:
         type: string
+      url:
+        type: string
+      urls:
+        type: array
+        items:
+          type: string
+      pods:
+        type: array
+        items:
+          $ref: "#/definitions/PodModel"
       start_date:
         type: string
         format: datetime
+      last_update:
+        type: string
+        format: datetime
+
+
   ServiceDeploymentModel:
     type: object
     required:
@@ -638,6 +887,19 @@ definitions:
       name:
         type: string
         description: "a valid domain name"
+  CertificateModel:
+    type: object
+    properties:
+      id:
+        type: integer
+      domain_name:
+        type: string
+      created_at:
+        type: string
+        format: datetime
+      details:
+        type: object
+        description: "contains further information for user"
   DomainModel:
     type: object
     properties:
@@ -647,6 +909,8 @@ definitions:
         type: string
       verified:
         type: boolean
+      certificate:
+        $ref: "#/definitions/CertificateModel"
   UserCredentials:
     type: object
     required:
@@ -673,5 +937,64 @@ definitions:
   ServiceLogResponse:
     type: object
     properties:
+      last_logged_time:
+        type: string
       logs:
         type: string
+  ServiceDeploymentManifestModel:
+    type: object
+    description: "Service manifest, please refer to https://docs.fandogh.cloud/docs/service-manifest.html for manifest details"
+
+  SecretModel:
+    type: object
+    properties:
+      name:
+        type: string
+      namespace:
+        type: string
+      type:
+        type: string
+      created_at:
+        type: string
+        format: datetime
+  CreateSecretModel:
+    type: object
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+      fields:
+        type: object
+        description: "depends on type of secret"
+  QuotaModel:
+    type: object
+    properties:
+      memory_limit:
+        type: integer
+      cpu_limit:
+        type: number
+      service_limit:
+        type: integer
+      max_replica:
+        type: integer
+      pending_certificate_limit:
+        type: integer
+  UsedResourcesModel:
+    type: object
+    properties:
+      service_count:
+        type: integer
+      memory_usage:
+        type: integer
+      cpu_usage:
+        type: number
+  NamespaceModel:
+    type: object
+    properties:
+      name:
+        type: string
+      quota:
+        $ref: "#/definitions/QuotaModel"
+      current_used_resources:
+        $ref: "#/definitions/UsedResourcesModel"
