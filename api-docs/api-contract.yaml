@@ -532,6 +532,67 @@ paths:
         500:
           description: "Server Error, Do not rely on response body"
 
+  /domains/{domain_name}/certificate:
+    post:
+      tags:
+      - "Domains"
+      description: "To request certificate for a domain"
+      operationId: "Request Certificate"
+      parameters:
+      - in: "path"
+        name: "domain_name"
+        type: string
+        required: true
+      - in: "header"
+        name: "AUTHORIZATION"
+        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+        type: string
+        required: true
+      responses:
+        201:
+          description: "Request has been submitted and getting certificate is in progress "
+          schema:
+            $ref: "#/definitions/CertificateModel"
+        401:
+          description: "Authentication required"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        404:
+          description: "Domain not found"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        500:
+          description: "Server Error, Do not rely on response body"
+    delete:
+        tags:
+        - "Domains"
+        description: "To revoke a certificate for a domain"
+        operationId: "Revoke Certificate"
+        parameters:
+        - in: "path"
+          name: "domain_name"
+          type: string
+          required: true
+        - in: "header"
+          name: "AUTHORIZATION"
+          description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+          type: string
+          required: true
+        responses:
+          200:
+            description: "Request has been submitted and getting certificate is in progress "
+            schema:
+              $ref: "#/definitions/MessageResponse"
+          401:
+            description: "Authentication required"
+            schema:
+              $ref: "#/definitions/MessageResponse"
+          404:
+            description: "Domain not found"
+            schema:
+              $ref: "#/definitions/MessageResponse"
+          500:
+            description: "Server Error, Do not rely on response body"
 
 definitions:
   ErrorItem:
@@ -748,6 +809,19 @@ definitions:
       name:
         type: string
         description: "a valid domain name"
+  CertificateModel:
+    type: object
+    properties:
+      id:
+        type: integer
+      domain_name:
+        type: string
+      created_at:
+        type: string
+        format: datetime
+      details:
+        type: object
+        description: "contains further information for user"
   DomainModel:
     type: object
     properties:
@@ -757,6 +831,8 @@ definitions:
         type: string
       verified:
         type: boolean
+      certificate:
+        $ref: "#/definitions/CertificateModel"
   UserCredentials:
     type: object
     required:
