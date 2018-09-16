@@ -593,7 +593,61 @@ paths:
               $ref: "#/definitions/MessageResponse"
           500:
             description: "Server Error, Do not rely on response body"
-
+  /secrets:
+    get:
+      tags:
+      - "Secret"
+      description: "To get list of secrets"
+      operationId: "List secrets"
+      parameters:
+      - in: "header"
+        name: "AUTHORIZATION"
+        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+        type: string
+        required: true
+      responses:
+        200:
+          description: "List of secrets"
+          schema:
+            $ref: "#/definitions/SecretModel"
+        401:
+          description: "Authentication required"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        500:
+          description: "Server Error, Do not rely on response body"
+    post:
+      tags:
+      - "Secret"
+      description: "to create a secret"
+      operationId: "Create Secret"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Secret object"
+        required: true
+        schema:
+          $ref: "#/definitions/CreateSecretModel"
+      - in: "header"
+        name: "AUTHORIZATION"
+        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+        type: string
+        required: true
+      responses:
+        200:
+          description: "Response has been created"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        401:
+          description: "Authentication required"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        500:
+          description: "Server Error, Do not rely on response body"
 definitions:
   ErrorItem:
     type: object
@@ -866,4 +920,27 @@ definitions:
   ServiceDeploymentManifestModel:
     type: object
     description: "Service manifest, please refer to https://docs.fandogh.cloud/docs/service-manifest.html for manifest details"
+
+  SecretModel:
+    type: object
+    properties:
+      name:
+        type: string
+      namespace:
+        type: string
+      type:
+        type: string
+      created_at:
+        type: string
+        format: datetime
+  CreateSecretModel:
+    type: object
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+      fields:
+        type: object
+        description: "depends on type of secret"
 
