@@ -63,7 +63,7 @@ def get_window_width():
         return None
 
 
-def _parse_key_values(key_values):
+def parse_key_values(key_values):
     env_variables = {}
     for env in key_values:
         (k, v) = env.split('=', 1)
@@ -88,7 +88,7 @@ def read_manifest(manifest_file, parameters):
         with open(manifest_file, mode='r') as manifest:
             rendered_manifest = process_template(
                 manifest.read(),
-                _parse_key_values(
+                parse_key_values(
                     parameters
                 )
             )

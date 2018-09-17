@@ -1,6 +1,6 @@
 import requests
 
-from fandogh_cli.fandogh_client import base_url, get_exception, _parse_key_values
+from fandogh_cli.fandogh_client import base_url, get_exception, parse_key_values
 from fandogh_cli.fandogh_client import get_stored_token
 from fandogh_cli.utils import convert_datetime
 
@@ -30,7 +30,7 @@ def create_secret(name, secret_type, fields):
                              json={
                                  "name": name,
                                  "type": secret_type,
-                                 "fields": _parse_key_values(fields)
+                                 "fields": parse_key_values(fields)
                              },
                              )
     if response.status_code != 200:

@@ -1,8 +1,6 @@
 import click
-
-from fandogh_cli.fandogh_client import _parse_key_values
 from .fandogh_client import *
-from .utils import format_text, TextStyle
+from .utils import format_text, TextStyle, parse_key_values
 from .base_commands import FandoghCommand
 
 
@@ -52,7 +50,7 @@ def _generate_managed_manifest(name, version, config):
     spec['version'] = version
 
     param_list = []
-    env_variables = _parse_key_values(config)
+    env_variables = parse_key_values(config)
     for key in env_variables:
         if key == 'service_name':
             manifest['name'] = env_variables[key]
