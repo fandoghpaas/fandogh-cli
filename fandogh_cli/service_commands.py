@@ -6,7 +6,6 @@ from .utils import format_text, TextStyle
 from .base_commands import FandoghCommand
 from time import sleep
 
-
 @click.group("service")
 def service():
     """Service management commands"""
@@ -146,21 +145,11 @@ def service_details(service_name):
                 (container.get('waiting', {}) or {}).get('reason', 'Pending'),
                 TextStyle.WARNING)))
 
-        for item in details.get('env', []):
-            if item['name'] == 'HIDDEN':
-                click.echo('    Environment Variables:')
-                if item['value'] == 'True':
-                    click.echo(present(lambda: details.get('env'), renderer='table',
-                                       headers=['Name', 'Value'],
-                                       columns=['name', '*****'
-                                                        ''])
-                               )
-
-                else:
-                    click.echo(present(lambda: details.get('env'), renderer='table',
-                                       headers=['Name', 'Value'],
-                                       columns=['name', 'value'])
-                               )
+        click.echo('    Environment Variables:')
+        click.echo(present(lambda: details.get('env'), renderer='table',
+                           headers=['Name', 'Value', 'Hidden'],
+                           columns=['name', 'value',  'hidden'])
+                   )
 
         click.echo('    ---------------------')
 

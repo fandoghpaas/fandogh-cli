@@ -26,6 +26,11 @@ def table_renderer(data, **kwargs):
                 row.append('Yes')
             elif item.get(cn) is False:
                 row.append('No')
+            elif 'hidden' in column_names:
+                if item.get('hidden') and cn == 'value':
+                    row.append('*****')
+                else:
+                    row.append(item.get(cn))
             else:
                 row.append(item.get(cn))
         table.append_row(row)
@@ -47,7 +52,6 @@ renderers = {
 
 
 def present(data_provider, pre='', post='', renderer='text', **kwargs):
-        data = data_provider()
-        rendered = renderers.get(renderer)(data, **kwargs)
-        return pre + str(rendered) + post
-
+    data = data_provider()
+    rendered = renderers.get(renderer)(data, **kwargs)
+    return pre + str(rendered) + post
