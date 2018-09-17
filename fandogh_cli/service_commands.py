@@ -145,7 +145,7 @@ def service_details(service_name):
                 (container.get('waiting', {}) or {}).get('reason', 'Pending'),
                 TextStyle.WARNING)))
 
-        click.echo('    Environment Variables:')
+        click.echo('Environment Variables:')
         click.echo(present(lambda: details.get('env'), renderer='table',
                            headers=['Name', 'Value'],
                            columns=['name', 'value'])
