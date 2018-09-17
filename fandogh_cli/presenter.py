@@ -26,11 +26,6 @@ def table_renderer(data, **kwargs):
                 row.append('Yes')
             elif item.get(cn) is False:
                 row.append('No')
-            elif 'hidden' in column_names:
-                if item.get('hidden') and cn == 'value':
-                    row.append('*****')
-                else:
-                    row.append(item.get(cn))
             else:
                 row.append(item.get(cn))
         table.append_row(row)

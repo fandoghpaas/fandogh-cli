@@ -147,8 +147,8 @@ def service_details(service_name):
 
         click.echo('    Environment Variables:')
         click.echo(present(lambda: details.get('env'), renderer='table',
-                           headers=['Name', 'Value', 'Hidden'],
-                           columns=['name', 'value',  'hidden'])
+                           headers=['Name', 'Value'],
+                           columns=['name', 'value'])
                    )
 
         click.echo('    ---------------------')
