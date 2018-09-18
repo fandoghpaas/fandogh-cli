@@ -1,4 +1,6 @@
 import click
+import yaml
+
 from .fandogh_client import *
 from .config import get_project_config
 from .presenter import present
@@ -205,7 +207,8 @@ def service_manifest(name):
     if response.status_code != 200:
         raise get_exception(response)
     else:
-        click.echo(response.json()[0])
+        for line in yaml.load_all(response.content):
+            click.echo(line)
 
 
 service.add_command(deploy)
