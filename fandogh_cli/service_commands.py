@@ -67,8 +67,7 @@ def service_list():
     """List all services for this image"""
     table = present(lambda: list_services(),
                     renderer='table',
-                    headers=['Service Name', 'URL', 'Service Type', "Memory Usages", 'Started at', 'Updated at',
-                             'State'],
+                    headers=['Service Name', 'URL', 'Service Type', "Memory Usages", 'Started at', 'Updated at', 'State'],
                     columns=['name', 'url', 'service_type', 'memory', 'start_date', 'last_update', 'state', ])
     if table:
         click.echo(table)
@@ -195,23 +194,9 @@ def service_apply(file):
     click.echo(message)
 
 
-@click.command('export-manifest', cls=FandoghCommand)
-@click.option('-s', '--service', '--name', prompt='Service name')
-def service_manifest(name):
-    token = get_stored_token()
-    response = requests.get(base_services_url + '/manifests',
-                            headers={'Authorization': 'JWT ' + token}
-                            )
-    if response.status_code != 200:
-        raise get_exception(response)
-    else:
-        click.echo(response.json()[0])
-
-
 service.add_command(deploy)
 service.add_command(service_apply)
 service.add_command(service_list)
 service.add_command(service_destroy)
 service.add_command(service_logs)
 service.add_command(service_details)
-service.add_command(service_manifest)
