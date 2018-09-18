@@ -202,13 +202,16 @@ def service_apply(file):
 def service_manifest(name):
     token = get_stored_token()
     response = requests.get(base_services_url + '/manifests',
+                            params={'service_name': name},
                             headers={'Authorization': 'JWT ' + token}
                             )
     if response.status_code != 200:
         raise get_exception(response)
     else:
-        for line in yaml.load_all(response.content):
-            click.echo(line)
+        manifest = response.json()['data']
+
+        for item in manifest:
+            click.echo(yaml.safe_dump(json.loads(item), default_flow_style=False))
 
 
 service.add_command(deploy)
