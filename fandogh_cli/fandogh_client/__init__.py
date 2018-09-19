@@ -324,14 +324,14 @@ def _generate_manifest(image, version, name, port, envs, hosts, internal, regist
     if image:
         spec['image'] = '{}:{}'.format(image, version)
 
-    env_lis = []
+    env_list = []
 
     if envs:
         env_variables = _parse_key_values(envs)
         for key in env_variables:
-            env_lis.append({'name': key, 'value': env_variables[key]})
+            env_list.append({'name': key, 'value': env_variables[key]})
 
-    spec['env'] = env_lis
+    spec['env'] = env_list
 
     if registry_secret:
         spec['image_pull_secret'] = registry_secret

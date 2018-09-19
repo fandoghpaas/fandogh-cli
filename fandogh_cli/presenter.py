@@ -47,7 +47,6 @@ renderers = {
 
 
 def present(data_provider, pre='', post='', renderer='text', **kwargs):
-        data = data_provider()
-        rendered = renderers.get(renderer)(data, **kwargs)
-        return pre + str(rendered) + post
-
+    data = data_provider()
+    rendered = renderers.get(renderer)(data, **kwargs)
+    return pre + str(rendered) + post

@@ -6,7 +6,6 @@ from .utils import format_text, TextStyle
 from .base_commands import FandoghCommand
 from time import sleep
 
-
 @click.group("service")
 def service():
     """Service management commands"""
@@ -67,7 +66,8 @@ def service_list():
     """List all services for this image"""
     table = present(lambda: list_services(),
                     renderer='table',
-                    headers=['Service Name', 'URL', 'Service Type', "Memory Usages", 'Started at', 'Updated at', 'State'],
+                    headers=['Service Name', 'URL', 'Service Type', "Memory Usages", 'Started at', 'Updated at',
+                             'State'],
                     columns=['name', 'url', 'service_type', 'memory', 'start_date', 'last_update', 'state', ])
     if table:
         click.echo(table)
@@ -144,7 +144,14 @@ def service_details(service_name):
                                               else format_text(
                 (container.get('waiting', {}) or {}).get('reason', 'Pending'),
                 TextStyle.WARNING)))
-            click.echo('    ---------------------')
+
+        click.echo('Environment Variables:')
+        click.echo(present(lambda: details.get('env'), renderer='table',
+                           headers=['Name', 'Value'],
+                           columns=['name', 'value'])
+                   )
+
+        click.echo('    ---------------------')
 
         if pod.get('events', []) and containers_length != ready_containers_length:
             click.echo('    Events:')
