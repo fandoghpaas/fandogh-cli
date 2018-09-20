@@ -211,7 +211,7 @@ def service_dump(name):
         manifest = response.json()['data']
 
         for item in manifest:
-            click.echo(yaml.safe_dump(json.loads(item), default_flow_style=False))
+            click.echo(yaml.safe_dump(item, default_flow_style=False))
 
 
 service.add_command(deploy)
