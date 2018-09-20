@@ -1,5 +1,6 @@
 import click
 
+from .fandogh_client.exec_client import post_exec
 from .fandogh_client import get_details
 from .base_commands import FandoghCommand
 
@@ -17,4 +18,5 @@ def exec(command, service, replica):
         click.echo('- {}'.format(pod_name))
 
     selected_pod_name = click.prompt('Please choose one of the replicas above', type=click.Choice(pod_name))
-    click.echo('run {} on {} {}'.format(command, service, selected_pod_name))
+    response = post_exec(selected_pod_name, command)
+    click.echo(response['message'])

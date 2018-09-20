@@ -1,10 +1,9 @@
 import requests
 
-from fandogh_cli.fandogh_client import base_url, get_exception, _parse_key_values
+from fandogh_cli.fandogh_client import base_url, get_exception
 from fandogh_cli.fandogh_client import get_stored_token
-from fandogh_cli.utils import convert_datetime
 
-base_exec_url = '%sexec' % base_url
+base_exec_url = '%sservices/exec' % base_url
 
 
 def post_exec(pod_name, command):
