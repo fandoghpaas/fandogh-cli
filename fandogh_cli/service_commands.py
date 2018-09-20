@@ -199,7 +199,7 @@ def service_apply(file):
 
 @click.command('dump', cls=FandoghCommand)
 @click.option('-s', '--service', '--name', prompt='Service name')
-def service_manifest(name):
+def service_dump(name):
     token = get_stored_token()
     response = requests.get(base_services_url + '/manifests',
                             params={'service_name': name},
@@ -220,4 +220,4 @@ service.add_command(service_list)
 service.add_command(service_destroy)
 service.add_command(service_logs)
 service.add_command(service_details)
-service.add_command(service_manifest)
+service.add_command(service_dump)
