@@ -342,9 +342,10 @@ def _generate_manifest(image, version, name, port, envs, hosts, internal, regist
     if hosts:
         spec['domains'] = [{'name': host} for host in hosts]
 
+    if port:
+        spec['port'] = port
     if internal_ports:
         internal_ports = list(internal_ports)
-        internal_ports.append("{}:{}".format(port, port))
         spec['internal_port_mapping'] = [parse_port_mapping(port_mapping) for port_mapping in internal_ports]
 
     manifest['spec'] = spec
