@@ -209,9 +209,7 @@ def service_dump(name):
         raise get_exception(response)
     else:
         manifest = response.json()['data']
-
-        for item in manifest:
-            click.echo(yaml.safe_dump(item, default_flow_style=False))
+        click.echo(yaml.safe_dump(manifest, default_flow_style=False))
 
 
 service.add_command(deploy)
