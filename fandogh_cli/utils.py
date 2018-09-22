@@ -1,8 +1,7 @@
+from string import Template
 import click
 import os
-
 from datetime import datetime
-
 import pytz
 import tzlocal
 
@@ -62,3 +61,40 @@ def get_window_width():
             return int(columns)
     except Exception as exp:
         return None
+
+
+def parse_key_values(key_values):
+    env_variables = {}
+    for env in key_values:
+        (k, v) = env.split('=', 1)
+        env_variables[k] = v
+    return env_variables
+
+
+def process_template(template, mapping):
+    return Template(template).substitute(**mapping)
+
+
+def trim_comments(manifest):
+    lines = []
+    for line in manifest.split("\n"):
+        if not line.strip().startswith("#"):
+            lines.append(line)
+    return "\n".join(lines)
+
+
+def read_manifest(manifest_file, parameters):
+    try:
+        with open(manifest_file, mode='r') as manifest:
+            rendered_manifest = process_template(
+                manifest.read(),
+                parse_key_values(
+                    parameters
+                )
+            )
+        return trim_comments(rendered_manifest)
+    except IOError as e:
+        click.echo(format_text(e.strerror, TextStyle.FAIL), err=True)
+    except KeyError as missing_parameter:
+        click.echo(format_text("you need to provide value for {} in order to deploy this manifest",
+                               TextStyle.FAIL).format(missing_parameter))

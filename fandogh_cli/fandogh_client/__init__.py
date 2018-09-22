@@ -1,9 +1,8 @@
 import json
-
 import requests
 import os
 from fandogh_cli.config import get_user_config
-from fandogh_cli.utils import convert_datetime
+from fandogh_cli.utils import convert_datetime, parse_key_values
 
 fandogh_host = os.getenv('FANDOGH_HOST', 'https://api.fandogh.cloud')
 base_url = '%s/api/' % fandogh_host
@@ -176,14 +175,6 @@ def list_versions(image_name):
         return result
 
 
-def _parse_key_values(envs):
-    env_variables = {}
-    for env in envs:
-        (k, v) = env.split('=', 1)
-        env_variables[k] = v
-    return env_variables
-
-
 def parse_port_mapping(port_mapping):
     # validate and convert outside:inside:protocol to a nice dict
     port_mapping = port_mapping.upper()
@@ -270,7 +261,7 @@ def get_details(service_name):
 
 def deploy_managed_service(service_name, version, configs):
     token = get_stored_token()
-    configution = _parse_key_values(configs)
+    configution = parse_key_values(configs)
     response = requests.post(base_managed_services_url,
                              json={'name': service_name,
                                    'version': version,
@@ -327,7 +318,7 @@ def _generate_manifest(image, version, name, port, envs, hosts, internal, regist
     env_list = []
 
     if envs:
-        env_variables = _parse_key_values(envs)
+        env_variables = parse_key_values(envs)
         for key in env_variables:
             env_list.append({'name': key, 'value': env_variables[key]})
 

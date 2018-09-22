@@ -2,7 +2,7 @@ import click
 from .fandogh_client import *
 from .config import get_project_config
 from .presenter import present
-from .utils import format_text, TextStyle
+from .utils import format_text, TextStyle, read_manifest
 from .base_commands import FandoghCommand
 from time import sleep
 
@@ -165,16 +165,13 @@ def service_details(service_name):
 
 @click.command('apply', cls=FandoghCommand)
 @click.option('-f', '--file', 'file', prompt='File address')
-def service_apply(file):
+@click.option('-p', '--parameter', 'parameters', help='Manifest parameters', multiple=True)
+def service_apply(file, parameters):
     """Deploys a service defined as a manifest"""
-    try:
-        with open(file, mode='r') as manifest:
-            manifest_content = manifest.read()
-            click.echo(manifest_content)
-    except FileNotFoundError as e:
-        click.echo(format_text(e.strerror, TextStyle.FAIL), err=True)
+    manifest_content = read_manifest(file, parameters)
+    if manifest_content is None:
         return
-
+    click.echo(manifest_content)
     from yaml import load
 
     yml = load(manifest_content)
