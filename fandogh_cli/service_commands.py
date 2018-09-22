@@ -164,9 +164,6 @@ def service_apply(file, parameters):
     if manifest_content is None:
         return
     click.echo(manifest_content)
-    if not click.confirm("Please review the manifest, Are you sure you want to deploy this manifest?"):
-        click.echo(format_text("Deployment has been canceled as your request", TextStyle.FAIL))
-        return
     from yaml import load
 
     yml = load(manifest_content)
