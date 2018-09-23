@@ -14,10 +14,13 @@ def exec(command, service, replica):
     if not replica:
         details = get_details(service)
         pods = details['pods']
-        pod_names = [pod['name'] for pod in pods]
-        for pod_name in pod_names:
-            click.echo('- {}'.format(pod_name))
+        if len(pods) == 1:
+            replica = pods[0]['name']
+        else:
+            pod_names = [pod['name'] for pod in pods]
+            for pod_name in pod_names:
+                click.echo('- {}'.format(pod_name))
 
-        replica = click.prompt('Please choose one of the replicas above', type=click.Choice(pod_name))
+            replica = click.prompt('Please choose one of the replicas above', type=click.Choice(pod_names))
     response = post_exec(replica, command)
     click.echo(response['message'])
