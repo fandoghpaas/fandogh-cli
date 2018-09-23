@@ -14,6 +14,7 @@ def exec(command, service, replica):
     if not replica:
         details = get_details(service)
         pods = details['pods']
+        # TODO: just find the available pods
         if len(pods) == 1:
             replica = pods[0]['name']
         else:
