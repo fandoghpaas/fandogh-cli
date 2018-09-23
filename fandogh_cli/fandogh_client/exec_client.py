@@ -3,7 +3,7 @@ import requests
 from fandogh_cli.fandogh_client import base_url, get_exception
 from fandogh_cli.fandogh_client import get_stored_token
 
-base_exec_url = '%sservices/exec' % base_url
+base_exec_url = '%sservices/exec_commands' % base_url
 
 
 def post_exec(pod_name, command):
