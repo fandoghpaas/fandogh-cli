@@ -1,4 +1,6 @@
 import click
+import yaml
+
 from .fandogh_client import *
 from .config import get_project_config
 from .presenter import present
@@ -199,9 +201,16 @@ def service_apply(file, parameters):
     click.echo(message)
 
 
+@click.command('dump', cls=FandoghCommand)
+@click.option('-s', '--service', '--name', prompt='Service name')
+def service_dump(name):
+    click.echo(yaml.safe_dump(dump_manifest(name), default_flow_style=False))
+
+
 service.add_command(deploy)
 service.add_command(service_apply)
 service.add_command(service_list)
 service.add_command(service_destroy)
 service.add_command(service_logs)
 service.add_command(service_details)
+service.add_command(service_dump)
