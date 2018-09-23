@@ -26,7 +26,7 @@ class FandoghAPIError(Exception):
 class AuthenticationError(Exception):
     message = "Please login first. You can do it by running 'fandogh login' command"
 
-    def __init__(self, response):
+    def __init__(self, response=None):
         self.response = response
 
 
