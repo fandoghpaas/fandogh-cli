@@ -349,3 +349,16 @@ def _generate_manifest(image, version, name, port, envs, hosts, internal, regist
 
     manifest['spec'] = spec
     return manifest
+
+
+def dump_manifest(service_name):
+    token = get_stored_token()
+    response = requests.get(base_services_url + '/manifests',
+                            params={'service_name': service_name},
+                            headers={'Authorization': 'JWT ' + token}
+                            )
+
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        return response.json()['data']

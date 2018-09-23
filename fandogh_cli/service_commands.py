@@ -200,16 +200,7 @@ def service_apply(file):
 @click.command('dump', cls=FandoghCommand)
 @click.option('-s', '--service', '--name', prompt='Service name')
 def service_dump(name):
-    token = get_stored_token()
-    response = requests.get(base_services_url + '/manifests',
-                            params={'service_name': name},
-                            headers={'Authorization': 'JWT ' + token}
-                            )
-    if response.status_code != 200:
-        raise get_exception(response)
-    else:
-        manifest = response.json()['data']
-        click.echo(yaml.safe_dump(manifest, default_flow_style=False))
+    click.echo(yaml.safe_dump(dump_manifest(name), default_flow_style=False))
 
 
 service.add_command(deploy)
