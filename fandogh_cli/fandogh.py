@@ -9,8 +9,7 @@ from .service_commands import service
 from .managed_service_commands import managed_service
 
 from .base_commands import FandoghCommand
-from .presenter import present
-from .config import *
+from fandogh_cli.fandogh_presenter.table_presenter import present
 from .fandogh_client import *
 
 

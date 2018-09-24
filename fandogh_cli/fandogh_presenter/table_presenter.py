@@ -1,50 +1,52 @@
-import click
-from fandogh_cli.presenter import present
-from fandogh_cli.utils import TextStyle, format_text
+from beautifultable import BeautifulTable
+import os
+
+from fandogh_cli.utils import get_window_width
+
+FANDOGH_DEBUG = os.environ.get('FANDOGH_DEBUG', False)
 
 
-def generate_service_detail(details):
-    if details.get('env'):
-        click.echo('Environment Variables:')
-        click.echo(present(lambda: details.get('env'), renderer='table',
-                           headers=['Name', 'Value'],
-                           columns=['name', 'value'])
-                   )
-    click.echo('Pods:')
-    for pod in details['pods']:
-        click.echo('  Name: {}'.format(pod['name']))
-        click.echo('  Created at: {}'.format(pod.get("created_at", "UNKNOWN")))
-        click.echo('  Phase: {}'.format(
-            format_text(pod['phase'], TextStyle.OKGREEN)
-            if pod['phase'] == 'Running'
-            else format_text(pod['phase'], TextStyle.WARNING)
-        ))
-        containers = pod.get('containers', [])
-        containers_length = len(containers)
-        ready_containers = list(filter(lambda c: c.get('ready', False), containers))
-        ready_containers_length = len(ready_containers)
-        if ready_containers_length != containers_length:
-            pod_ready_message = '  Ready containers:' + format_text(
-                ' {}/{}'.format(ready_containers_length, containers_length), TextStyle.WARNING)
-        else:
-            pod_ready_message = '  Ready containers:' + format_text(
-                ' {}/{}'.format(containers_length, containers_length), TextStyle.OKGREEN)
-        click.echo(pod_ready_message)
-        click.echo('  Containers:')
-        for container in pod['containers']:
-            click.echo('    Name: {}'.format(container['name']))
-            click.echo('    Image: {}'.format(container['image']))
-            click.echo('    Staus: {}'.format(format_text('Ready', TextStyle.OKGREEN) if container['ready']
-                                              else format_text(
-                (container.get('waiting', {}) or {}).get('reason', 'Pending'),
-                TextStyle.WARNING)))
+def _create_table(columns):
+    min_width = 80
+    width = max(min_width, get_window_width() or 160)
+    table = BeautifulTable(max_width=width)
+    table.column_headers = columns
+    table.row_separator_char = ''
+    return table
 
-        click.echo('    ---------------------')
 
-        if pod.get('events', []) and containers_length != ready_containers_length:
-            click.echo('    Events:')
-            click.echo(
-                present(lambda: pod.get('events'), renderer='table',
-                        headers=['Reason', 'Message', 'Count', 'First Seen', 'Last Seen'],
-                        columns=['reason', 'message', 'count', 'first_timestamp', 'last_timestamp'])
-            )
+def table_renderer(data, **kwargs):
+    headers = kwargs.get('headers')
+    column_names = kwargs.get('columns')
+    table = _create_table(headers)
+    for item in data:
+        row = []
+        for cn in column_names:
+            if item.get(cn) is True:
+                row.append('Yes')
+            elif item.get(cn) is False:
+                row.append('No')
+            else:
+                row.append(item.get(cn))
+        table.append_row(row)
+    return table
+
+
+def text_renderer(data, **kwargs):
+    field = kwargs.get('field', None)
+    if field:
+        return str(data.get(field) or '')
+    else:
+        return str(data or '')
+
+
+renderers = {
+    'table': table_renderer,
+    'text': text_renderer
+}
+
+
+def present(data_provider, pre='', post='', renderer='text', **kwargs):
+    data = data_provider()
+    rendered = renderers.get(renderer)(data, **kwargs)
+    return pre + str(rendered) + post

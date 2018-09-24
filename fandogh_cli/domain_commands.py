@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 import click
-import time
 
 from .fandogh_client.domain_client import *
 from .base_commands import FandoghCommand
-from .presenter import present
+from fandogh_cli.fandogh_presenter.table_presenter import present
 from .utils import format_text, TextStyle
 
 
