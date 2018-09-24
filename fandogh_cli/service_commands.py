@@ -142,7 +142,9 @@ def service_details(service_name):
 @click.command('apply', cls=FandoghCommand)
 @click.option('-f', '--file', 'file', prompt='File address')
 @click.option('-p', '--parameter', 'parameters', help='Manifest parameters', multiple=True)
-def service_apply(file, parameters):
+@click.option('-d', 'detach', is_flag=True, default=False,
+              help='detach terminal.')
+def service_apply(file, parameters, detach):
     """Deploys a service defined as a manifest"""
     manifest_content = read_manifest(file, parameters)
     if manifest_content is None:
@@ -173,24 +175,27 @@ def service_apply(file, parameters):
         Managed service deployed successfully
         """
 
-    while True:
-        details = get_details(service_name)
+    if detach:
+        click.echo(message)
+    else:
+        while True:
+            details = get_details(service_name)
 
-        if not details:
-            exit(1)
+            if not details:
+                exit(1)
 
-        click.clear()
+            click.clear()
 
-        if details.get('state') == 'RUNNING':
-            present_service_detail(details)
-            click.echo(message)
-            exit(1)
-        elif details.get('state') == 'UNSTABLE':
-            present_service_detail(details)
-            click.echo('You can press ctrl + C to exit details service state monitoring')
-            sleep(3)
-        else:
-            exit(1)
+            if details.get('state') == 'RUNNING':
+                present_service_detail(details)
+                click.echo(message)
+                exit(1)
+            elif details.get('state') == 'UNSTABLE':
+                present_service_detail(details)
+                click.echo('You can press ctrl + C to exit details service state monitoring')
+                sleep(3)
+            else:
+                exit(1)
 
 
 service.add_command(deploy)
