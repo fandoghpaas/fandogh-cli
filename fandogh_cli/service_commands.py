@@ -26,7 +26,10 @@ def service():
 @click.option('--internal', help='This is an internal service like a DB and the port should '
                                  'not be exposed publicly', default=False, is_flag=True)
 @click.option('--image-pull-policy', 'image_pull_policy', default='IfNotPresent')
-def deploy(image, version, name, port, envs, hosts, internal, registry_secret, image_pull_policy, internal_ports):
+@click.option('-d', 'detach', is_flag=True, default=False,
+              help='detach terminal.')
+def deploy(image, version, name, port, envs, hosts, internal, registry_secret, image_pull_policy, internal_ports,
+           detach):
     """Deploy service"""
     if not image:
         image = get_project_config().get('image.name')
@@ -46,39 +49,57 @@ def deploy(image, version, name, port, envs, hosts, internal, registry_secret, i
     deployment_result = deploy_service(image, version, name, envs, hosts, port, internal, registry_secret,
                                        image_pull_policy, internal_ports)
 
-    while True:
-        details = get_details(name)
+    if detach:
+        message = "\nCongratulation, Your service is running ^_^\n\n"
+        if str(deployment_result['service_type']).lower() == 'external':
+            message += "Your service is accessible using the following URLs:\n{}".format(
+                "\n".join([" - {}".format(url) for url in deployment_result['urls']])
+            )
+            message += '\n'
+            click.echo(message)
+        else:
+            message += """
+        Since your service is internal, it's not accessible from outside your fandogh private network, 
+        but other services inside your private network will be able to find it using it's name: '{}'
+                """.strip().format(
+                deployment_result['name']
+            )
+            message += '\n'
+            click.secho(message, bold=True, fg='yellow')
+    else:
+        while True:
+            details = get_details(name)
 
-        if not details:
-            exit(1)
+            if not details:
+                exit(1)
 
-        click.clear()
+            click.clear()
 
-        if details.get('state') == 'RUNNING':
-            present_service_detail(details)
-            message = "\nCongratulation, Your service is running ^_^\n\n"
-            if str(deployment_result['service_type']).lower() == 'external':
-                message += "Your service is accessible using the following URLs:\n{}".format(
-                    "\n".join([" - {}".format(url) for url in deployment_result['urls']])
-                )
-                message += '\n'
-                click.echo(message)
-            else:
-                message += """
+            if details.get('state') == 'RUNNING':
+                present_service_detail(details)
+                message = "\nCongratulation, Your service is running ^_^\n\n"
+                if str(deployment_result['service_type']).lower() == 'external':
+                    message += "Your service is accessible using the following URLs:\n{}".format(
+                        "\n".join([" - {}".format(url) for url in deployment_result['urls']])
+                    )
+                    message += '\n'
+                    click.echo(message)
+                else:
+                    message += """
             Since your service is internal, it's not accessible from outside your fandogh private network, 
             but other services inside your private network will be able to find it using it's name: '{}'
                     """.strip().format(
-                    deployment_result['name']
-                )
-                message += '\n'
-                click.secho(message, bold=True, fg='yellow')
-            exit(1)
-        elif details.get('state') == 'UNSTABLE':
-            present_service_detail(details)
-            click.echo('You can press ctrl + C to exit details service state monitoring')
-            sleep(3)
-        else:
-            exit(1)
+                        deployment_result['name']
+                    )
+                    message += '\n'
+                    click.secho(message, bold=True, fg='yellow')
+                exit(1)
+            elif details.get('state') == 'UNSTABLE':
+                present_service_detail(details)
+                click.echo('You can press ctrl + C to exit details service state monitoring')
+                sleep(3)
+            else:
+                exit(1)
 
 
 @click.command('list', cls=FandoghCommand)
