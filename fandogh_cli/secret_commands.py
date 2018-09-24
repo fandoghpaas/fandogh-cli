@@ -1,7 +1,7 @@
 import click
 from fandogh_cli.fandogh_client.secrets_client import list_secret, create_secret
 from .utils import format_text, TextStyle
-from presenter import present
+from .presenter import present
 from .base_commands import FandoghCommand
 
 

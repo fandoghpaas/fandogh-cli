@@ -3,7 +3,7 @@ import click
 
 from .fandogh_client.domain_client import *
 from .base_commands import FandoghCommand
-from presenter import present
+from .presenter import present
 from .utils import format_text, TextStyle
 
 

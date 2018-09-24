@@ -9,7 +9,7 @@ from .service_commands import service
 from .managed_service_commands import managed_service
 
 from .base_commands import FandoghCommand
-from presenter import present
+from .presenter import present
 from .fandogh_client import *
 
 
@@ -39,6 +39,7 @@ def login(username, password):
     click.echo(message + '\n')
     click.echo('Welcome to Fandogh Cloud, you can start using our PaaS as quickly as a link click, Try it below:\n')
     click.echo('https://docs.fandogh.cloud/docs/getting-started.html\n')
+
 
 base.add_command(login)
 base.add_command(image)

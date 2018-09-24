@@ -1,3 +1,3 @@
-from base_presenter import *
-from table_data_provider import *
+from .base_presenter import *
+from .service_presenter import *
 

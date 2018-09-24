@@ -5,7 +5,7 @@ from .config import get_project_config
 from .utils import format_text, TextStyle, read_manifest
 from .base_commands import FandoghCommand
 from time import sleep
-from presenter import generate_service_detail
+from .presenter import present_service_detail, present
 
 
 @click.group("service")
@@ -55,7 +55,7 @@ def deploy(image, version, name, port, envs, hosts, internal, registry_secret, i
         click.clear()
 
         if details.get('state') == 'RUNNING':
-            generate_service_detail(details)
+            present_service_detail(details)
             message = "\nCongratulation, Your service is running ^_^\n\n"
             if str(deployment_result['service_type']).lower() == 'external':
                 message += "Your service is accessible using the following URLs:\n{}".format(
@@ -74,7 +74,7 @@ def deploy(image, version, name, port, envs, hosts, internal, registry_secret, i
                 click.secho(message, bold=True, fg='yellow')
             exit(1)
         elif details.get('state') == 'UNSTABLE':
-            generate_service_detail(details)
+            present_service_detail(details)
             click.echo('You can press ctrl + C to exit details service state monitoring')
             sleep(3)
         else:
@@ -136,7 +136,7 @@ def service_details(service_name):
     if not details:
         return
 
-    generate_service_detail(details)
+    present_service_detail(details)
 
 
 @click.command('apply', cls=FandoghCommand)
@@ -182,11 +182,11 @@ def service_apply(file, parameters):
         click.clear()
 
         if details.get('state') == 'RUNNING':
-            generate_service_detail(details)
+            present_service_detail(details)
             click.echo(message)
             exit(1)
         elif details.get('state') == 'UNSTABLE':
-            generate_service_detail(details)
+            present_service_detail(details)
             click.echo('You can press ctrl + C to exit details service state monitoring')
             sleep(3)
         else:

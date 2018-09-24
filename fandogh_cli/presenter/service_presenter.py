@@ -1,9 +1,9 @@
 import click
-from base_presenter import present
+from .base_presenter import present
 from fandogh_cli.utils import TextStyle, format_text
 
 
-def generate_service_detail(details):
+def present_service_detail(details):
     if details.get('env'):
         click.echo('Environment Variables:')
         click.echo(present(lambda: details.get('env'), renderer='table',
