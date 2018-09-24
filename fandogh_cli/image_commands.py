@@ -2,7 +2,7 @@
 import click
 from .base_commands import FandoghCommand
 from .utils import format_text, TextStyle
-from fandogh_cli.fandogh_presenter.table_presenter import present
+from fandogh_cli.fandogh_presenter.presenter import present
 from .config import *
 from .fandogh_client import *
 from time import sleep

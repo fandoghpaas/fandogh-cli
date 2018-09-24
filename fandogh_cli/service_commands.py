@@ -3,7 +3,7 @@ import click
 from fandogh_cli.fandogh_presenter.table_data_provider import generate_service_detail
 from .fandogh_client import *
 from .config import get_project_config
-from fandogh_cli.fandogh_presenter.table_presenter import present
+from fandogh_cli.fandogh_presenter.presenter import present
 from .utils import format_text, TextStyle, read_manifest
 from .base_commands import FandoghCommand
 from time import sleep
@@ -80,8 +80,6 @@ def deploy(image, version, name, port, envs, hosts, internal, registry_secret, i
             sleep(3)
         else:
             exit(1)
-
-
 
 
 @click.command('list', cls=FandoghCommand)

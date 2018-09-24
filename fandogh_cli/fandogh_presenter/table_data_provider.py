@@ -1,5 +1,5 @@
 import click
-from fandogh_cli.fandogh_presenter.table_presenter import present
+from fandogh_cli.fandogh_presenter.presenter import present
 from fandogh_cli.utils import TextStyle, format_text
 
 
