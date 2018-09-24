@@ -1,4 +1,6 @@
 import click
+
+from fandogh_cli.fandogh_presenter.table_data_provider import generate_service_detail
 from .fandogh_client import *
 from .config import get_project_config
 from fandogh_cli.fandogh_presenter.table_presenter import present
