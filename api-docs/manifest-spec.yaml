@@ -11,6 +11,7 @@ spec:
   env:
     - name: VERSION
       value: v1
+      hidden: false
 
   domains:
      - name: api.hello-world.com # already created domain
