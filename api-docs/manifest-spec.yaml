@@ -16,7 +16,7 @@ spec:
   domains:
      - name: api.hello-world.com # already created domain
        tls: api-hello-world-tls # already created certificate
-  volumes:
+  volume_mounts:
     - name: default # already created volume
       mountPath: /mnt/data
       subPath: test
@@ -47,7 +47,7 @@ spec:
   env:
     - name: VERSION
       value: v1
-  volumes:
+  volume_mounts:
     - name: default # already created volume
       mount_path: /mnt/data
       sub_path: test
@@ -79,7 +79,7 @@ spec:
     limit:
       memory: 200Mi
       cpu: 0.2
-  volumes:
+  volume_mounts:
     - name: default # already created volume
       mount_path: /mnt/data
       sub_path: test
