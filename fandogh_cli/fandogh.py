@@ -6,7 +6,7 @@ from fandogh_cli.secret_commands import secret
 from .domain_commands import domain
 from .image_commands import image
 from .service_commands import service
-from .exec_commands import exec
+from .exec_commands import exec_command
 from .managed_service_commands import managed_service
 
 from .base_commands import FandoghCommand
@@ -48,7 +48,7 @@ base.add_command(managed_service)
 base.add_command(domain)
 base.add_command(secret)
 base.add_command(namespace)
-base.add_command(exec)
+base.add_command(exec_command)
 
 if __name__ == '__main__':
     base()

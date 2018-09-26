@@ -9,7 +9,7 @@ from .base_commands import FandoghCommand
 @click.argument('command', nargs=1)
 @click.option('-s', '--service', 'service', prompt='Service Name')
 @click.option('-r', '--replica')
-def exec(command, service, replica):
+def exec_command(command, service, replica):
     """Exec management commands"""
     if not replica:
         details = get_details(service)
