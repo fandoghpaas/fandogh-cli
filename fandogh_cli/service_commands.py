@@ -1,5 +1,5 @@
 import click
-
+import yaml
 from .fandogh_client import *
 from .config import get_project_config
 from .utils import format_text, TextStyle, read_manifest
@@ -93,7 +93,7 @@ def deploy(image, version, name, port, envs, hosts, internal, registry_secret, i
                     )
                     message += '\n'
                     click.secho(message, bold=True, fg='yellow')
-                exit(1)
+                exit(0)
             elif details.get('state') == 'UNSTABLE':
                 present_service_detail(details)
                 click.echo('You can press ctrl + C to exit details service state monitoring')
@@ -210,7 +210,7 @@ def service_apply(file, parameters, detach):
             if details.get('state') == 'RUNNING':
                 present_service_detail(details)
                 click.echo(message)
-                exit(1)
+                exit(0)
             elif details.get('state') == 'UNSTABLE':
                 present_service_detail(details)
                 click.echo('You can press ctrl + C to exit details service state monitoring')
