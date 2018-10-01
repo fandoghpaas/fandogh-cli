@@ -41,6 +41,7 @@ def login(username, password):
     click.echo('Welcome to Fandogh Cloud, you can start using our PaaS as quickly as a link click, Try it below:\n')
     click.echo('https://docs.fandogh.cloud/docs/getting-started.html\n')
 
+
 base.add_command(login)
 base.add_command(image)
 base.add_command(service)

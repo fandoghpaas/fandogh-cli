@@ -3,10 +3,10 @@ import yaml
 
 from .fandogh_client import *
 from .config import get_project_config
-from .presenter import present
 from .utils import format_text, TextStyle, read_manifest
 from .base_commands import FandoghCommand
 from time import sleep
+from .presenter import present_service_detail, present
 
 
 @click.group("service")
@@ -27,7 +27,10 @@ def service():
 @click.option('--internal', help='This is an internal service like a DB and the port should '
                                  'not be exposed publicly', default=False, is_flag=True)
 @click.option('--image-pull-policy', 'image_pull_policy', default='IfNotPresent')
-def deploy(image, version, name, port, envs, hosts, internal, registry_secret, image_pull_policy, internal_ports):
+@click.option('-d', 'detach', is_flag=True, default=False,
+              help='detach terminal.')
+def deploy(image, version, name, port, envs, hosts, internal, registry_secret, image_pull_policy, internal_ports,
+           detach):
     """Deploy service"""
     if not image:
         image = get_project_config().get('image.name')
@@ -46,22 +49,58 @@ def deploy(image, version, name, port, envs, hosts, internal, registry_secret, i
                 exit(-1)
     deployment_result = deploy_service(image, version, name, envs, hosts, port, internal, registry_secret,
                                        image_pull_policy, internal_ports)
-    message = "\nCongratulation, Your service is running ^_^\n\n"
-    if str(deployment_result['service_type']).lower() == 'external':
-        message += "Your service is accessible using the following URLs:\n{}".format(
-            "\n".join([" - {}".format(url) for url in deployment_result['urls']])
-        )
-        message += '\n'
-        click.echo(message)
+
+    if detach:
+        message = "\nCongratulation, Your service is running ^_^\n\n"
+        if str(deployment_result['service_type']).lower() == 'external':
+            message += "Your service is accessible using the following URLs:\n{}".format(
+                "\n".join([" - {}".format(url) for url in deployment_result['urls']])
+            )
+            message += '\n'
+            click.echo(message)
+        else:
+            message += """
+        Since your service is internal, it's not accessible from outside your fandogh private network, 
+        but other services inside your private network will be able to find it using it's name: '{}'
+                """.strip().format(
+                deployment_result['name']
+            )
+            message += '\n'
+            click.secho(message, bold=True, fg='yellow')
     else:
-        message += """
-Since your service is internal, it's not accessible from outside your fandogh private network, 
-but other services inside your private network will be able to find it using it's name: '{}'
-        """.strip().format(
-            deployment_result['name']
-        )
-        message += '\n'
-        click.secho(message, bold=True, fg='yellow')
+        while True:
+            details = get_details(name)
+
+            if not details:
+                exit(1)
+
+            click.clear()
+
+            if details.get('state') == 'RUNNING':
+                present_service_detail(details)
+                message = "\nCongratulation, Your service is running ^_^\n\n"
+                if str(deployment_result['service_type']).lower() == 'external':
+                    message += "Your service is accessible using the following URLs:\n{}".format(
+                        "\n".join([" - {}".format(url) for url in deployment_result['urls']])
+                    )
+                    message += '\n'
+                    click.echo(message)
+                else:
+                    message += """
+            Since your service is internal, it's not accessible from outside your fandogh private network, 
+            but other services inside your private network will be able to find it using it's name: '{}'
+                    """.strip().format(
+                        deployment_result['name']
+                    )
+                    message += '\n'
+                    click.secho(message, bold=True, fg='yellow')
+                exit(0)
+            elif details.get('state') == 'UNSTABLE':
+                present_service_detail(details)
+                click.echo('You can press ctrl + C to exit details service state monitoring')
+                sleep(3)
+            else:
+                exit(1)
 
 
 @click.command('list', cls=FandoghCommand)
@@ -119,56 +158,15 @@ def service_details(service_name):
     if not details:
         return
 
-    if details.get('env'):
-        click.echo('Environment Variables:')
-        click.echo(present(lambda: details.get('env'), renderer='table',
-                           headers=['Name', 'Value'],
-                           columns=['name', 'value'])
-                   )
-    click.echo('Pods:')
-    for pod in details['pods']:
-        click.echo('  Name: {}'.format(pod['name']))
-        click.echo('  Created at: {}'.format(pod.get("created_at", "UNKNOWN")))
-        click.echo('  Phase: {}'.format(
-            format_text(pod['phase'], TextStyle.OKGREEN)
-            if pod['phase'] == 'Running'
-            else format_text(pod['phase'], TextStyle.WARNING)
-        ))
-        containers = pod.get('containers', [])
-        containers_length = len(containers)
-        ready_containers = list(filter(lambda c: c.get('ready', False), containers))
-        ready_containers_length = len(ready_containers)
-        if ready_containers_length != containers_length:
-            pod_ready_message = '  Ready containers:' + format_text(
-                ' {}/{}'.format(ready_containers_length, containers_length), TextStyle.WARNING)
-        else:
-            pod_ready_message = '  Ready containers:' + format_text(
-                ' {}/{}'.format(containers_length, containers_length), TextStyle.OKGREEN)
-        click.echo(pod_ready_message)
-        click.echo('  Containers:')
-        for container in pod['containers']:
-            click.echo('    Name: {}'.format(container['name']))
-            click.echo('    Image: {}'.format(container['image']))
-            click.echo('    Staus: {}'.format(format_text('Ready', TextStyle.OKGREEN) if container['ready']
-                                              else format_text(
-                (container.get('waiting', {}) or {}).get('reason', 'Pending'),
-                TextStyle.WARNING)))
-
-        click.echo('    ---------------------')
-
-        if pod.get('events', []) and containers_length != ready_containers_length:
-            click.echo('    Events:')
-            click.echo(
-                present(lambda: pod.get('events'), renderer='table',
-                        headers=['Reason', 'Message', 'Count', 'First Seen', 'Last Seen'],
-                        columns=['reason', 'message', 'count', 'first_timestamp', 'last_timestamp'])
-            )
+    present_service_detail(details)
 
 
 @click.command('apply', cls=FandoghCommand)
 @click.option('-f', '--file', 'file', prompt='File address')
 @click.option('-p', '--parameter', 'parameters', help='Manifest parameters', multiple=True)
-def service_apply(file, parameters):
+@click.option('-d', 'detach', is_flag=True, default=False,
+              help='detach terminal.')
+def service_apply(file, parameters, detach):
     """Deploys a service defined as a manifest"""
     manifest_content = read_manifest(file, parameters)
     if manifest_content is None:
@@ -179,6 +177,7 @@ def service_apply(file, parameters):
     yml = load(manifest_content)
 
     deployment_result = deploy_manifest(yml)
+    service_name = yml.get('name', '')
     message = "\nCongratulation, Your service is running ^_^\n"
     service_type = str(deployment_result.get('service_type', '')).lower()
 
@@ -198,7 +197,27 @@ def service_apply(file, parameters):
         Managed service deployed successfully
         """
 
-    click.echo(message)
+    if detach:
+        click.echo(message)
+    else:
+        while True:
+            details = get_details(service_name)
+
+            if not details:
+                exit(1)
+
+            click.clear()
+
+            if details.get('state') == 'RUNNING':
+                present_service_detail(details)
+                click.echo(message)
+                exit(0)
+            elif details.get('state') == 'UNSTABLE':
+                present_service_detail(details)
+                click.echo('You can press ctrl + C to exit details service state monitoring')
+                sleep(3)
+            else:
+                exit(1)
 
 
 @click.command('dump', cls=FandoghCommand)

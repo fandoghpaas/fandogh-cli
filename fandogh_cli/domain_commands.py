@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import click
-import time
 
 from .fandogh_client.domain_client import *
 from .base_commands import FandoghCommand

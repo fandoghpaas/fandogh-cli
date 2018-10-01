@@ -1,6 +1,5 @@
 import click
 from fandogh_cli.fandogh_client.namespace_client import details_namespace
-from .presenter import present
 from .base_commands import FandoghCommand
 from .utils import format_text, TextStyle
 
