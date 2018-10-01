@@ -46,7 +46,7 @@ def _generate_managed_manifest(name, version, config):
     manifest['kind'] = 'ManagedService'
 
     spec = dict()
-    spec['service_name'] = name
+    spec['name'] = spec['service_name'] = name
     spec['version'] = version
 
     param_list = []
