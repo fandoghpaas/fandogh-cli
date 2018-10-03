@@ -41,21 +41,21 @@ def help():
             click.echo("\t\t. {}:\t{}".format(parameter_name.ljust(20), description))
 
 
-def _generate_managed_manifest(name, version, config):
+def _generate_managed_manifest(service_type, version, config):
     manifest = dict()
     manifest['kind'] = 'ManagedService'
 
     spec = dict()
-    spec['service_name'] = name
+    manifest['name'] = spec['service_name'] = service_type
     spec['version'] = version
 
     param_list = []
-    env_variables = parse_key_values(config)
-    for key in env_variables:
+    service_parameters = parse_key_values(config)
+    for key in service_parameters:
         if key == 'service_name':
-            manifest['name'] = env_variables[key]
+            manifest['name'] = service_parameters[key]
         else:
-            param_list.append({'name': key, 'value': env_variables[key]})
+            param_list.append({'name': key, 'value': service_parameters[key]})
 
     spec['parameters'] = param_list
     manifest['spec'] = spec
