@@ -1,6 +1,7 @@
 import platform
 
 import click
+import requests
 
 from fandogh_cli.config import get_user_config
 from fandogh_cli import VERSION
@@ -25,7 +26,11 @@ def collect(cmd, ctx, exception=None):
 
             report(info)
 
+    except requests.exceptions.ConnectionError:
+        pass
     except Exception as e:
-        click.echo(format_text('Error in reporting problem. Please share this error with to help us to improve the service.', TextStyle.FAIL), err=True)
+        click.echo(
+            format_text('Error in reporting problem. Please share this error with to help us to improve the service.',
+                        TextStyle.FAIL), err=True)
         click.echo(format_text('Caused by {}'.format(exception), TextStyle.FAIL), err=True)
         click.echo(format_text('Report error: {}'.format(e), TextStyle.FAIL), err=True)
