@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 import click
+import requests
 from click import Command
 from fandogh_cli import NAME
 from fandogh_cli.fandogh_client import FandoghAPIError, CommandParameterException
@@ -38,6 +39,11 @@ class FandoghCommand(Command):
             click.echo(format_text(
                 "Please login first. You can do it by running 'fandogh login' command", TextStyle.FAIL
             ), err=True)
+
+        except requests.exceptions.RequestException as req_err:
+            click.echo(format_text('Error in your network connection! trying again might help to fix this issue \n'
+                       'if it is keep happening, please inform us!', TextStyle.FAIL), err=True)
+            collect(self, ctx, req_err)
         except Exception as exp:
             collect(self, ctx, exp)
             raise exp
