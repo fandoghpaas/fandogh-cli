@@ -10,6 +10,13 @@ def present_service_detail(details):
                            headers=['Name', 'Value'],
                            columns=['name', 'value'])
                    )
+
+    if details.get('urls'):
+        click.echo('Domains:')
+
+        for url in details['urls']:
+            click.echo('- {}'.format(url))
+
     click.echo('Pods:')
     for pod in details['pods']:
         click.echo('  Name: {}'.format(pod['name']))
