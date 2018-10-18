@@ -48,16 +48,7 @@ def list_images():
     """
     List images
     """
-    table = present(lambda: get_images(),
-                    renderer='table',
-                    headers=['Name', 'Last Version', 'Last Version Publication Date'],
-                    columns=['name', 'last_version_version', 'last_version_date'])
-    if table:
-        click.echo(table)
-    else:
-        click.echo('\nYou have no images to show, why don\'t you try building one? \n'
-                   'have fun and follow the link below:\n')
-        click.echo('https://docs.fandogh.cloud/docs/images.html\n')
+    generate_image_list()
 
 
 def show_image_logs(image_name, version):
@@ -172,6 +163,27 @@ def versions(image):
               default=lambda: get_project_config().get('image.name'))
 def delete(image):
     click.echo(delete_image(image)['message'])
+
+
+@click.command('images', cls=FandoghCommand)
+def images():
+    """
+    List of all images in your namespace
+    """
+    generate_image_list()
+
+
+def generate_image_list():
+    table = present(lambda: get_images(),
+                    renderer='table',
+                    headers=['Name', 'Last Version', 'Last Version Publication Date'],
+                    columns=['name', 'last_version_version', 'last_version_date'])
+    if table:
+        click.echo(table)
+    else:
+        click.echo('\nYou have no images to show, why don\'t you try building one? \n'
+                   'have fun and follow the link below:\n')
+        click.echo('https://docs.fandogh.cloud/docs/images.html\n')
 
 
 image.add_command(init)
