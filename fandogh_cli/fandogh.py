@@ -5,7 +5,7 @@ from fandogh_cli.namespace_commands import namespace
 from fandogh_cli.secret_commands import secret
 from .domain_commands import domain
 from .image_commands import image
-from .service_commands import service
+from .service_commands import service, services
 from .exec_commands import exec_command
 from .managed_service_commands import managed_service
 
@@ -45,6 +45,7 @@ def login(username, password):
 base.add_command(login)
 base.add_command(image)
 base.add_command(service)
+base.add_command(services)
 base.add_command(managed_service)
 base.add_command(domain)
 base.add_command(secret)

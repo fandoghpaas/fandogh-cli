@@ -106,17 +106,7 @@ def deploy(image, version, name, port, envs, hosts, internal, registry_secret, i
 @click.command('list', cls=FandoghCommand)
 def service_list():
     """List all services for this image"""
-    table = present(lambda: list_services(),
-                    renderer='table',
-                    headers=['Service Name', 'URL', 'Service Type', "Memory Usages", 'Started at', 'Updated at',
-                             'State'],
-                    columns=['name', 'url', 'service_type', 'memory', 'start_date', 'last_update', 'state', ])
-    if table:
-        click.echo(table)
-    else:
-        click.echo('\nYou have no running services right now, why don\'t you try deploying one? \n'
-                   'have fun and follow the link below:\n')
-        click.echo('https://docs.fandogh.cloud/docs/services.html\n')
+    generate_service_list()
 
 
 @click.command('destroy', cls=FandoghCommand)
@@ -224,6 +214,26 @@ def service_apply(file, parameters, detach):
 @click.option('-s', '--service', '--name', prompt='Service name')
 def service_dump(name):
     click.echo(yaml.safe_dump(dump_manifest(name), default_flow_style=False))
+
+
+@click.command('services', cls=FandoghCommand)
+def services():
+    """List of all running services"""
+    generate_service_list()
+
+
+def generate_service_list():
+    table = present(lambda: list_services(),
+                    renderer='table',
+                    headers=['Service Name', 'URL', 'Service Type', "Memory Usages", 'Started at', 'Updated at',
+                             'State'],
+                    columns=['name', 'url', 'service_type', 'memory', 'start_date', 'last_update', 'state', ])
+    if table:
+        click.echo(table)
+    else:
+        click.echo('\nYou have no running services right now, why don\'t you try deploying one? \n'
+                   'have fun and follow the link below:\n')
+        click.echo('https://docs.fandogh.cloud/docs/services.html\n')
 
 
 service.add_command(deploy)
