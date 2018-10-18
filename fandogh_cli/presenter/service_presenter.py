@@ -15,7 +15,7 @@ def present_service_detail(details):
         click.echo('Domains:')
 
         for url in details['urls']:
-            click.echo('- {}'.format(url))
+            click.echo(' - {}'.format(url))
 
     click.echo('Pods:')
     for pod in details['pods']:
