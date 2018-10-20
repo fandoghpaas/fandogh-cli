@@ -178,10 +178,10 @@ def service_apply(file, parameters, detach):
     # click.echo(manifest_content)
     from yaml import load
 
-    for index, file_in in enumerate(manifest_content):
-        yml = load(file_in)
-        click.echo('\n this is deploying {} \n'.format(yml))
-        click.echo('\n this is deploying {} \n'.format(file_in))
+    for index, service_conf in enumerate(manifest_content):
+        click.echo('service {} - {} is being deployed'.format(index+1, len(manifest_content)))
+        yml = load(service_conf)
+
         deployment_result = deploy_manifest(yml)
         service_name = yml.get('name', '')
         message = "\nCongratulation, Your service is running ^_^\n"
