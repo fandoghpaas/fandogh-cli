@@ -85,14 +85,17 @@ def trim_comments(manifest):
 
 def read_manifest(manifest_file, parameters):
     try:
+        deployment_list = list()
         with open(manifest_file, mode='r') as manifest:
-            rendered_manifest = process_template(
-                manifest.read(),
-                parse_key_values(
-                    parameters
+            for deployment in manifest.read().split('---'):
+                rendered_manifest = process_template(
+                    deployment,
+                    parse_key_values(
+                        parameters
+                    )
                 )
-            )
-        return trim_comments(rendered_manifest)
+                deployment_list.append(trim_comments(rendered_manifest))
+        return deployment_list
     except IOError as e:
         click.echo(format_text(e.strerror, TextStyle.FAIL), err=True)
     except KeyError as missing_parameter:

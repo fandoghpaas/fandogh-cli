@@ -124,6 +124,8 @@ def service_list():
               help='Name of the service you want to destroy')
 def service_destroy(service_name):
     """Destroy service"""
+    click.echo('you are about to destroy service with name {}.'.format(service_name))
+    click.echo('It might take a while!')
     message = present(lambda: destroy_service(service_name))
     click.echo(message)
 
@@ -171,53 +173,63 @@ def service_apply(file, parameters, detach):
     manifest_content = read_manifest(file, parameters)
     if manifest_content is None:
         return
-    click.echo(manifest_content)
+    for content in manifest_content:
+        click.echo(content)
+    # click.echo(manifest_content)
     from yaml import load
 
-    yml = load(manifest_content)
+    for index, file_in in enumerate(manifest_content):
+        yml = load(file_in)
+        click.echo('\n this is deploying {} \n'.format(yml))
+        click.echo('\n this is deploying {} \n'.format(file_in))
+        deployment_result = deploy_manifest(yml)
+        service_name = yml.get('name', '')
+        message = "\nCongratulation, Your service is running ^_^\n"
+        service_type = str(deployment_result.get('service_type', '')).lower()
 
-    deployment_result = deploy_manifest(yml)
-    service_name = yml.get('name', '')
-    message = "\nCongratulation, Your service is running ^_^\n"
-    service_type = str(deployment_result.get('service_type', '')).lower()
+        if service_type == 'external':
+            message += "Your service is accessible using the following URLs:\n{}".format(
+                "\n".join([" - {}".format(url) for url in deployment_result['urls']])
+            )
+        elif service_type == 'internal':
+            message += """
+        Since your service is internal, it's not accessible from outside your fandogh private network, 
+        but other services inside your private network will be able to find it using it's name: '{}'
+                """.strip().format(
+                deployment_result['name']
+            )
+        elif service_type == 'managed':
+            message += """
+            Managed service deployed successfully
+            """
 
-    if service_type == 'external':
-        message += "Your service is accessible using the following URLs:\n{}".format(
-            "\n".join([" - {}".format(url) for url in deployment_result['urls']])
-        )
-    elif service_type == 'internal':
-        message += """
-    Since your service is internal, it's not accessible from outside your fandogh private network, 
-    but other services inside your private network will be able to find it using it's name: '{}'
-            """.strip().format(
-            deployment_result['name']
-        )
-    elif service_type == 'managed':
-        message += """
-        Managed service deployed successfully
-        """
+        if detach:
+            click.echo(message)
+        else:
+            while True:
+                details = get_details(service_name)
 
-    if detach:
-        click.echo(message)
-    else:
-        while True:
-            details = get_details(service_name)
+                if not details:
+                    exit(1)
 
-            if not details:
-                exit(1)
+                click.clear()
 
-            click.clear()
-
-            if details.get('state') == 'RUNNING':
-                present_service_detail(details)
-                click.echo(message)
-                exit(0)
-            elif details.get('state') == 'UNSTABLE':
-                present_service_detail(details)
-                click.echo('You can press ctrl + C to exit details service state monitoring')
-                sleep(3)
-            else:
-                exit(1)
+                if details.get('state') == 'RUNNING':
+                    present_service_detail(details)
+                    click.echo(message)
+                    if index == len(manifest_content) - 1:
+                        exit(0)
+                    else:
+                        break
+                elif details.get('state') == 'UNSTABLE':
+                    present_service_detail(details)
+                    click.echo('You can press ctrl + C to exit details service state monitoring')
+                    sleep(3)
+                else:
+                    if index == len(manifest_content) - 1:
+                        exit(1)
+                    else:
+                        break
 
 
 @click.command('dump', cls=FandoghCommand)
