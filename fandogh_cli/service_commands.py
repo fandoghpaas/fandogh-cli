@@ -171,17 +171,19 @@ def service_details(service_name):
 def service_apply(file, parameters, detach):
     """Deploys a service defined as a manifest"""
     manifest_content = read_manifest(file, parameters)
+
     if manifest_content is None:
         return
-    from yaml import load
 
-    for index, service_conf in enumerate(manifest_content):
-        click.echo('service {} - {} is being deployed'.format(index+1, len(manifest_content)))
-        click.echo(service_conf)
-        yml = load(service_conf)
+    from yaml import load_all
+    manifests = list(load_all(manifest_content))
 
-        deployment_result = deploy_manifest(yml)
-        service_name = yml.get('name', '')
+    for index, service_conf in enumerate(manifests):
+        click.echo('service {} - {} is being deployed'.format(index+1, len(manifests)))
+        click.echo(yaml.dump(service_conf))
+
+        deployment_result = deploy_manifest(service_conf)
+        service_name = service_conf.get('name', '')
         message = "\nCongratulation, Your service is running ^_^\n"
         service_type = str(deployment_result.get('service_type', '')).lower()
 

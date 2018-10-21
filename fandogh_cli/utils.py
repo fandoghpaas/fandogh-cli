@@ -85,17 +85,14 @@ def trim_comments(manifest):
 
 def read_manifest(manifest_file, parameters):
     try:
-        service_config_list = list()
         with open(manifest_file, mode='r') as manifest:
-            for config in manifest.read().split('---'):
-                rendered_manifest = process_template(
-                    config,
-                    parse_key_values(
-                        parameters
-                    )
+            rendered_manifest = process_template(
+                manifest.read(),
+                parse_key_values(
+                    parameters
                 )
-                service_config_list.append(trim_comments(rendered_manifest))
-        return service_config_list
+            )
+        return trim_comments(rendered_manifest)
     except IOError as e:
         click.echo(format_text(e.strerror, TextStyle.FAIL), err=True)
     except KeyError as missing_parameter:
