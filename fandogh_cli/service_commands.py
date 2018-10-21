@@ -180,7 +180,7 @@ def service_apply(file, parameters, detach):
 
     for index, service_conf in enumerate(manifests):
         click.echo('service {} - {} is being deployed'.format(index+1, len(manifests)))
-        click.echo(yaml.dump(service_conf))
+        click.echo(yaml.safe_dump(service_conf, default_flow_style=False))
 
         deployment_result = deploy_manifest(service_conf)
         service_name = service_conf.get('name', '')
