@@ -171,55 +171,65 @@ def service_details(service_name):
 def service_apply(file, parameters, detach):
     """Deploys a service defined as a manifest"""
     manifest_content = read_manifest(file, parameters)
+
     if manifest_content is None:
         return
-    click.echo(manifest_content)
-    from yaml import load
 
-    yml = load(manifest_content)
+    from yaml import load_all
+    manifests = list(load_all(manifest_content))
 
-    deployment_result = deploy_manifest(yml)
-    service_name = yml.get('name', '')
-    message = "\nCongratulation, Your service is running ^_^\n"
-    service_type = str(deployment_result.get('service_type', '')).lower()
+    for index, service_conf in enumerate(manifests):
+        click.echo('service {} - {} is being deployed'.format(index+1, len(manifests)))
+        click.echo(yaml.dump(service_conf))
 
-    if service_type == 'external':
-        message += "Your service is accessible using the following URLs:\n{}".format(
-            "\n".join([" - {}".format(url) for url in deployment_result['urls']])
-        )
-    elif service_type == 'internal':
-        message += """
-    Since your service is internal, it's not accessible from outside your fandogh private network, 
-    but other services inside your private network will be able to find it using it's name: '{}'
-            """.strip().format(
-            deployment_result['name']
-        )
-    elif service_type == 'managed':
-        message += """
-        Managed service deployed successfully
-        """
+        deployment_result = deploy_manifest(service_conf)
+        service_name = service_conf.get('name', '')
+        message = "\nCongratulation, Your service is running ^_^\n"
+        service_type = str(deployment_result.get('service_type', '')).lower()
 
-    if detach:
-        click.echo(message)
-    else:
-        while True:
-            details = get_details(service_name)
+        if service_type == 'external':
+            message += "Your service is accessible using the following URLs:\n{}".format(
+                "\n".join([" - {}".format(url) for url in deployment_result['urls']])
+            )
+        elif service_type == 'internal':
+            message += """
+        Since your service is internal, it's not accessible from outside your fandogh private network, 
+        but other services inside your private network will be able to find it using it's name: '{}'
+                """.strip().format(
+                deployment_result['name']
+            )
+        elif service_type == 'managed':
+            message += """
+            Managed service deployed successfully
+            """
 
-            if not details:
-                exit(1)
+        if detach:
+            click.echo(message)
+        else:
+            while True:
+                details = get_details(service_name)
 
-            click.clear()
+                if not details:
+                    exit(1)
 
-            if details.get('state') == 'RUNNING':
-                present_service_detail(details)
-                click.echo(message)
-                exit(0)
-            elif details.get('state') == 'UNSTABLE':
-                present_service_detail(details)
-                click.echo('You can press ctrl + C to exit details service state monitoring')
-                sleep(3)
-            else:
-                exit(1)
+                click.clear()
+
+                if details.get('state') == 'RUNNING':
+                    present_service_detail(details)
+                    click.echo(message)
+                    if index == len(manifest_content) - 1:
+                        exit(0)
+                    else:
+                        break
+                elif details.get('state') == 'UNSTABLE':
+                    present_service_detail(details)
+                    click.echo('You can press ctrl + C to exit details service state monitoring')
+                    sleep(3)
+                else:
+                    if index == len(manifest_content) - 1:
+                        exit(1)
+                    else:
+                        break
 
 
 @click.command('dump', cls=FandoghCommand)
