@@ -173,13 +173,11 @@ def service_apply(file, parameters, detach):
     manifest_content = read_manifest(file, parameters)
     if manifest_content is None:
         return
-    for content in manifest_content:
-        click.echo(content)
-    # click.echo(manifest_content)
     from yaml import load
 
     for index, service_conf in enumerate(manifest_content):
         click.echo('service {} - {} is being deployed'.format(index+1, len(manifest_content)))
+        click.echo(service_conf)
         yml = load(service_conf)
 
         deployment_result = deploy_manifest(yml)
