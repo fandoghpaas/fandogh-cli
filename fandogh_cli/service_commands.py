@@ -124,6 +124,8 @@ def service_list():
               help='Name of the service you want to destroy')
 def service_destroy(service_name):
     """Destroy service"""
+    click.echo('you are about to destroy service with name {}.'.format(service_name))
+    click.echo('It might take a while!')
     message = present(lambda: destroy_service(service_name))
     click.echo(message)
 
