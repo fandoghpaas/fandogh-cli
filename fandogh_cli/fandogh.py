@@ -3,6 +3,7 @@
 import click
 from fandogh_cli.namespace_commands import namespace
 from fandogh_cli.secret_commands import secret
+from volume_commands import volume
 from .domain_commands import domain
 from .image_commands import image
 from .service_commands import service
@@ -50,6 +51,7 @@ base.add_command(domain)
 base.add_command(secret)
 base.add_command(namespace)
 base.add_command(exec_command)
+base.add_command(volume)
 
 if __name__ == '__main__':
     base()
