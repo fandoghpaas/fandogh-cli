@@ -9,6 +9,7 @@ base_url = '%s/api/' % fandogh_host
 base_images_url = '%simages' % base_url
 base_services_url = '%sservices' % base_url
 base_managed_services_url = '%smanaged-services' % base_url
+base_volume_url = '%svolumes' % base_url
 max_workspace_size = 20  # MB
 
 
@@ -354,3 +355,16 @@ def dump_manifest(service_name):
         raise get_exception(response)
     else:
         return response.json()['data']
+
+
+def deploy_volume(name, capacity):
+    token = get_stored_token()
+    body = dict({'name': name, 'spec': {'storage': capacity}})
+    response = requests.post(base_volume_url,
+                             json=body,
+                             headers={'Authorization': 'JWT ' + token}
+                             )
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        return response.json()
