@@ -357,7 +357,7 @@ def dump_manifest(service_name):
         return response.json()['data']
 
 
-def deploy_volume(name, capacity):
+def create_pvc(name, capacity):
     token = get_stored_token()
     body = dict({'name': name, 'spec': {'storage': capacity}})
     response = requests.post(base_volume_url,
@@ -368,3 +368,13 @@ def deploy_volume(name, capacity):
         raise get_exception(response)
     else:
         return response.json()
+
+
+def delete_pvc(name):
+    token = get_stored_token()
+    response = requests.delete(base_volume_url + '/{}'.format(name),
+                               headers={'Authorization': 'JWT ' + token})
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        return response.json()['message']
