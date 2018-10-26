@@ -1,6 +1,8 @@
 import click
+
+from .presenter import present
 from .base_commands import FandoghCommand
-from .fandogh_client import create_pvc, delete_pvc
+from .fandogh_client import create_pvc, delete_pvc, list_volumes
 
 
 @click.group('volume')
@@ -21,5 +23,17 @@ def delete_volume(name):
     click.echo(delete_pvc(name))
 
 
+@click.command('list', help='Volume list', cls=FandoghCommand)
+def volume_list():
+    table = present(lambda: list_volumes(),
+                    renderer='table',
+                    headers=['Name', 'Status', 'Volume', 'Capacity', 'Editable', 'Age'],
+                    columns=['name', 'status', 'volume', 'capacity', 'editable', 'age'])
+
+    if table:
+        click.echo(table)
+
+
 volume.add_command(create_volume)
 volume.add_command(delete_volume)
+volume.add_command(volume_list)

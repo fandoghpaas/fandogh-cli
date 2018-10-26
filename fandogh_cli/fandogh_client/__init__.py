@@ -373,8 +373,20 @@ def create_pvc(name, capacity):
 def delete_pvc(name):
     token = get_stored_token()
     response = requests.delete(base_volume_url + '/{}'.format(name),
-                               headers={'Authorization': 'JWT ' + token})
+                               headers={'Authorization': 'JWT ' + token}
+                               )
     if response.status_code != 200:
         raise get_exception(response)
     else:
         return response.json()['message']
+
+
+def list_volumes():
+    token = get_stored_token()
+    response = requests.get(base_volume_url,
+                            headers={'Authorization': 'JWT ' + token}
+                            )
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        return response.json()
