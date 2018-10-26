@@ -357,7 +357,7 @@ def dump_manifest(service_name):
         return response.json()['data']
 
 
-def create_pvc(name, capacity):
+def create_volume_claim(name, capacity):
     token = get_stored_token()
     body = dict({'name': name, 'spec': {'storage': capacity}})
     response = requests.post(base_volume_url,
@@ -370,7 +370,7 @@ def create_pvc(name, capacity):
         return response.json()
 
 
-def delete_pvc(name):
+def delete_volume_claim(name):
     token = get_stored_token()
     response = requests.delete(base_volume_url + '/{}'.format(name),
                                headers={'Authorization': 'JWT ' + token}

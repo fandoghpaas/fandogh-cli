@@ -2,7 +2,7 @@ import click
 
 from .presenter import present
 from .base_commands import FandoghCommand
-from .fandogh_client import create_pvc, delete_pvc, list_volumes
+from .fandogh_client import create_volume_claim, delete_volume_claim, list_volumes
 
 
 @click.group('volume')
@@ -14,13 +14,13 @@ def volume():
 @click.option('--name', '-n', help='Name of the volume', prompt='Volume Name')
 @click.option('--capacity', '-c', help='Volume capacity', prompt='Storage Capacity')
 def create_volume(name, capacity):
-    click.echo(create_pvc(name, capacity))
+    click.echo(create_volume_claim(name, capacity))
 
 
 @click.command('delete', help='Delete pvc', cls=FandoghCommand)
 @click.option('--name', '-n', help='Name of the volume', prompt='Volume Name')
 def delete_volume(name):
-    click.echo(delete_pvc(name))
+    click.echo(delete_volume_claim(name))
 
 
 @click.command('list', help='Volume list', cls=FandoghCommand)
