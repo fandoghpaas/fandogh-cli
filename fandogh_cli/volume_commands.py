@@ -10,14 +10,14 @@ def volume():
     """Volume management commands"""
 
 
-@click.command('create', help='Create new pvc', cls=FandoghCommand)
+@click.command('create', help='Create new volume', cls=FandoghCommand)
 @click.option('--name', '-n', help='Name of the volume', prompt='Volume Name')
 @click.option('--capacity', '-c', help='Volume capacity', prompt='Storage Capacity')
 def create_volume(name, capacity):
     click.echo(create_volume_claim(name, capacity))
 
 
-@click.command('delete', help='Delete pvc', cls=FandoghCommand)
+@click.command('delete', help='Delete specific volume', cls=FandoghCommand)
 @click.option('--name', '-n', help='Name of the volume', prompt='Volume Name')
 def delete_volume(name):
     click.echo(delete_volume_claim(name))
