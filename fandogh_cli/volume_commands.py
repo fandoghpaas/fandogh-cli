@@ -27,7 +27,7 @@ def delete_volume(name):
 def volume_list():
     table = present(lambda: list_volumes(),
                     renderer='table',
-                    headers=['Name', 'Status', 'Volume', 'Capacity', 'Editable', 'Age'],
+                    headers=['Name', 'Status', 'Volume', 'Capacity', 'Editable', 'Creation Date'],
                     columns=['name', 'status', 'volume', 'capacity', 'editable', 'age'])
 
     if table:
