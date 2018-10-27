@@ -10,7 +10,7 @@ def volume():
     """Volume management commands"""
 
 
-@click.command('create', help='Create new volume', cls=FandoghCommand)
+@click.command('add', help='Add new volume', cls=FandoghCommand)
 @click.option('--name', '-n', help='Name of the volume', prompt='Volume Name')
 @click.option('--capacity', '-c', help='Volume capacity', prompt='Storage Capacity')
 def create_volume(name, capacity):
