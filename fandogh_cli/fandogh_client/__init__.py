@@ -357,6 +357,25 @@ def dump_manifest(service_name):
         return response.json()['data']
 
 
+'''
+Volume Requests Section
+
+method list:
+    create_volume_claim
+    delete_volume_claim
+    is_volume_in_use
+    list_volumes
+'''
+
+''' 
+  Request to create a volume with:
+  
+  - volume_name: name of the dedicated volume user requires to build
+  - capacity: size of the volume ended with 'Gi'
+   
+'''
+
+
 def create_volume_claim(volume_name, capacity):
     token = get_stored_token()
     body = dict({'name': volume_name, 'spec': {'storage': capacity}})
@@ -370,6 +389,14 @@ def create_volume_claim(volume_name, capacity):
         return response.json()
 
 
+'''
+  Request ro delete a volume with:
+  
+  - volume_name: name of the volume to be deleted
+  
+'''
+
+
 def delete_volume_claim(volume_name):
     token = get_stored_token()
     response = requests.delete(base_volume_url + '/{}'.format(volume_name),
@@ -381,6 +408,14 @@ def delete_volume_claim(volume_name):
         return response.json()['message']
 
 
+'''
+  Request ro check if the volume is in use using:
+  
+  - volume_name: name of the volume to be checked  
+
+'''
+
+
 def is_volume_in_use(volume_name):
     token = get_stored_token()
     response = requests.get(base_volume_url + '/{}'.format(volume_name),
@@ -389,6 +424,12 @@ def is_volume_in_use(volume_name):
         raise get_exception(response)
     else:
         return response.json()['message']
+
+
+'''
+  Request to fetch list of volumes for a user:
+  
+'''
 
 
 def list_volumes():
