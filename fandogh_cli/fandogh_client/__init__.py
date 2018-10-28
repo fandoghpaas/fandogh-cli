@@ -43,6 +43,18 @@ class ResourceNotFoundError(FandoghAPIError):
             self.message = self.response.json().get('message', self.message)
 
 
+class ExecutionForbidden(FandoghAPIError):
+    message = "Forbidden Execution"
+
+    def __init__(self, response, message=None):
+        self.response = response
+        if message:
+            self.message = message
+
+        if hasattr(self.response, 'json'):
+            self.message = self.response.json().get('message', self.message)
+
+
 class FandoghInternalError(FandoghAPIError):
     message = "Sorry, there is an internal error, the incident has been logged and we will fix it ASAP"
 
@@ -82,6 +94,7 @@ def get_exception(response):
         401: AuthenticationError,
         400: FandoghBadRequest,
         500: FandoghInternalError,
+        403: ExecutionForbidden,
     }.get(response.status_code, FandoghAPIError)
     return exception_class(response)
 
@@ -363,7 +376,6 @@ Volume Requests Section
 method list:
     create_volume_claim
     delete_volume_claim
-    is_volume_in_use
     list_volumes
 '''
 
@@ -402,24 +414,6 @@ def delete_volume_claim(volume_name):
     response = requests.delete(base_volume_url + '/{}'.format(volume_name),
                                headers={'Authorization': 'JWT ' + token}
                                )
-    if response.status_code != 200:
-        raise get_exception(response)
-    else:
-        return response.json()['message']
-
-
-'''
-  Request ro check if the volume is in use using:
-  
-  - volume_name: name of the volume to be checked  
-
-'''
-
-
-def is_volume_in_use(volume_name):
-    token = get_stored_token()
-    response = requests.get(base_volume_url + '/{}'.format(volume_name),
-                            headers={'Authorization': 'JWT' + token})
     if response.status_code != 200:
         raise get_exception(response)
     else:

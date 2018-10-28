@@ -1,9 +1,9 @@
 import click
+from fandogh_cli.utils import format_text, TextStyle
 
 from .presenter import present
 from .base_commands import FandoghCommand
 from .fandogh_client import create_volume_claim, delete_volume_claim, list_volumes
-
 
 '''
     This class is for volume commands
@@ -18,7 +18,6 @@ from .fandogh_client import create_volume_claim, delete_volume_claim, list_volum
     - volume_list
     
 '''
-
 
 '''
 
@@ -54,9 +53,12 @@ def volume():
 @click.option('--name', '-n', help='Name of the volume', prompt='Volume Name')
 @click.option('--capacity', '-c', help='Volume capacity', prompt='Storage Capacity')
 @click.option('--detach', '-d', help='Execute request in background', default=False, is_flag=True)
-def create_volume(name, capacity):
+def create_volume(name, capacity, detach):
     click.echo('Creating volume may take some times, please wait...')
-    click.echo(create_volume_claim(name, capacity))
+    if detach:
+        create_volume_claim(name, capacity)
+    else:
+        click.echo(create_volume_claim(name, capacity))
 
 
 '''
@@ -77,8 +79,11 @@ def create_volume(name, capacity):
 @click.command('delete', help='Delete specific volume', cls=FandoghCommand)
 @click.option('--name', '-n', help='Name of the volume', prompt='Volume Name')
 def delete_volume(name):
-    click.echo('Volume delete may take some times, please wait...')
-    click.echo(delete_volume_claim(name))
+
+    if click.confirm(format_text('If you proceed all your data will be deleted, do you want to continue?',
+                                 TextStyle.WARNING)):
+        click.echo('Volume delete may take some times, please wait...')
+        click.echo(delete_volume_claim(name))
 
 
 '''
@@ -101,8 +106,8 @@ def delete_volume(name):
 def volume_list():
     table = present(lambda: list_volumes(),
                     renderer='table',
-                    headers=['Name', 'Status', 'Volume', 'Capacity', 'Editable', 'Creation Date'],
-                    columns=['name', 'status', 'volume', 'capacity', 'editable', 'age'])
+                    headers=['Name', 'Status', 'Mounted', 'Volume', 'Capacity', 'Editable', 'Creation Date'],
+                    columns=['name', 'status', 'is_mounted', 'volume', 'capacity', 'editable', 'age'])
 
     if table:
         click.echo(table)
