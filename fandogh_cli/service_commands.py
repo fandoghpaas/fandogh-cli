@@ -179,17 +179,18 @@ def service_apply(file, parameters, detach):
     manifests = list(load_all(manifest_content))
 
     for index, service_conf in enumerate(manifests):
-        click.echo('service {} - {} is being deployed'.format(index+1, len(manifests)))
+        click.echo('service {} - {} is being deployed'.format(index + 1, len(manifests)))
         click.echo(yaml.safe_dump(service_conf, default_flow_style=False))
 
         deployment_result = deploy_manifest(service_conf)
         service_name = service_conf.get('name', '')
         message = "\nCongratulation, Your service is running ^_^\n"
         service_type = str(deployment_result.get('service_type', '')).lower()
+        service_urls = deployment_result['urls']
 
         if service_type == 'external':
             message += "Your service is accessible using the following URLs:\n{}".format(
-                "\n".join([" - {}".format(url) for url in deployment_result['urls']])
+                "\n".join([" - {}".format(url) for url in service_urls])
             )
         elif service_type == 'internal':
             message += """
@@ -199,9 +200,12 @@ def service_apply(file, parameters, detach):
                 deployment_result['name']
             )
         elif service_type == 'managed':
-            message += """
-            Managed service deployed successfully
-            """
+            message += """Managed service deployed successfully"""
+
+            if len(service_urls) > 0:
+                message += "If your service has any web interface, it will be available via the following urls in few seconds:\n{}".format(
+                    "".join([" - {}\n".format(u) for u in service_urls])
+                )
 
         if detach:
             click.echo(message)
