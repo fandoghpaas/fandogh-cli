@@ -20,6 +20,11 @@ def deploy(name, version, configs):
         response = deploy_manifest(_generate_managed_manifest(name, version, configs))
         click.echo(
             'your managed service with name \'{}\' will be up and running in seconds'.format(response.get('name')))
+        service_urls = response.get('urls', [])
+        if len(service_urls)>0:
+            click.echo("If you'r service has any web interface, it will be available via the following urls:\n{}".format(
+                "".join([" - {}\n".format(u) for u in service_urls])
+            ))
     except FandoghBadRequest:
         click.echo(format_text(
             "please check `fandogh managed-service help` for more information "
