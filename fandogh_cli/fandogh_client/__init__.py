@@ -357,9 +357,9 @@ def dump_manifest(service_name):
         return response.json()['data']
 
 
-def create_volume_claim(name, capacity):
+def create_volume_claim(volume_name, capacity):
     token = get_stored_token()
-    body = dict({'name': name, 'spec': {'storage': capacity}})
+    body = dict({'name': volume_name, 'spec': {'storage': capacity}})
     response = requests.post(base_volume_url,
                              json=body,
                              headers={'Authorization': 'JWT ' + token}
@@ -370,11 +370,21 @@ def create_volume_claim(name, capacity):
         return response.json()
 
 
-def delete_volume_claim(name):
+def delete_volume_claim(volume_name):
     token = get_stored_token()
-    response = requests.delete(base_volume_url + '/{}'.format(name),
+    response = requests.delete(base_volume_url + '/{}'.format(volume_name),
                                headers={'Authorization': 'JWT ' + token}
                                )
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        return response.json()['message']
+
+
+def is_volume_in_use(volume_name):
+    token = get_stored_token()
+    response = requests.get(base_volume_url + '/{}'.format(volume_name),
+                            headers={'Authorization': 'JWT' + token})
     if response.status_code != 200:
         raise get_exception(response)
     else:
