@@ -22,7 +22,7 @@ def deploy(name, version, configs):
             'your managed service with name \'{}\' will be up and running in seconds'.format(response.get('name')))
         service_urls = response.get('urls', [])
         if len(service_urls)>0:
-            click.echo("If you'r service has any web interface, it will be available via the following urls:\n{}".format(
+            click.echo("If your service has any web interface, it will be available via the following urls in few seconds:\n{}".format(
                 "".join([" - {}\n".format(u) for u in service_urls])
             ))
     except FandoghBadRequest:
