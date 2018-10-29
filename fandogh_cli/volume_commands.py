@@ -35,6 +35,7 @@ def volume():
 '''
   Fandogh user calls this cli command
   in order to create a new volume.
+  it will show the resulting value in table format
   
   command name:
   
@@ -58,7 +59,13 @@ def create_volume(name, capacity, detach):
     if detach:
         create_volume_claim(name, capacity)
     else:
-        click.echo(create_volume_claim(name, capacity))
+        data = create_volume_claim(name, capacity)
+        click.echo('volume \'{}\' was built successfully and is ready to attach'.format(data.get('name')))
+        table = present(lambda: [data],
+                        renderer='table',
+                        headers=['Name', 'Status', 'Mounted', 'Volume', 'Capacity', 'Editable', 'Creation Date'],
+                        columns=['name', 'status', 'is_mounted', 'volume', 'capacity', 'editable', 'age'])
+        click.echo(table)
 
 
 '''
@@ -79,7 +86,6 @@ def create_volume(name, capacity, detach):
 @click.command('delete', help='Delete specific volume', cls=FandoghCommand)
 @click.option('--name', '-n', help='Name of the volume', prompt='Volume Name')
 def delete_volume(name):
-
     if click.confirm(format_text('If you proceed all your data will be deleted, do you want to continue?',
                                  TextStyle.WARNING)):
         click.echo('Volume delete may take some times, please wait...')
