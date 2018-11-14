@@ -1,0 +1,32 @@
+sudo: required
+language: python
+python: '3.6'
+services:
+  - docker
+
+stages:
+  - name: deploy
+    if: tag =~ /^[0-9]+\.[0-9]+\.[0-9]+$/
+
+jobs:
+  include:
+    - stage: deploy
+      script: skip
+      before_deploy:
+#        - sed -i "s/@VERSION@/${TRAVIS_TAG}/g" setup.py
+        - docker build -t fandogh-cli .
+        - docker tag fandogh-cli $DOCKER_USERNAME/fandogh-cli
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      deploy:
+        - provider: script
+          on:
+            all_branches: true
+          script: docker push ${DOCKER_USERNAME}/fandogh-cli:latest
+# visit https://docs.travis-ci.com/user/deployment/pypi/ for more information
+#        - provider: pypi
+#          on:
+#            all_branches: true
+#          user: "Your username"
+#          password:
+#            secure: "Your encrypted password"
+#          skip_existing: true
