@@ -6,24 +6,8 @@ services:
 branches:
   only:
   - master
-#stages:
-#  - name: deploy
-#    if: tag =~ /^[0-9]+\.[0-9]+\.[0-9]+$/
-jobs:
-  include:
-    - stage: deploy
-      script:
-        - export VERSION="`python fandogh_cli/__init__.py`"
-        - docker build -t fandoghpaas/fandogh-cli:$VERSION -t fandoghpaas/fandogh_cli:latest .
-      deploy:
-        - provider: script
-          script: echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin; docker push ${DOCKER_USERNAME}/fandogh-cli:latest;  docker push ${DOCKER_USERNAME}/fandogh-cli:$VERSION
-          on:
-            all_branches: true
-        - provider: pypi
-          user: ${PYPI_USERNAME}
-          password: ${PYPI_PASSWORD}
-          skip_cleanup: true
-          skip_existing: true
-          on:
-            all_branches: true
+
+script:
+  - export VERSION="`python fandogh_cli/__init__.py`"
+  - docker build -t fandoghpaas/fandogh-cli:$VERSION -t fandoghpaas/fandogh_cli:latest .
+  - echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin; docker push ${DOCKER_USERNAME}/fandogh-cli:latest;  docker push ${DOCKER_USERNAME}/fandogh-cli:$VERSION
