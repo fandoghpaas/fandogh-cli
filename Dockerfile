@@ -5,6 +5,7 @@ RUN \
    cp /usr/share/zoneinfo/Asia/Tehran /etc/localtime && \
    echo "Asia/Tehran" > /etc/timezone
 
+ENV COLLECT_ERROR True
 WORKDIR /opt/fandogh_cli
 COPY . /opt/fandogh_cli
 RUN pip3 install -r requirements.txt
