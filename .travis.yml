@@ -10,4 +10,4 @@ branches:
 script:
   - export VERSION="`python fandogh_cli/__init__.py`"
   - docker build -t fandoghpaas/fandogh-cli:$VERSION -t fandoghpaas/fandogh_cli:latest .
-  - echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin; docker push ${DOCKER_USERNAME}/fandogh-cli:latest;  docker push ${DOCKER_USERNAME}/fandogh-cli:$VERSION
+  - echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin; docker push fandoghpaas/fandogh-cli:latest;  docker push fandoghpaas/fandogh-cli:$VERSION
