@@ -3,9 +3,12 @@ language: python
 python: '3.6'
 services:
   - docker
-stages:
-  - name: deploy
-    if: tag =~ /^[0-9]+\.[0-9]+\.[0-9]+$/
+branches:
+  only:
+  - master
+#stages:
+#  - name: deploy
+#    if: tag =~ /^[0-9]+\.[0-9]+\.[0-9]+$/
 jobs:
   include:
     - stage: deploy
