@@ -13,7 +13,7 @@ jobs:
   include:
     - stage: deploy
       script:
-        - export VERSION = "`python fandogh_cli/__init__.py`"
+        - export VERSION="`python fandogh_cli/__init__.py`"
         - docker build -t fandoghpaas/fandogh-cli:$VERSION -t fandoghpaas/fandogh_cli:latest .
       deploy:
         - provider: script
