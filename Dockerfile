@@ -3,12 +3,12 @@ RUN apk --update add python3 py3-pip py3-openssl py3-cryptography py3-requests t
     pip3 install --upgrade pip && \
     ln -sf /usr/share/zoneinfo/UTC /etc/localtime && \
     echo "UTC" > /etc/timezone
-RUN mkdir -p /fandogh
-WORKDIR /fandogh
-COPY requirements.txt /fandogh
-RUN pip install -r /fandogh/requirements.txt
-COPY fandogh_cli /fandogh/fandogh_cli
-RUN echo -e '#!/usr/bin/python3 \nimport sys \nfrom fandogh_cli.fandogh import base \nsys.exit(base())'> /usr/bin/fandogh && \
-    chmod +x /usr/bin/fandogh
-ENV PYTHONPATH "${PYTONPATH}:/fandogh/"
+
+COPY requirements.txt /opt/fandogh_cli/requirements.txt
+RUN pip3 install -r /opt/fandogh_cli/requirements.txt
+
+ENV COLLECT_ERROR True
+WORKDIR /opt/fandogh_cli
+COPY . /opt/fandogh_cli
+RUN python3 setup.py install
 CMD ["fandogh"]
