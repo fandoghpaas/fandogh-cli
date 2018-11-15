@@ -10,12 +10,11 @@ jobs:
   include:
     - stage: deploy
       script:
-        - sed -i "s/VERSION.*/VERSION = '${TRAVIS_TAG}'/g" fandogh_cli/__init__.py
-        - docker build -t fandogh-cli .
-        - docker tag fandogh-cli ${DOCKER_USERNAME}/fandogh-cli
+        - export VERSION = `python fandogh_cli/__init__.py`
+        - docker build -t fandoghpaas/fandogh-cli:$VERSION -t fandoghpaas/fandogh_cli:latest .
       deploy:
         - provider: script
-          script: echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin; docker push ${DOCKER_USERNAME}/fandogh-cli:latest
+          script: echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin; docker push ${DOCKER_USERNAME}/fandogh-cli:latest;  docker push ${DOCKER_USERNAME}/fandogh-cli:$VERSION
           on:
             all_branches: true
         - provider: pypi
