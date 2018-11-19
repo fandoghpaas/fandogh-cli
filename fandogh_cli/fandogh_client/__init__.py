@@ -390,7 +390,7 @@ method list:
 
 def create_volume_claim(volume_name, capacity):
     token = get_stored_token()
-    body = dict({'name': volume_name, 'spec': {'storage': capacity}})
+    body = dict({'name': volume_name, 'storage': capacity})
     response = requests.post(base_volume_url,
                              json=body,
                              headers={'Authorization': 'JWT ' + token}
