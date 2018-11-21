@@ -63,8 +63,8 @@ def create_volume(name, capacity, detach):
         click.echo('volume \'{}\' was built successfully and is ready to attach'.format(data.get('name')))
         table = present(lambda: [data],
                         renderer='table',
-                        headers=['Name', 'Status', 'Mounted', 'Volume', 'Capacity', 'Editable', 'Creation Date'],
-                        columns=['name', 'status', 'is_mounted', 'volume', 'capacity', 'editable', 'age'])
+                        headers=['Name', 'Status', 'Mounted', 'Volume', 'Capacity', 'Creation Date'],
+                        columns=['name', 'status', 'is_mounted', 'volume', 'capacity', 'age'])
         click.echo(table)
 
 
