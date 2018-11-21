@@ -112,8 +112,8 @@ def delete_volume(name):
 def volume_list():
     table = present(lambda: list_volumes(),
                     renderer='table',
-                    headers=['Name', 'Status', 'Mounted', 'Volume', 'Capacity', 'Editable', 'Creation Date'],
-                    columns=['name', 'status', 'is_mounted', 'volume', 'capacity', 'editable', 'age'])
+                    headers=['Name', 'Status', 'Mounted', 'Volume', 'Capacity', 'Creation Date'],
+                    columns=['name', 'status', 'is_mounted', 'volume', 'capacity', 'age'])
 
     if table:
         click.echo(table)
