@@ -30,6 +30,12 @@ def status():
         current="{} MB".format(result['current_used_resources'].get('memory_usage')),
         total="{} MB".format(result['quota'].get('memory_limit', 'N/A'))
     )
+
+    print_value(
+        name='Volume',
+        current="{} GB".format(result['current_used_resources'].get('volume_usage')),
+        total="{} GB".format(result['quota'].get('volume_limit', 'N/A'))
+    )
     # print_value('CPU', result['current_used_resources'].get('cpu_usage'), result['quota'].get('cpu_limit', 'N/A'))
 
 

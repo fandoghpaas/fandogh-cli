@@ -9,6 +9,7 @@ base_url = '%s/api/' % fandogh_host
 base_images_url = '%simages' % base_url
 base_services_url = '%sservices' % base_url
 base_managed_services_url = '%smanaged-services' % base_url
+base_volume_url = '%svolumes' % base_url
 max_workspace_size = 20  # MB
 
 
@@ -32,6 +33,18 @@ class AuthenticationError(Exception):
 
 class ResourceNotFoundError(FandoghAPIError):
     message = "Resource Not found"
+
+    def __init__(self, response, message=None):
+        self.response = response
+        if message:
+            self.message = message
+
+        if hasattr(self.response, 'json'):
+            self.message = self.response.json().get('message', self.message)
+
+
+class ExecutionForbidden(FandoghAPIError):
+    message = "Forbidden Execution"
 
     def __init__(self, response, message=None):
         self.response = response
@@ -81,6 +94,7 @@ def get_exception(response):
         401: AuthenticationError,
         400: FandoghBadRequest,
         500: FandoghInternalError,
+        403: ExecutionForbidden,
     }.get(response.status_code, FandoghAPIError)
     return exception_class(response)
 
@@ -354,3 +368,70 @@ def dump_manifest(service_name):
         raise get_exception(response)
     else:
         return response.json()['data']
+
+
+'''
+Volume Requests Section
+
+method list:
+    create_volume_claim
+    delete_volume_claim
+    list_volumes
+'''
+
+''' 
+  Request to create a volume with:
+  
+  - volume_name: name of the dedicated volume user requires to build
+  - capacity: size of the volume ended with 'Gi'
+   
+'''
+
+
+def create_volume_claim(volume_name, capacity):
+    token = get_stored_token()
+    body = dict({'name': volume_name, 'capacity': capacity})
+    response = requests.post(base_volume_url,
+                             json=body,
+                             headers={'Authorization': 'JWT ' + token}
+                             )
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        return response.json()
+
+
+'''
+  Request ro delete a volume with:
+  
+  - volume_name: name of the volume to be deleted
+  
+'''
+
+
+def delete_volume_claim(volume_name):
+    token = get_stored_token()
+    response = requests.delete(base_volume_url + '/{}'.format(volume_name),
+                               headers={'Authorization': 'JWT ' + token}
+                               )
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        return response.json()['message']
+
+
+'''
+  Request to fetch list of volumes for a user:
+  
+'''
+
+
+def list_volumes():
+    token = get_stored_token()
+    response = requests.get(base_volume_url,
+                            headers={'Authorization': 'JWT ' + token}
+                            )
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        return response.json()
