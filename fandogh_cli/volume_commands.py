@@ -117,6 +117,8 @@ def volume_list():
 
     if table:
         click.echo(table)
+    else:
+        click.echo('You have no volumes in your namespace!')
 
 
 volume.add_command(create_volume)
