@@ -822,6 +822,10 @@ definitions:
       last_update:
         type: string
         format: datetime
+      image_name:
+        type: string
+      image_version:
+        type: string
 
 
   ServiceDeploymentModel:
