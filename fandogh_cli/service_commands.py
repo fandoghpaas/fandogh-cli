@@ -29,8 +29,9 @@ def service():
 @click.option('--image-pull-policy', 'image_pull_policy', default='IfNotPresent')
 @click.option('-d', 'detach', is_flag=True, default=False,
               help='detach terminal.')
+@click.option('--read_env', is_flag=True, default=False, help='this command will help you read os environment variables')
 def deploy(image, version, name, port, envs, hosts, internal, registry_secret, image_pull_policy, internal_ports,
-           detach):
+           detach, read_env):
     """Deploy service"""
     if not image:
         image = get_project_config().get('image.name')
@@ -48,7 +49,7 @@ def deploy(image, version, name, port, envs, hosts, internal, registry_secret, i
                     err=True)
                 exit(-1)
     deployment_result = deploy_service(image, version, name, envs, hosts, port, internal, registry_secret,
-                                       image_pull_policy, internal_ports)
+                                       image_pull_policy, internal_ports, read_env)
 
     if detach:
         message = "\nCongratulation, Your service is running ^_^\n\n"

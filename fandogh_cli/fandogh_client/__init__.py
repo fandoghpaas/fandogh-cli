@@ -214,10 +214,10 @@ def parse_port_mapping(port_mapping):
 
 
 def deploy_service(image_name, version, service_name, envs, hosts, port, internal, registry_secret, image_pull_policy,
-                   internal_ports):
+                   internal_ports, read_env):
     return deploy_manifest(
         _generate_manifest(image_name, version, service_name, port, envs, hosts, internal, registry_secret,
-                           image_pull_policy, internal_ports))
+                           image_pull_policy, internal_ports, read_env))
 
 
 def list_services():
@@ -313,7 +313,7 @@ def deploy_manifest(manifest):
 
 
 def _generate_manifest(image, version, name, port, envs, hosts, internal, registry_secret, image_pull_policy,
-                       internal_ports):
+                       internal_ports, read_env):
     manifest = dict()
 
     if internal:
@@ -332,7 +332,7 @@ def _generate_manifest(image, version, name, port, envs, hosts, internal, regist
     env_list = []
 
     if envs:
-        env_variables = parse_key_values(envs)
+        env_variables = parse_key_values(envs, read_env=read_env)
         for key in env_variables:
             env_list.append({'name': key, 'value': env_variables[key]})
 
