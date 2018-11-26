@@ -63,10 +63,14 @@ def get_window_width():
         return None
 
 
-def parse_key_values(key_values):
+def parse_key_values(key_values, read_env):
     env_variables = {}
     for env in key_values:
         (k, v) = env.split('=', 1)
+        if read_env and os.environ.get(k, default=None) is not None:
+            v = os.environ.get(k)
+        else:
+            raise Exception('${} is not a valid environment variable'.format(k))
         env_variables[k] = v
     return env_variables
 
@@ -83,13 +87,14 @@ def trim_comments(manifest):
     return "\n".join(lines)
 
 
-def read_manifest(manifest_file, parameters):
+def read_manifest(manifest_file, parameters, read_env):
     try:
         with open(manifest_file, mode='r') as manifest:
             rendered_manifest = process_template(
                 manifest.read(),
                 parse_key_values(
-                    parameters
+                    parameters,
+                    read_env
                 )
             )
         return trim_comments(rendered_manifest)

@@ -168,9 +168,10 @@ def service_details(service_name):
 @click.option('-p', '--parameter', 'parameters', help='Manifest parameters', multiple=True)
 @click.option('-d', 'detach', is_flag=True, default=False,
               help='detach terminal.')
-def service_apply(file, parameters, detach):
+@click.option('--read_env', is_flag=True, default=False, help='this command will help you read os environment variables')
+def service_apply(file, parameters, detach, read_env):
     """Deploys a service defined as a manifest"""
-    manifest_content = read_manifest(file, parameters)
+    manifest_content = read_manifest(file, parameters, read_env)
 
     if manifest_content is None:
         return
@@ -181,6 +182,12 @@ def service_apply(file, parameters, detach):
     for index, service_conf in enumerate(manifests):
         click.echo('service {} - {} is being deployed'.format(index + 1, len(manifests)))
         click.echo(yaml.safe_dump(service_conf, default_flow_style=False))
+
+        for env in service_conf.get('spec').get('env', []):
+            if env.get('value', None) is None and read_env:
+                if os.environ.get(env.get('name'), default='') == '':
+                    raise Exception('${} is not a valid environment variable'.format(env.get('name')))
+                env.update(value=os.environ.get(env.get('name')))
 
         deployment_result = deploy_manifest(service_conf)
         service_name = service_conf.get('name', '')
@@ -194,7 +201,7 @@ def service_apply(file, parameters, detach):
             )
         elif service_type == 'internal':
             message += """
-        Since your service is internal, it's not accessible from outside your fandogh private network, 
+        Since your service is internal, it's not accessible from outside your fandogh private network,
         but other services inside your private network will be able to find it using it's name: '{}'
                 """.strip().format(
                 deployment_result['name']
