@@ -69,7 +69,7 @@ def parse_key_values(key_values):
 
         if len(env.split('=', 1)) == 1:
             k = env
-            if os.environ.get(k, default=None) is not None:
+            if os.environ.get(k, default=None):
                 env_variables[k] = os.environ.get(k)
             else:
                 raise Exception('${} is not a valid environment variable'.format(k))
