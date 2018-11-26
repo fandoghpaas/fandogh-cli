@@ -56,22 +56,27 @@ def convert_datetime(datetime_value):
 
 def get_window_width():
     try:
-        with os.popen('stty size', 'r') as  size:
+        with os.popen('stty size', 'r') as size:
             columns = size.read().split()[1]
             return int(columns)
     except Exception as exp:
         return None
 
 
-def parse_key_values(key_values, read_env):
+def parse_key_values(key_values):
     env_variables = {}
     for env in key_values:
-        (k, v) = env.split('=', 1)
-        if read_env and os.environ.get(k, default=None) is not None:
-            v = os.environ.get(k)
+
+        if len(env.split('=', 1)) == 1:
+            k = env
+            if os.environ.get(k, default=None) is not None:
+                env_variables[k] = os.environ.get(k)
+            else:
+                raise Exception('${} is not a valid environment variable'.format(k))
         else:
-            raise Exception('${} is not a valid environment variable'.format(k))
-        env_variables[k] = v
+            (k, v) = env.split('=', 1)
+            env_variables[k] = v
+
     return env_variables
 
 
@@ -87,14 +92,13 @@ def trim_comments(manifest):
     return "\n".join(lines)
 
 
-def read_manifest(manifest_file, parameters, read_env):
+def read_manifest(manifest_file, parameters):
     try:
         with open(manifest_file, mode='r') as manifest:
             rendered_manifest = process_template(
                 manifest.read(),
                 parse_key_values(
-                    parameters,
-                    read_env
+                    parameters
                 )
             )
         return trim_comments(rendered_manifest)

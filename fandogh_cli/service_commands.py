@@ -29,9 +29,8 @@ def service():
 @click.option('--image-pull-policy', 'image_pull_policy', default='IfNotPresent')
 @click.option('-d', 'detach', is_flag=True, default=False,
               help='detach terminal.')
-@click.option('--read_env', is_flag=True, default=False, help='this command will help you read os environment variables')
 def deploy(image, version, name, port, envs, hosts, internal, registry_secret, image_pull_policy, internal_ports,
-           detach, read_env):
+           detach):
     """Deploy service"""
     if not image:
         image = get_project_config().get('image.name')
@@ -49,7 +48,7 @@ def deploy(image, version, name, port, envs, hosts, internal, registry_secret, i
                     err=True)
                 exit(-1)
     deployment_result = deploy_service(image, version, name, envs, hosts, port, internal, registry_secret,
-                                       image_pull_policy, internal_ports, read_env)
+                                       image_pull_policy, internal_ports)
 
     if detach:
         message = "\nCongratulation, Your service is running ^_^\n\n"
@@ -169,10 +168,9 @@ def service_details(service_name):
 @click.option('-p', '--parameter', 'parameters', help='Manifest parameters', multiple=True)
 @click.option('-d', 'detach', is_flag=True, default=False,
               help='detach terminal.')
-@click.option('--read_env', is_flag=True, default=False, help='this command will help you read os environment variables')
-def service_apply(file, parameters, detach, read_env):
+def service_apply(file, parameters, detach):
     """Deploys a service defined as a manifest"""
-    manifest_content = read_manifest(file, parameters, read_env)
+    manifest_content = read_manifest(file, parameters)
 
     if manifest_content is None:
         return
@@ -183,12 +181,6 @@ def service_apply(file, parameters, detach, read_env):
     for index, service_conf in enumerate(manifests):
         click.echo('service {} - {} is being deployed'.format(index + 1, len(manifests)))
         click.echo(yaml.safe_dump(service_conf, default_flow_style=False))
-
-        for env in service_conf.get('spec').get('env', []):
-            if env.get('value', None) is None and read_env:
-                if os.environ.get(env.get('name'), default='') == '':
-                    raise Exception('${} is not a valid environment variable'.format(env.get('name')))
-                env.update(value=os.environ.get(env.get('name')))
 
         deployment_result = deploy_manifest(service_conf)
         service_name = service_conf.get('name', '')
