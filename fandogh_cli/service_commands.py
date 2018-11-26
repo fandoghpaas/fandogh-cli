@@ -194,7 +194,7 @@ def service_apply(file, parameters, detach):
             )
         elif service_type == 'internal':
             message += """
-        Since your service is internal, it's not accessible from outside your fandogh private network, 
+        Since your service is internal, it's not accessible from outside your fandogh private network,
         but other services inside your private network will be able to find it using it's name: '{}'
                 """.strip().format(
                 deployment_result['name']

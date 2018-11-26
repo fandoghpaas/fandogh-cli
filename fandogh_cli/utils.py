@@ -56,7 +56,7 @@ def convert_datetime(datetime_value):
 
 def get_window_width():
     try:
-        with os.popen('stty size', 'r') as  size:
+        with os.popen('stty size', 'r') as size:
             columns = size.read().split()[1]
             return int(columns)
     except Exception as exp:
@@ -66,8 +66,17 @@ def get_window_width():
 def parse_key_values(key_values):
     env_variables = {}
     for env in key_values:
-        (k, v) = env.split('=', 1)
-        env_variables[k] = v
+
+        if len(env.split('=', 1)) == 1:
+            k = env
+            if os.environ.get(k, default=None):
+                env_variables[k] = os.environ.get(k)
+            else:
+                raise Exception('${} is not a valid environment variable'.format(k))
+        else:
+            (k, v) = env.split('=', 1)
+            env_variables[k] = v
+
     return env_variables
 
 
