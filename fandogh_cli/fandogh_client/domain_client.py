@@ -51,7 +51,7 @@ def verify_domain(name):
 def details_domain(name):
     token = get_stored_token()
     response = requests.get(base_domains_url + '/' + name,
-                             headers={'Authorization': 'JWT ' + token})
+                            headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
         raise get_exception(response)
     else:
@@ -71,7 +71,17 @@ def create_certificate(name):
 def delete_certificate(name):
     token = get_stored_token()
     response = requests.delete(base_domains_url + '/' + name + '/certificate',
-                             headers={'Authorization': 'JWT ' + token})
+                               headers={'Authorization': 'JWT ' + token})
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        return response.json()
+
+
+def delete_domains(domain_name):
+    token = get_stored_token()
+    response = requests.delete(base_domains_url + '/{}'.format(domain_name),
+                               headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
         raise get_exception(response)
     else:

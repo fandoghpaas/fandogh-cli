@@ -109,6 +109,12 @@ def revoke_certificate(name):
         click.echo("Revoking certificate has been canceled")
 
 
+@click.command('delete', cls=FandoghCommand)
+@click.option('--name', '-n', 'name', prompt='Domain name', help='The domain name')
+def delete(name):
+    click.echo(delete_domains(name))
+
+
 def _display_domain_details(domain_details, clear=True):
     if clear:
         click.clear()
@@ -146,3 +152,4 @@ domain.add_command(verify)
 domain.add_command(details)
 domain.add_command(request_certificate)
 domain.add_command(revoke_certificate)
+domain.add_command(delete)
