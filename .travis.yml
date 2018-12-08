@@ -10,7 +10,7 @@ jobs:
   include:
     - stage: deploy
       script:
-        - sed -i "s/VERSION.*/VERSION = '${TRAVIS_TAG}'/g" fandogh_cli/__init__.py
+        - sed -i "s/VERSION.*=.*/VERSION = '${TRAVIS_TAG}'/g" fandogh_cli/__init__.py
       deploy:
         - provider: script
           script: docker build -t ${DOCKER_USERNAME}/fandogh-cli .;echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin; docker push ${DOCKER_USERNAME}/fandogh-cli:latest
