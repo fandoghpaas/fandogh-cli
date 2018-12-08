@@ -596,6 +596,7 @@ paths:
           description: "Server Error, Do not rely on response body"
 
 
+
     delete:
       tags:
       - "Domains"
