@@ -1049,8 +1049,6 @@ definitions:
         type: string
       status:
         type: string
-      volume:
-        type: string
       capacity:
         type: string
       age:
