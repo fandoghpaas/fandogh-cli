@@ -595,8 +595,6 @@ paths:
         500:
           description: "Server Error, Do not rely on response body"
 
-
-
     delete:
       tags:
       - "Domains"
@@ -627,9 +625,6 @@ paths:
             $ref: "#/definitions/MessageResponse"
         500:
           description: "Server Error, Do not rely on response body"
-  
-
-
 
   /domains/{domain_name}/verifications:
     post:
