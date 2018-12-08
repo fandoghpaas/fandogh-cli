@@ -1064,7 +1064,7 @@ definitions:
     properties:
       name:
         type: string
-      storage:
+      capacity:
         type: string
 
   SecretModel:
