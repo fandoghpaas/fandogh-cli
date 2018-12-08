@@ -594,6 +594,37 @@ paths:
             $ref: "#/definitions/MessageResponse"
         500:
           description: "Server Error, Do not rely on response body"
+
+    delete:
+      tags:
+      - "Domains"
+      description: "To delete a domain"
+      operationId: "Delete domain"
+      parameters:
+      - in: "path"
+        name: "domain_name"
+        type: string
+        required: true
+      - in: "header"
+        name: "AUTHORIZATION"
+        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+        type: string
+        required: true
+      responses:
+        200:
+          description: "Domain object deleted successfully"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        401:
+          description: "Authentication required"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        500:
+          description: "Server Error, Do not rely on response body"
   
   
   /domains/{domain_name}/verifications:
