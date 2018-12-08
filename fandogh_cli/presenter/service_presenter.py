@@ -17,6 +17,13 @@ def present_service_detail(details):
         for url in details['urls']:
             click.echo(' - {}'.format(url))
 
+    if details.get('volumes'):
+        click.echo('Volumes:')
+        click.echo(present(lambda: details.get('volumes'), renderer='table',
+                           headers=['No', 'Volume'],
+                           columns=['no', 'volume'])
+                   )
+
     click.echo('Pods:')
     for pod in details['pods']:
         click.echo('  Name: {}'.format(pod['name']))
@@ -41,7 +48,7 @@ def present_service_detail(details):
         for container in pod['containers']:
             click.echo('    Name: {}'.format(container['name']))
             click.echo('    Image: {}'.format(container['image']))
-            click.echo('    Staus: {}'.format(format_text('Ready', TextStyle.OKGREEN) if container['ready']
+            click.echo('    Status: {}'.format(format_text('Ready', TextStyle.OKGREEN) if container['ready']
                                               else format_text(
                 (container.get('waiting', {}) or {}).get('reason', 'Pending'),
                 TextStyle.WARNING)))
