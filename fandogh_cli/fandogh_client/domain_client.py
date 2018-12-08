@@ -78,7 +78,7 @@ def delete_certificate(name):
         return response.json()
 
 
-def delete_domains(domain_name):
+def delete_domain(domain_name):
     token = get_stored_token()
     response = requests.delete(base_domains_url + '/{}'.format(domain_name),
                                headers={'Authorization': 'JWT ' + token})
