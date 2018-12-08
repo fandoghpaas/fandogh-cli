@@ -17,6 +17,11 @@ jobs:
           skip_cleanup: true
           on:
             all_branches: true
+       - provider: script
+         script: docker build -t ${DOCKER_USERNAME}/fandogh-cli:${TRAVIS_TAG} .;echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin; docker push ${DOCKER_USERNAME}/fandogh-cli:${TRAVIS_TAG}
+         skip_cleanup: true
+         on:
+           all_branches: true
         - provider: pypi
           user: ${PYPI_USERNAME}
           password: ${PYPI_PASSWORD}
