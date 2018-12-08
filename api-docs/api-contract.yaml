@@ -628,7 +628,9 @@ paths:
         500:
           description: "Server Error, Do not rely on response body"
   
-  
+
+
+
   /domains/{domain_name}/verifications:
     post:
       tags:
