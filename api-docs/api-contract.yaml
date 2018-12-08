@@ -1053,11 +1053,9 @@ definitions:
         type: string
       capacity:
         type: string
-      editable:
-        type: string
       age:
         type: string
-      is_mounted:
+      mounted_to:
         type: boolean
         
   CreateVolumeModel:
@@ -1067,7 +1065,6 @@ definitions:
       name:
         type: string
       storage:
-        description: "Note: value of the storage must end with Gi like this -> 10Gi"
         type: string
 
   SecretModel:
