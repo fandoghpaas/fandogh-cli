@@ -443,6 +443,100 @@ paths:
             $ref: "#/definitions/MessageResponse"
         500:
           description: "Server Error, Do not rely on response body"
+          
+          
+  /volumes:
+    get:
+      tags: 
+      - "Volumes"
+      description: "To get list of user volumes"
+      operationId: "get volumes"
+      parameters: 
+      - in: "header"
+        name: "AUTHORIZATION"
+        description: "in this format: JWT [USER-TOKEN], where [USER-TOKEN] is user's token"
+        type: string
+        required: true
+      responses:
+        200:
+          description: "array of user volumes"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/VolumeModel"
+        401:
+          description: "Authorization required"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+            
+    post:
+      tags:
+      - "Volumes"
+      description: "To create a volume with name and capacity"
+      operationId: "add new volume"
+      parameters:
+      - in: "header"
+        name: "AUTHORIZATION"
+        description: "in this format: JWT [USER-TOKEN], where [USER-TOKEN] is user's token"
+        type: string
+        required: true
+      - in: "body"
+        name: "body"
+        description: "Volume model"
+        required: true
+        schema:
+          $ref: "#/definitions/CreateVolumeModel"
+
+      responses:
+        200:
+          description: "A volume model"
+          schema:
+            $ref: "#/definitions/VolumeModel"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        401:
+          description: "Authentication required"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        500:
+          description: "Server Error, Do not rely on response body"
+          
+  /volumes/{volume_name}:
+    delete:
+      tags:
+      - "Volumes"
+      description: "To delete an existing volume by name"
+      operationId: "delete a volume"
+      parameters:
+      - in: "path"
+        name: "volume_name"
+        required: true
+        type: string
+        description: "name of the volume to be deleted"
+      - in: "header"
+        name: "AUTHORIZATION"
+        description: "in this format: JWT [USER-TOKEN], where [USER-TOKEN] is user's token"
+        type: string
+        required: true
+      
+      responses:
+        200:
+          description: "A message from server"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        401:
+          description: "Authentication required"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        500:
+          description: "Server Error, Do not rely on response body"
+
   /domains:
     get:
       tags:
@@ -976,6 +1070,30 @@ definitions:
   ServiceDeploymentManifestModel:
     type: object
     description: "Service manifest, please refer to https://docs.fandogh.cloud/docs/service-manifest.html for manifest details"
+    
+  VolumeModel:
+    type: object
+    description: "A model to represent entities of a volume"
+    properties:
+      name:
+        type: string
+      status:
+        type: string
+      capacity:
+        type: string
+      age:
+        type: string
+      mounted_to:
+        type: boolean
+        
+  CreateVolumeModel:
+    type: object
+    description: "A model to represent desired volume to be created"
+    properties:
+      name:
+        type: string
+      capacity:
+        type: string
 
   SecretModel:
     type: object
