@@ -275,7 +275,6 @@ def get_details(service_name):
     else:
         service = response.json()
         import json
-        print(json.dumps(service, indent=' '))
         if 'start_date' in service:
             service['start_date'] = convert_datetime(service['start_date'])
         if 'last_update' in service:
