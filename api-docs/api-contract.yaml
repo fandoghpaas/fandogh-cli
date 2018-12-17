@@ -325,6 +325,34 @@ paths:
           description: "Server Error, Do not rely on response body"
 
   /services/{service-name}:
+    get:
+      tags:
+      - "Services"
+      description: "To get details of a services"
+      operationId: "get service"
+      parameters:
+      - in: "path"
+        name: service-name
+        required: true
+        type: string
+      - in: "header"
+        name: "AUTHORIZATION"
+        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+        type: string
+        required: true
+      responses:
+        200:
+          description: "service has been destroyed"
+          schema:
+            $ref: "#/definitions/ServiceModel"
+        401:
+          description: "Authentication required"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        404:
+          description: "Service not found"
+          schema:
+            $ref: "#/definitions/MessageResponse"
     delete:
       tags:
       - "Services"
