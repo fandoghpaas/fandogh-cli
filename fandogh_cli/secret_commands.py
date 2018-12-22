@@ -1,5 +1,5 @@
 import click
-from fandogh_cli.fandogh_client.secrets_client import list_secret, create_secret
+from fandogh_cli.fandogh_client.secrets_client import list_secret, create_secret, put_secret, delete_secret
 from .utils import format_text, TextStyle
 from .presenter import present
 from .base_commands import FandoghCommand
@@ -28,10 +28,30 @@ def list():
 @click.option('--type', '-t', 'secret_type', help='type of secret to list', prompt="Secret Type")
 @click.option('--field', '-f', 'fields', help='fields to store in secret', multiple=True)
 def create(secret_type, fields, secret_name):
-    """list secrets filtered by type"""
+    """Create new secret"""
     result = create_secret(secret_name, secret_type, fields, )
     click.echo(result['message'])
 
 
+@click.command("put", cls=FandoghCommand)
+@click.option('--name', '-n', 'secret_name', help='a unique name for secret', prompt='Name for the secret')
+@click.option('--type', '-t', 'secret_type', help='type of secret to list', prompt="Secret Type")
+@click.option('--field', '-f', 'fields', help='fields to store in secret', multiple=True)
+def put(secret_type, fields, secret_name):
+    """Put new values for a secret """
+    result = put_secret(secret_name, secret_type, fields)
+    click.echo(result['message'])
+
+
+@click.command("delete", cls=FandoghCommand)
+@click.option('--name', '-n', 'secret_name', help='name of the secret to delete', prompt='Name for the secret')
+def delete(secret_name):
+    """Delete a secret by name"""
+    result = delete_secret(secret_name)
+    click.echo(result['message'])
+
+
 secret.add_command(list)
+secret.add_command(put)
 secret.add_command(create)
+secret.add_command(delete)
