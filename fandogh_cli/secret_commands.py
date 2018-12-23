@@ -47,8 +47,11 @@ def put(secret_type, fields, secret_name):
 @click.option('--name', '-n', 'secret_name', help='name of the secret to delete', prompt='Name for the secret')
 def delete(secret_name):
     """Delete a secret by name"""
-    result = delete_secret(secret_name)
-    click.echo(result['message'])
+    if click.confirm("You are about to delete a secret named '{}', you cannot undo this action. Are sure?".format(
+            secret_name
+    )):
+        result = delete_secret(secret_name)
+        click.echo(result['message'])
 
 
 secret.add_command(list)
