@@ -3,10 +3,10 @@ info:
   description: "Fandogh API"
   version: "1.0.0"
   title: "Fandogh API"
-host: "api.fandogh.cloud"
+host: "localhost:8000"
 basePath: "/api"
 schemes:
-- "https"
+- "http"
 consumes:
   - "application/json"
 produces:
@@ -65,6 +65,7 @@ paths:
           description: "Authentication required"
           schema:
             $ref: "#/definitions/MessageResponse"
+
     put:
       tags:
       - "Account"
@@ -86,13 +87,43 @@ paths:
           $ref: "#/definitions/UserDetails"
       responses:
         200:
-          description: "array of images"
+          description: "Details of the user"
           schema:
             $ref: "#/definitions/UserDetails"
         401:
           description: "Authentication required"
           schema:
             $ref: "#/definitions/MessageResponse"
+
+    patch:
+      tags:
+      - "Account"
+      description: "To update Account password"
+      operationId: "Update account password"
+      parameters:
+      - in: "header"
+        name: "AUTHORIZATION"
+        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+        type: string
+        required: true
+      - in: "path"
+        name: "username"
+        type: string
+        required: true
+      - in: "body"
+        name: "userDetails"
+        schema:
+          $ref: "#/definitions/ChangePassword"
+      responses:
+        200:
+          description: "General message"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        401:
+          description: "Authentication required"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+
   /images:
     get:
       tags:
@@ -1212,3 +1243,9 @@ definitions:
         type: string
       last_name:
         type: string
+  ChangePassword:
+    type: object
+    properties:
+      password:
+        type: string
+        format: password
