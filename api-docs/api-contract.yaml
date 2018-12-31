@@ -1246,6 +1246,8 @@ definitions:
   ChangePassword:
     type: object
     properties:
-      password:
+      current_password:
+        type: string
+      new_password:
         type: string
         format: password
