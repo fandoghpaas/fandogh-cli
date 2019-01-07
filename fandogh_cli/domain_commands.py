@@ -59,8 +59,8 @@ def list():
     """
     table = present(lambda: list_domains(),
                     renderer='table',
-                    headers=['Domain name', 'Verified', 'Certificate'],
-                    columns=['name', 'verified', 'certificate'])
+                    headers=['Domain name', 'Verified', 'Certificate', 'Certificate status'],
+                    columns=['name', 'verified', 'certificate', 'certificate_status'])
 
     click.echo(table)
 
