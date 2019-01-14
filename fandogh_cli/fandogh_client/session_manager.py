@@ -4,6 +4,7 @@ import sys
 import threading
 import six
 import websocket
+from fandogh_cli.fandogh_client import fandogh_ssh_host
 
 
 def get_encoding():
@@ -44,7 +45,7 @@ class NonInteractive(RawInput):
         return self.raw_input("")
 
 
-def start_session(session_key, url='ws://localhost:8181/session'):
+def start_session(session_key):
     if not sys.stdin.isatty():
         raise Exception('tty stdin is needed!')
 
@@ -57,7 +58,7 @@ def start_session(session_key, url='ws://localhost:8181/session'):
 
     opts = {}
 
-    ws = websocket.create_connection(url, sslopt=opts, **options)
+    ws = websocket.create_connection(fandogh_ssh_host, sslopt=opts, **options)
 
     console = NonInteractive()
 

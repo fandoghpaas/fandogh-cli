@@ -20,7 +20,7 @@ def post_exec(pod_name, command):
 
 def post_session(pod_name, command):
     token = get_stored_token()
-    response = requests.post(base_exec_url,
+    response = requests.post(base_session_url,
                              headers={'Authorization': 'JWT ' + token},
                              json={'pod_name': pod_name, 'command': command})
     if response.status_code != 200:
