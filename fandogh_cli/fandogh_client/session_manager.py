@@ -57,8 +57,7 @@ def start_session(session_key):
     }
 
     opts = {}
-
-    ws = websocket.create_connection(fandogh_ssh_host, sslopt=opts, **options)
+    ws = websocket.create_connection(fandogh_ssh_host+'/session', sslopt=opts, **options)
 
     console = NonInteractive()
 
