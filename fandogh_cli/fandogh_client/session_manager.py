@@ -108,6 +108,7 @@ def start_session(session_key):
 
         while True:
             try:
+                kbhit.kbhit()
                 message = kbhit.getch()
                 ws.send(message)
             except KeyboardInterrupt:

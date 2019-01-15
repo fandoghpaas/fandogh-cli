@@ -31,7 +31,7 @@ def exec_command(command, service, replica, interactive):
     if interactive:
         click.echo('Initializing session...')
         response = post_session(replica, command)
-        click.echo('Connection to the replica...')
+        click.echo('Connecting to the replica...')
         start_session(response['session_key'])
     else:
         response = post_exec(replica, command)
