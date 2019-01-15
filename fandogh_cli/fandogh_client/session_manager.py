@@ -9,8 +9,6 @@ import click
 
 from fandogh_cli.utils import KBHit
 
-kbhit = KBHit()
-
 
 def get_encoding():
     encoding = getattr(sys.stdin, "encoding", "")
@@ -52,11 +50,12 @@ class NonInteractive(RawInput):
 
 def start_session(session_key):
     try:
+        kbhit = KBHit()
         # if not sys.stdin.isatty():
         #     raise Exception('tty stdin is needed!')
         # fd = sys.stdin.fileno()
         # mode = tty.tcgetattr(fd)
-        # tty.setraw(fd)
+        # tty.setraw:q
 
         options = {
             'header': {
