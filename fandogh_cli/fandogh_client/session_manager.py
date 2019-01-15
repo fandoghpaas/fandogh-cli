@@ -5,6 +5,7 @@ import threading
 import six
 import websocket
 from fandogh_cli.fandogh_client import fandogh_ssh_host
+import click
 
 
 def get_encoding():
@@ -109,6 +110,8 @@ def start_session(session_key):
                 break
             except EOFError:
                 break
+    except websocket.WebSocketConnectionClosedException as e:
+        click.echo('Connection has been closed...')
     finally:
         tty.tcsetattr(fd, tty.TCSAFLUSH, mode)
 
