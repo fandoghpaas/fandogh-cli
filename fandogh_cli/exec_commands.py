@@ -26,10 +26,10 @@ def exec_command(command, service, replica, interactive):
 
             replica = click.prompt('Please choose one of the replicas above', type=click.Choice(pod_names))
     if interactive:
-        click.echo('Initializing session...')
-        response = post_session(replica, command)
-        click.echo('Connection to the replica...')
-        start_session(response['session_key'])
+            click.echo('Initializing session...')
+            response = post_session(replica, command)
+            click.echo('Connection to the replica...')
+            start_session(response['session_key'])
     else:
         response = post_exec(replica, command)
         click.echo(response['message'])
