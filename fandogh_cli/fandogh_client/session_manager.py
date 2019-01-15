@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import tty
+
 import sys
 import threading
 import six
