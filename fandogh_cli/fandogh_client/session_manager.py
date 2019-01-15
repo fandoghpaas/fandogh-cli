@@ -7,6 +7,10 @@ import websocket
 from fandogh_cli.fandogh_client import fandogh_ssh_host
 import click
 
+from fandogh_cli.utils import KBHit
+
+kbhit = KBHit()
+
 
 def get_encoding():
     encoding = getattr(sys.stdin, "encoding", "")
@@ -48,11 +52,11 @@ class NonInteractive(RawInput):
 
 def start_session(session_key):
     try:
-        if not sys.stdin.isatty():
-            raise Exception('tty stdin is needed!')
-        fd = sys.stdin.fileno()
-        mode = tty.tcgetattr(fd)
-        tty.setraw(fd)
+        # if not sys.stdin.isatty():
+        #     raise Exception('tty stdin is needed!')
+        # fd = sys.stdin.fileno()
+        # mode = tty.tcgetattr(fd)
+        # tty.setraw(fd)
 
         options = {
             'header': {
@@ -104,7 +108,7 @@ def start_session(session_key):
 
         while True:
             try:
-                message = sys.stdin.read(1)
+                message = kbhit.getch()
                 ws.send(message)
             except KeyboardInterrupt:
                 break
@@ -113,7 +117,8 @@ def start_session(session_key):
     except websocket.WebSocketConnectionClosedException as e:
         click.echo('Connection has been closed...')
     finally:
-        tty.tcsetattr(fd, tty.TCSAFLUSH, mode)
+        kbhit.set_normal_term()
+        # tty.tcsetattr(fd, tty.TCSAFLUSH, mode)
 
 
 if __name__ == "__main__":
