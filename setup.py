@@ -18,7 +18,7 @@ setup(
                       "pytz",
                       "tzlocal",
                       "pyyaml",
-                      "websocket-client"],
+                      "websocket-client==0.54.0"],
     author_email='soroosh.sarabadani@gmail.com',
     url='https://github.com/fandoghpaas/fandogh-cli',
     keywords=['PaaS', 'Fandogh'],
