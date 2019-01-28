@@ -1,0 +1,21 @@
+{
+  "manifest": {
+    "kind": {
+      "description": "You should define description"
+    },
+    "name": "name",
+    "internal": {
+      "spec": {}
+    },
+    "external": {
+      "spec": {
+        "path": "string",
+        "domains": [],
+        "allow_http": true
+      }
+    },
+    "managed": {
+      "spec": {}
+    }
+  }
+}
