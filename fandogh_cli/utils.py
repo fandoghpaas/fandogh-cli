@@ -1,4 +1,3 @@
-import json
 from string import Template
 import click
 import os
@@ -184,7 +183,7 @@ class KBHit:
 
         if os.name == 'nt':
             return msvcrt.getch()
-                # .decode('utf-8')
+            # .decode('utf-8')
 
         else:
             return sys.stdin.read(1)
@@ -236,9 +235,3 @@ if __name__ == "__main__":
             print(c)
 
     kb.set_normal_term()
-
-
-def fetch_manifest_object():
-    with open('fandogh-assets/manifest-guidelines.json') as json_file:
-        return json.load(json_file)
-
