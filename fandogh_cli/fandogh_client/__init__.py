@@ -315,9 +315,12 @@ def deploy_manifest(manifest):
             keys = str(list(response.json().keys())[0]).split('.')
             temp = x
             for key in keys:
-                temp = temp.get(key)
-            document = temp.get('document')
-            click.echo(format_text(document, TextStyle.WARNING))
+                temp = temp.get(key, None)
+
+            if temp is not None:
+                if temp.get('document', False):
+                    document = temp.get('document', None)
+                    click.echo(format_text(document, TextStyle.WARNING))
         raise get_exception(response)
     else:
         return response.json()
