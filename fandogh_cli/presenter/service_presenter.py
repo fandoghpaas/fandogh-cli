@@ -58,6 +58,7 @@ def present_service_detail(details):
                 click.echo('    Status: {}'.format(
                     format_text((container.get('waiting', {}) or {}).get('reason', 'Pending'), TextStyle.WARNING)))
 
+            click.echo('    Restarts: {}'.format(container['restarts']))
         if pod.get('events', []) and containers_length != ready_containers_length:
             click.echo('    ---------------------')
             click.echo('    Events:')
