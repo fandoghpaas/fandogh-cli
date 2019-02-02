@@ -62,6 +62,7 @@ def present_service_detail(details):
             click.echo('    Restarts: {}'.format(container['restarts']))
 
         if pod.get('events', []) and containers_length != ready_containers_length:
+            click.echo('\n')
             click.echo('    ---------------------')
             click.echo('    Events:')
             click.echo(
@@ -69,3 +70,4 @@ def present_service_detail(details):
                         headers=['Reason', 'Message', 'Count', 'First Seen', 'Last Seen'],
                         columns=['reason', 'message', 'count', 'first_timestamp', 'last_timestamp'])
             )
+        click.echo('\n')
