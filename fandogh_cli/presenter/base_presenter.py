@@ -28,6 +28,8 @@ def table_renderer(data, **kwargs):
                     for container in pod.get('containers', []):
                         temp_count += container.get('restarts')
                 row.append(temp_count)
+            elif cn == 'replicas':
+                row.append(len(data[index].get('pods')))
             elif item.get(cn) is True:
                 row.append('Yes')
             elif item.get(cn) is False:
