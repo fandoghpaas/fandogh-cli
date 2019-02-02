@@ -48,6 +48,7 @@ def present_service_detail(details):
         for container in pod['containers']:
             click.echo('    Name: {}'.format(container['name']))
             click.echo('    Image: {}'.format(container['image']))
+            click.echo('    Replicas: {}'.format(len(details['pods'])))
 
             if container['ready']:
                 click.echo('    Status: {}'.format(format_text('Ready', TextStyle.OKGREEN)))
@@ -59,6 +60,7 @@ def present_service_detail(details):
                     format_text((container.get('waiting', {}) or {}).get('reason', 'Pending'), TextStyle.WARNING)))
 
             click.echo('    Restarts: {}'.format(container['restarts']))
+
         if pod.get('events', []) and containers_length != ready_containers_length:
             click.echo('    ---------------------')
             click.echo('    Events:')
