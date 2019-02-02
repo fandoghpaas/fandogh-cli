@@ -48,14 +48,18 @@ def present_service_detail(details):
         for container in pod['containers']:
             click.echo('    Name: {}'.format(container['name']))
             click.echo('    Image: {}'.format(container['image']))
-            click.echo('    Status: {}'.format(format_text('Ready', TextStyle.OKGREEN) if container['ready']
-                                              else format_text(
-                (container.get('waiting', {}) or {}).get('reason', 'Pending'),
-                TextStyle.WARNING)))
 
-        click.echo('    ---------------------')
+            if container['ready']:
+                click.echo('    Status: {}'.format(format_text('Ready', TextStyle.OKGREEN)))
+            elif container['terminated']:
+                click.echo('    Status: {}'.format(
+                    format_text(container.get('terminated', {}).get('reason', 'Terminated'), TextStyle.FAIL)))
+            else:
+                click.echo('    Status: {}'.format(
+                    format_text((container.get('waiting', {}) or {}).get('reason', 'Pending'), TextStyle.WARNING)))
 
         if pod.get('events', []) and containers_length != ready_containers_length:
+            click.echo('    ---------------------')
             click.echo('    Events:')
             click.echo(
                 present(lambda: pod.get('events'), renderer='table',
