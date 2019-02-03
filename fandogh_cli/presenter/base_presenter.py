@@ -22,13 +22,7 @@ def table_renderer(data, **kwargs):
     for index, item in enumerate(data):
         row = []
         for cn in column_names:
-            if cn == 'restarts':
-                temp_count = 0
-                for pod in data[index].get('pods', ''):
-                    for container in pod.get('containers', []):
-                        temp_count += container.get('restarts')
-                row.append(temp_count)
-            elif cn == 'replicas':
+            if cn == 'replicas':
                 row.append(len(data[index].get('pods')))
             elif item.get(cn) is True:
                 row.append('Yes')

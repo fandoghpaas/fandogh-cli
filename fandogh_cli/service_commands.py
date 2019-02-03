@@ -113,7 +113,7 @@ def service_list():
                              'Updated at',
                              'State', 'Restarts'],
                     columns=['name', 'url', 'service_type', 'memory', 'replicas', 'start_date', 'last_update', 'state',
-                             'restarts'])
+                             'service_restarts'])
     if table:
         click.echo(table)
     else:
