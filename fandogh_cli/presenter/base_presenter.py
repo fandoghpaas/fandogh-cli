@@ -19,10 +19,12 @@ def table_renderer(data, **kwargs):
     headers = kwargs.get('headers')
     column_names = kwargs.get('columns')
     table = _create_table(headers)
-    for item in data:
+    for index, item in enumerate(data):
         row = []
         for cn in column_names:
-            if item.get(cn) is True:
+            if cn == 'replicas':
+                row.append(len(data[index].get('pods')))
+            elif item.get(cn) is True:
                 row.append('Yes')
             elif item.get(cn) is False:
                 row.append('No')
