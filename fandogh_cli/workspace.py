@@ -49,9 +49,8 @@ class Workspace:
             for file in files:
                 if file != 'workspace.zip':
                     file_path = os.path.join(os.path.relpath(root, path), file)
-                    if file.lower() != "dockerfile" and any(
-                            fnmatch(file_path, ignore.strip())
-                            for ignore in ignored_entries):
+                    if (file.lower() != "dockerfile" and
+                        any(fnmatch(file_path, ignore.strip()) for ignore in ignored_entries)):
                         debug('{} filtered out.'.format(file_path))
                         continue
                     ziph.write(file_path)
