@@ -9,7 +9,7 @@ class Workspace:
         workspace_config = workspace_config or {}
         self.path = workspace_config.get('path', os.getcwd())
         self.zip_file_name = os.path.join(self.path, 'workspace.zip')
-        files = os.listdir(self.path)
+        files = [file.lower() for file in os.listdir(self.path)]
         self.has_docker_ignore = '.dockerignore' in files
         self.has_docker_file = 'Dockerfile' in files
         self._create_zip_file()
@@ -50,7 +50,8 @@ class Workspace:
                 if file != 'workspace.zip':
                     file_path = os.path.join(os.path.relpath(root, path), file)
                     if file.lower() != "dockerfile" and any(
-                            fnmatch(file_path, ignore.strip()) for ignore in ignored_entries):
+                            fnmatch(file_path, ignore.strip())
+                            for ignore in ignored_entries):
                         debug('{} filtered out.'.format(file_path))
                         continue
                     ziph.write(file_path)
