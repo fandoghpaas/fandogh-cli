@@ -78,8 +78,9 @@ class FandoghCommand(Command):
     def _check_for_error_collection_permission(self):
         collect_error = get_user_config().get('collect_error')
         if collect_error is None:
-            if os.environ.get('COLLECT_ERROR', False):
-                get_user_config().set('collect_error', 'YES')
+            env_value = os.environ.get('COLLECT_ERROR', None)
+            if env_value in ['YES', 'NO']:
+                get_user_config().set('collect_error', env_value)                
             else:
                 confirmed = click.confirm(
                     'Would you like to let Fandogh CLI to send context information in case any unhandled error happens?')
