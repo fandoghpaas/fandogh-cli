@@ -10,7 +10,7 @@ One with the current version of the CLI can create new images on Fandogh and pub
 
 ### How to install the CLI
 
-<b>Please note that</b>Fandogh-cli is a python based application which needs the python 3.5 or higher. 
+<b>Please note that</b> Fandogh-cli is a python based application which needs the python 3.5 or higher. 
 Run the following command to install the CLI:
 
 `pip install fandogh-cli`  
@@ -28,7 +28,7 @@ After you install the CLI, run the following command to log in with your Fandogh
 
 `fandogh login` 
 
-When you run `fandogh login` it wil prompt for username and password which will be used to obtain a token. the token will be stored in $HOME/.fandogh/credentials and later will be used by all other fandogh commands.
+When you run `fandogh login` it wil prompt for username and password which will be used to obtain a token. The token will be stored in $HOME/.fandogh/credentials and later will be used by all other fandogh commands.
 
 ### How to create a new Image
 
@@ -42,7 +42,7 @@ $ image name: test-application
 Image created successfully
 ```
 
-Now it's time to publish the first version of your image. An image in fandogh consists of a Dockerfile and the files which are necessary (a.k.a context) to build the docker image. For the time being you Dockerfile should be in the root of your application directory.
+Now it's time to publish the first version of your image. An image in fandogh consists of a Dockerfile and the files which are necessary (a.k.a context) to build the docker image. For the time being your Dockerfile should be in the root of your application directory.
 Run the following command to publish your image version:
 
 ```bash
@@ -109,7 +109,7 @@ http://mysql.your_namespace.fandogh.cloud
 From your services you can access to the Mysql by using `mysql:3306` address. 
 
 ##### Configuration
-There are couple of configuration that you can pass to Fandogh when you are deploying a Mysql service:
+There are a couple of configuration that you can pass to Fandogh when you are deploying a Mysql service:
 
 * `service_name default: mysql` 
 
@@ -153,7 +153,7 @@ http://postgresql.your_namespace.fandogh.cloud
 From your services you can access to the service by using `postgresql:5432` address. 
 
 ##### Configuration
-There are couple of configuration that you can pass to Fandogh when you are deploying a Postgresql service:
+There are a couple of configuration that you can pass to Fandogh when you are deploying a Postgresql service:
 
 * `service_name default: postgresql` 
 
@@ -180,7 +180,7 @@ $ fandogh managed-service deploy postgresql 10.4 \
 ## Custom domain
 Normally your external services is accessible via `service-name-namespace.fandogh.cloud` on HTTP and HTTPS,
 but you might like to use your custom domain name, like somedomain.com.
-in order to do this you need to submit and verify your domain in fandogh, it's easy :
+In order to do this you need to submit and verify your domain in fandogh, it's easy :
 1. first run `fandogh domain add --name=somedomain.com`
 2. if you're adding a subdomain of a verified domain you don't need verification, for example if you already verified `tehran.myservice.com` then `api.tehran.myservice.com` doesn't need verification, you just need to add it.
 3. if your domain needs verification, it will stop and show you a *key*, you need to create a TXT record in your domain with the *key* value.
