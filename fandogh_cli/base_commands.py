@@ -81,7 +81,7 @@ class FandoghCommand(Command):
                 return None
             
             value = str(value).lower()
-            if value in ['no', '0', 'n']:
+            if value in ['no', '0', 'n', 'false']:
                 return 'NO'
             return 'YES'
         
