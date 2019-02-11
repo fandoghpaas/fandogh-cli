@@ -5,3 +5,4 @@ pyyaml
 requests-toolbelt
 pytz
 tzlocal
+websocket-client

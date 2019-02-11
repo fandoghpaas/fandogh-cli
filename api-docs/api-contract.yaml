@@ -40,6 +40,61 @@ paths:
         500:
           description: "Server Error, Do not rely on response body"
 
+  /accounts/{username}:
+    get:
+      tags:
+      - "Account"
+      description: "To get Account details"
+      operationId: "get Account details"
+      parameters:
+      - in: "header"
+        name: "AUTHORIZATION"
+        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+        type: string
+        required: true
+      - in: "path"
+        name: "username"
+        type: string
+        required: true
+      responses:
+        200:
+          description: "User details"
+          schema:
+            $ref: "#/definitions/UserDetails"
+        401:
+          description: "Authentication required"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+
+    patch:
+      tags:
+      - "Account"
+      description: "To update Account password"
+      operationId: "Update account password"
+      parameters:
+      - in: "header"
+        name: "AUTHORIZATION"
+        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+        type: string
+        required: true
+      - in: "path"
+        name: "username"
+        type: string
+        required: true
+      - in: "body"
+        name: "userDetails"
+        schema:
+          $ref: "#/definitions/UserDetails"
+      responses:
+        200:
+          description: "General message"
+          schema:
+            $ref: "#/definitions/UserDetails"
+        401:
+          description: "Authentication required"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+
   /images:
     get:
       tags:
@@ -471,15 +526,15 @@ paths:
             $ref: "#/definitions/MessageResponse"
         500:
           description: "Server Error, Do not rely on response body"
-          
-          
+
+
   /volumes:
     get:
-      tags: 
+      tags:
       - "Volumes"
       description: "To get list of user volumes"
       operationId: "get volumes"
-      parameters: 
+      parameters:
       - in: "header"
         name: "AUTHORIZATION"
         description: "in this format: JWT [USER-TOKEN], where [USER-TOKEN] is user's token"
@@ -496,7 +551,7 @@ paths:
           description: "Authorization required"
           schema:
             $ref: "#/definitions/MessageResponse"
-            
+
     post:
       tags:
       - "Volumes"
@@ -530,7 +585,7 @@ paths:
             $ref: "#/definitions/MessageResponse"
         500:
           description: "Server Error, Do not rely on response body"
-          
+
   /volumes/{volume_name}:
     delete:
       tags:
@@ -548,7 +603,7 @@ paths:
         description: "in this format: JWT [USER-TOKEN], where [USER-TOKEN] is user's token"
         type: string
         required: true
-      
+
       responses:
         200:
           description: "A message from server"
@@ -1098,7 +1153,7 @@ definitions:
   ServiceDeploymentManifestModel:
     type: object
     description: "Service manifest, please refer to https://docs.fandogh.cloud/docs/service-manifest.html for manifest details"
-    
+
   VolumeModel:
     type: object
     description: "A model to represent entities of a volume"
@@ -1113,7 +1168,7 @@ definitions:
         type: string
       mounted_to:
         type: boolean
-        
+
   CreateVolumeModel:
     type: object
     description: "A model to represent desired volume to be created"
@@ -1176,3 +1231,18 @@ definitions:
         $ref: "#/definitions/QuotaModel"
       current_used_resources:
         $ref: "#/definitions/UsedResourcesModel"
+  UserDetails:
+    type: object
+    properties:
+      national_id:
+        type: string
+      newsletter_subscriber:
+        type: boolean
+      first_name:
+        type: string
+      last_name:
+        type: string
+      current_password:
+        type: string
+      new_password:
+        type: string

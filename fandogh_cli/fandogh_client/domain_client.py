@@ -2,7 +2,6 @@ import requests
 
 from fandogh_cli.fandogh_client import base_url, get_exception
 from fandogh_cli.fandogh_client import get_stored_token
-
 base_domains_url = '%sdomains' % base_url
 
 
@@ -30,10 +29,12 @@ def list_domains():
         result = []
         for domain in response.json():
             cert = domain.get('certificate', None)
+            domain['certificate_status'] = " - "
             if cert is None:
                 domain['certificate'] = "No Certificate"
             else:
                 domain['certificate'] = "Requested"
+                domain['certificate_status'] = cert.get("details", {}).get('status', ' - ')
             result.append(domain)
         return result
 

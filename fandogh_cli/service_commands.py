@@ -106,11 +106,14 @@ def deploy(image, version, name, port, envs, hosts, internal, registry_secret, i
 @click.command('list', cls=FandoghCommand)
 def service_list():
     """List all services for this image"""
-    table = present(lambda: list_services(),
+    data = list_services()
+    table = present(lambda: data,
                     renderer='table',
-                    headers=['Service Name', 'URL', 'Service Type', "Memory Usages", 'Started at', 'Updated at',
-                             'State'],
-                    columns=['name', 'url', 'service_type', 'memory', 'start_date', 'last_update', 'state', ])
+                    headers=['Service Name', 'URL', 'Service Type', "Memory Usages", 'Replicas', 'Started at',
+                             'Updated at',
+                             'State', 'Restarts'],
+                    columns=['name', 'url', 'service_type', 'memory', 'replicas', 'start_date', 'last_update', 'state',
+                             'service_restarts'])
     if table:
         click.echo(table)
     else:
