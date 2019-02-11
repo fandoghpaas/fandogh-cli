@@ -2,6 +2,11 @@ import os
 import zipfile
 from fnmatch import fnmatch
 from fandogh_cli.utils import debug
+import sys
+
+
+if sys.version[0] == '2':
+    from itertools import imap as map
 
 
 class Workspace:
@@ -9,9 +14,17 @@ class Workspace:
         workspace_config = workspace_config or {}
         self.path = workspace_config.get('path', os.getcwd())
         self.zip_file_name = os.path.join(self.path, 'workspace.zip')
-        files = [file.lower() for file in os.listdir(self.path)]
-        self.has_docker_ignore = '.dockerignore' in files
-        self.has_docker_file = 'Dockerfile' in files
+        files = os.listdir(self.path)
+        files_lowercase = list(map(str.lower, files))
+
+        self.docker_file_name = ''
+        if 'dockerfile' in files_lowercase:
+            self.docker_file_name = files[files_lowercase.index('dockerfile')]
+
+        self.docker_ignore_name = ''
+        if '.dockerignore' in files_lowercase:
+            self.docker_ignore_name = files[files_lowercase.index('.dockerignore')]
+
         self._create_zip_file()
         self.zip_file_size_kb = os.path.getsize(self.zip_file_name)
         self.zip_file_size = self.zip_file_size_kb / 1048576
@@ -35,9 +48,9 @@ class Workspace:
         return str(self)
 
     def get_ignored_entries(self):
-        if not self.has_docker_ignore:
+        if not self.docker_ignore_name:
             return []
-        with open(os.path.join(self.path, '.dockerignore'), 'r') as file:
+        with open(os.path.join(self.path, self.docker_ignore_name), 'r') as file:
             entries = file.readlines()
         return entries
 
@@ -49,7 +62,7 @@ class Workspace:
             for file in files:
                 if file != 'workspace.zip':
                     file_path = os.path.join(os.path.relpath(root, path), file)
-                    if (file.lower() != "dockerfile" and
+                    if (file != self.docker_file_name and
                         any(fnmatch(file_path, ignore.strip()) for ignore in ignored_entries)):
                         debug('{} filtered out.'.format(file_path))
                         continue

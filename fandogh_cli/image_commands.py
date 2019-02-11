@@ -111,7 +111,7 @@ def publish(version, detach):
             return
     workspace = Workspace()
 
-    if not workspace.has_docker_file:
+    if not workspace.docker_file_name:
         click.echo("In order to publish your image you must have a Dockerfile in the current directory")
         return
     if workspace.zip_file_size > max_workspace_size:
@@ -121,7 +121,7 @@ def publish(version, detach):
             TextStyle.WARNING
         ))
 
-        if not workspace.has_docker_ignore:
+        if not workspace.docker_ignore_name:
             click.echo(format_text(
                 "[perhaps you may be able to take advantage of '.dockerignore' "
                 "to reduce your worksspace size, check documentation for .dockerignore at: "
