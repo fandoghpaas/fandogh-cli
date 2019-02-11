@@ -268,10 +268,19 @@ def get_logs(service_name, last_logged_time):
 
 
 def get_details(service_name):
-    services = list_services()
-    for service in services:
-        if service['name'] == service_name:
-            return service
+    token = get_stored_token()
+    response = requests.get(base_services_url + '/' + service_name,
+                               headers={'Authorization': 'JWT ' + token})
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        service = response.json()
+        import json
+        if 'start_date' in service:
+            service['start_date'] = convert_datetime(service['start_date'])
+        if 'last_update' in service:
+            service['last_update'] = convert_datetime(service['last_update'])
+        return service
 
 
 def deploy_managed_service(service_name, version, configs):
