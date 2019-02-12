@@ -1,5 +1,7 @@
 import click
-from fandogh_cli.fandogh_client.namespace_client import details_namespace
+from fandogh_cli.config import get_user_config
+
+from fandogh_cli.fandogh_client.namespace_client import *
 from .base_commands import FandoghCommand
 from .utils import format_text, TextStyle
 
@@ -7,6 +9,31 @@ from .utils import format_text, TextStyle
 @click.group("namespace")
 def namespace():
     """Namespace management commands"""
+
+
+@click.command("list", cls=FandoghCommand)
+def list():
+    namespaces = list_namespaces()
+    default_name_space = get_user_config().get('namespace', None)
+    if default_name_space is None and len(namespaces) > 1:
+        click.echo(format_text('You already have more than 1 namespace and none selected as default namespace.\n Please select a namespace as default one', TextStyle.FAIL))
+    click.echo('Your namespaces: ')
+    for namespace in namespaces:
+        message = ' * {}'.format(namespace['name'])
+        if namespace['name'] == default_name_space:
+            message += ' (default)'
+        click.echo(message)
+
+
+@click.command("default", cls=FandoghCommand)
+@click.option('--name', '-n', 'name', prompt='Namespace name', help='Namespace name that should be default', default=None)
+def default(name):
+    namespaces = list_namespaces()
+    if name in map(lambda n: n['name'], namespaces):
+        click.echo("Setting the default namespace to {}".format(name))
+        get_user_config().set('namespace', name)
+    else:
+        click.echo(format_text('Namespace not found', TextStyle.FAIL))
 
 
 @click.command("status", cls=FandoghCommand)
@@ -39,4 +66,6 @@ def status():
     # print_value('CPU', result['current_used_resources'].get('cpu_usage'), result['quota'].get('cpu_limit', 'N/A'))
 
 
+namespace.add_command(list)
+namespace.add_command(default)
 namespace.add_command(status)
