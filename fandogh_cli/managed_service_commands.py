@@ -18,8 +18,6 @@ def deploy(name, version, configs):
     """Deploy Managed Service"""
     try:
         response = deploy_manifest(_generate_managed_manifest(name, version, configs))
-        click.echo(
-            'your managed service with name \'{}\' will be up and running in seconds'.format(response.get('name')))
         help_message = response.get("help_message", None)
         if help_message:
             click.echo(help_message)
