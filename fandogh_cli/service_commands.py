@@ -190,25 +190,28 @@ def service_apply(file, parameters, detach):
         message = "\nCongratulation, Your service is running ^_^\n"
         service_type = str(deployment_result.get('service_type', '')).lower()
         service_urls = deployment_result['urls']
-
-        if service_type == 'external':
-            message += "Your service is accessible using the following URLs:\n{}".format(
-                "\n".join([" - {}".format(url) for url in service_urls])
-            )
-        elif service_type == 'internal':
-            message += """
-        Since your service is internal, it's not accessible from outside your fandogh private network,
-        but other services inside your private network will be able to find it using it's name: '{}'
-                """.strip().format(
-                deployment_result['name']
-            )
-        elif service_type == 'managed':
-            message += """Managed service deployed successfully"""
-
-            if len(service_urls) > 0:
-                message += "If your service has any web interface, it will be available via the following urls in few seconds:\n{}".format(
-                    "".join([" - {}\n".format(u) for u in service_urls])
+        help_message = deployment_result.get('help_message', "")
+        if help_message:
+            message += help_message
+        else:
+            if service_type == 'external':
+                message += "Your service is accessible using the following URLs:\n{}".format(
+                    "\n".join([" - {}".format(url) for url in service_urls])
                 )
+            elif service_type == 'internal':
+                message += """
+            Since your service is internal, it's not accessible from outside your fandogh private network,
+            but other services inside your private network will be able to find it using it's name: '{}'
+                    """.strip().format(
+                    deployment_result['name']
+                )
+            elif service_type == 'managed':
+                message += """Managed service deployed successfully"""
+
+                if len(service_urls) > 0:
+                    message += "If your service has any web interface, it will be available via the following urls in few seconds:\n{}".format(
+                        "".join([" - {}\n".format(u) for u in service_urls])
+                    )
 
         if detach:
             click.echo(message)
