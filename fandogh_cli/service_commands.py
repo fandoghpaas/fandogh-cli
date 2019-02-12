@@ -176,7 +176,7 @@ def service_details(service_name):
 @click.option('-p', '--parameter', 'parameters', help='Manifest parameters', multiple=True)
 @click.option('-d', 'detach', is_flag=True, default=False,
               help='detach terminal.')
-@click.option('-h', '--hide', is_flag=True, default=False,
+@click.option('-h', '--hide', 'hide_manifest', is_flag=True, default=False,
               help='Hide manifest content.')
 def service_apply(file, parameters, detach, hide_manifest):
     """Deploys a service defined as a manifest"""
