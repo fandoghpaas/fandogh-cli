@@ -12,9 +12,13 @@ base_services_url = '%sservices' % base_url
 base_managed_services_url = '%smanaged-services' % base_url
 base_volume_url = '%svolumes' % base_url
 max_workspace_size = 20  # MB
-default_request = {
-    'namespace': get_user_config().get('token', '')
-}
+
+
+def DEFAULT_HEADERS():
+    return {
+        'Authorization': 'JWT ' + get_stored_token(),
+        'ACTIVE-NAMESPACE': get_user_config().get('namespace', None)
+    }
 
 
 class TooLargeWorkspace(Exception):
@@ -225,9 +229,8 @@ def deploy_service(image_name, version, service_name, envs, hosts, port, interna
 
 
 def list_services():
-    token = get_stored_token()
     response = requests.get(base_services_url,
-                            headers={'Authorization': 'JWT ' + token})
+                            headers=DEFAULT_HEADERS())
     if response.status_code != 200:
         raise get_exception(response)
     else:
