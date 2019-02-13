@@ -12,6 +12,9 @@ base_services_url = '%sservices' % base_url
 base_managed_services_url = '%smanaged-services' % base_url
 base_volume_url = '%svolumes' % base_url
 max_workspace_size = 20  # MB
+default_request = {
+    'namespace': get_user_config().get('token', '')
+}
 
 
 class TooLargeWorkspace(Exception):
@@ -270,7 +273,7 @@ def get_logs(service_name, last_logged_time):
 def get_details(service_name):
     token = get_stored_token()
     response = requests.get(base_services_url + '/' + service_name,
-                               headers={'Authorization': 'JWT ' + token})
+                            headers={'Authorization': 'JWT ' + token})
     if response.status_code != 200:
         raise get_exception(response)
     else:
