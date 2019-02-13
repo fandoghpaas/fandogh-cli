@@ -6,10 +6,13 @@ base_namespace_url = '%sapi/users/namespaces' % base_url
 
 
 def list_namespaces():
-    return [
-        {'name': 'salameno-staging'},
-        {'name': 'salameno-production'},
-    ]
+    token = get_stored_token()
+    response = requests.get(base_namespace_url,  # use user's namespace
+                            headers={'Authorization': 'JWT ' + token})
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        return response.json()
 
 
 def details_namespace():

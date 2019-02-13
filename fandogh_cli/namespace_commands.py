@@ -21,16 +21,16 @@ def list():
     for namespace in namespaces:
         message = ' * {}'.format(namespace['name'])
         if namespace['name'] == default_name_space:
-            message += ' (default)'
+            message += ' (active)'
         click.echo(message)
 
 
-@click.command("default", cls=FandoghCommand)
+@click.command("active", cls=FandoghCommand)
 @click.option('--name', '-n', 'name', prompt='Namespace name', help='Namespace name that should be default', default=None)
-def default(name):
+def active(name):
     namespaces = list_namespaces()
     if name in map(lambda n: n['name'], namespaces):
-        click.echo("Setting the default namespace to {}".format(name))
+        click.echo("Setting the active namespace to {}".format(name))
         get_user_config().set('namespace', name)
     else:
         click.echo(format_text('Namespace not found', TextStyle.FAIL))
@@ -67,5 +67,5 @@ def status():
 
 
 namespace.add_command(list)
-namespace.add_command(default)
+namespace.add_command(active)
 namespace.add_command(status)
