@@ -29,10 +29,12 @@ def list_domains():
         result = []
         for domain in response.json():
             cert = domain.get('certificate', None)
+            domain['certificate_status'] = " - "
             if cert is None:
                 domain['certificate'] = "No Certificate"
             else:
                 domain['certificate'] = "Requested"
+                domain['certificate_status'] = cert.get("details", {}).get('status', ' - ')
             result.append(domain)
         return result
 
