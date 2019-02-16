@@ -9,6 +9,20 @@ from time import sleep
 from .presenter import present_service_detail, present
 
 
+def _hide_manifest_env_content(content):
+    if 'spec' not in content:
+        return content
+    if 'env' not in content['spec']:
+        return content
+
+    from copy import deepcopy
+    temp_content = deepcopy(content)
+    for env in temp_content['spec']['env']:
+        if env.get('hidden', False):
+            env['value'] = '***********'
+    return temp_content
+
+
 @click.group("service")
 def service():
     """Service management commands"""
@@ -188,25 +202,12 @@ def service_apply(file, parameters, detach, hide_manifest):
     from yaml import load_all
     manifests = list(load_all(manifest_content))
 
-    def hide_manifest_env_content(content):
-        if 'spec' not in content:
-            return content
-        if 'env' not in content['spec']:
-            return content
-
-        from copy import deepcopy
-        temp_content = deepcopy(content)
-        for env in temp_content['spec']['env']:
-            if env.get('hidden', False):
-                env['value'] = '***********'
-        return temp_content
-
     for index, service_conf in enumerate(manifests):
         click.echo(
             'service {} - {} is being deployed'.format(index + 1, len(manifests)))
 
         click.echo(
-            yaml.safe_dump(hide_manifest_env_content(service_conf) if hide_manifest else service_conf,
+            yaml.safe_dump(_hide_manifest_env_content(service_conf) if hide_manifest else service_conf,
                            default_flow_style=False),
         )
 
@@ -270,8 +271,14 @@ def service_apply(file, parameters, detach, hide_manifest):
 
 @click.command('dump', cls=FandoghCommand)
 @click.option('-s', '--service', '--name', 'name', prompt='Service name')
-def service_dump(name):
-    click.echo(yaml.safe_dump(dump_manifest(name), default_flow_style=False))
+@click.option('-h', '--hide', 'hide_manifest', is_flag=True, default=False,
+              help='Hide manifest content.')
+def service_dump(name, hide_manifest):
+    manifest = dump_manifest(name)
+    click.echo(
+        yaml.safe_dump(_hide_manifest_env_content(manifest) if hide_manifest else manifest,
+                       default_flow_style=False),
+    )    
 
 
 service.add_command(deploy)
