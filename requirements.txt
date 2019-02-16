@@ -6,3 +6,4 @@ requests-toolbelt
 pytz
 tzlocal
 websocket-client
+cryptography>=2.3
