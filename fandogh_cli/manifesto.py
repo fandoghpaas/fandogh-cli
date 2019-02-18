@@ -1,4 +1,4 @@
-x = {
+manifesto = {
     "manifest": {
         "kind": {
             "document": "You should define description"

@@ -5,7 +5,7 @@ import requests
 import os
 from fandogh_cli.config import get_user_config
 from fandogh_cli.utils import convert_datetime, parse_key_values, TextStyle, format_text
-from fandogh_cli.manifesto import x
+from fandogh_cli.manifesto import manifesto
 
 fandogh_host = os.getenv('FANDOGH_HOST', 'https://api.fandogh.cloud')
 fandogh_ssh_host = os.getenv('FANDOGH_SSH_HOST', 'wss://ssh.fandogh.cloud')
@@ -313,7 +313,7 @@ def deploy_manifest(manifest):
     if response.status_code != 200:
         if response.status_code == 400:
             keys = str(list(response.json().keys())[0]).split('.')
-            temp = x
+            temp = manifesto
             for key in keys:
                 temp = temp.get(key, None)
 
