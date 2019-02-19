@@ -134,6 +134,7 @@ manifesto = {
                                 "     sub_path: SUB_PATH_TWO\n"
                                 "  ...\n"
                                 "for more info visit manifest in:\n"
+                                "https://docs.fandogh.cloud/docs/dedicated-volume.html\n"
                                 "https://docs.fandogh.cloud/docs/service-manifest.html\n\n"
 
                 }, "resources": {
