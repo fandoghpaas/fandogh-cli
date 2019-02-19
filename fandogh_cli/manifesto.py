@@ -7,6 +7,8 @@ manifesto = {
                         "manifests are usually started with \"kind\" at the top:\n"
                         "kind: ManagedService or kind: InternalService or kind: ExternalService\n"
                         "...\n"
+                        "for more info visit manifest in:\n"
+                        "https://docs.fandogh.cloud/docs/service-manifest.html\n\n"
         },
         "name": {
             "document": "\"name\" variable demonstrates the name of the service that you want to deploy\n"
@@ -15,12 +17,14 @@ manifesto = {
                         "name: SERVICE_NAME\n"
                         "spec:\n"
                         "...\n"
+                        "for more info visit manifest in:\n"
+                        "https://docs.fandogh.cloud/docs/service-manifest.html\n\n"
         },
         "internal": {
             "spec": {
                 "image": {
                     "document": "\"image\" is name of the image that you want to create your service from.\n"
-                                "images can be defined in three ways:\n"
+                                "image can be defined in three ways:\n"
                                 "1- IMAGE_NAME:IMAGE_VERSION, which refers to an image already existing in your "
                                 "namespace\n "
                                 "2- library/IMAGE_NAME:IMAGE_VERSION, which refers to an image existing on docker hub\n"
@@ -33,7 +37,7 @@ manifesto = {
                                 "  ...\n"
 
                 }, "port": {
-                    "document": "port structure should be like this:\n\n"
+                    "document": "\"port\" structure should be like this:\n\n"
                                 "kind: InternalService\n"
                                 "name: SERVICE_NAME\n"
                                 "spec:\n"
@@ -44,7 +48,7 @@ manifesto = {
                                 "https://docs.fandogh.cloud/docs/service-manifest.html\n\n "
 
                 }, "image_pull_policy": {
-                    "document": "image_pull_policy gives you the option to always pull your image\n"
+                    "document": "\"image_pull_policy\" gives you the option to always pull your image\n"
                                 "for every service deploy that you make if it's value is set to \"Always\"\n"
                                 "if you don't specify this field, then the default value will be \"IfNotPresent\"\n"
                                 "kind: SERVICE_KIND[ExternalService, InternalService, ManagedService]\n"
@@ -57,7 +61,7 @@ manifesto = {
                                 "https://docs.fandogh.cloud/docs/service-manifest.html\n\n"
 
                 }, "image_pull_secret": {
-                    "document": "image_pull_secret is used for situations in which you want to\n"
+                    "document": "\"image_pull_secret\" is used for situations in which you want to\n"
                                 "pull an image from a private registry; in order to achieve this\n"
                                 "you have to pass the name of the secret that you have built before\n"
                                 "kind: SERVICE_KIND[ExternalService, InternalService, ManagedService]\n"
@@ -70,7 +74,7 @@ manifesto = {
                                 "https://docs.fandogh.cloud/docs/service-manifest.html\n"
                                 "https://docs.fandogh.cloud/docs/secret.html\n\n"
                 }, "replicas": {
-                    "document": "replica indicates the number of instances that should be made\n"
+                    "document": "\"replica\" indicates the number of instances that should be made\n"
                                 "from your manifest and it's default value is \"1\"\n"
                                 "kind: SERVICE_KIND[ExternalService, InternalService, ManagedService]\n"
                                 "name:SERVICE_NAME\n"
@@ -81,7 +85,7 @@ manifesto = {
                                 "for more info visit manifest in:\n"
                                 "https://docs.fandogh.cloud/docs/service-manifest.html\n\n"
                 }, "env": {
-                    "document": "env is used for declaring environment variables\n"
+                    "document": "\"env\" is used for declaring environment variables\n"
                                 "kind: SERVICE_KIND[ExternalService, InternalService, ManagedService]\n"
                                 "name:SERVICE_NAME\n"
                                 "spec\n"
@@ -96,7 +100,7 @@ manifesto = {
                                 "https://docs.fandogh.cloud/docs/service-manifest.html\n\n"
 
                 }, "port_mapping": {
-                    "document": "port_mapping gives your internal services ability to expose\n"
+                    "document": "\"port_mapping\" gives your internal services ability to expose\n"
                                 "themselves on ports other than their default ones."
                                 "Note that using port_mapping you can only expose your services\n"
                                 "in the namespace, not outside it!"
@@ -112,7 +116,7 @@ manifesto = {
                                 "for more info visit manifest in:\n"
                                 "https://docs.fandogh.cloud/docs/service-manifest.html\n\n"
                 }, "volume_mounts": {
-                    "document": "volume_mounts give you the option to persist your data just by mounting\n"
+                    "document": "\"volume_mounts\" give you the option to persist your data just by mounting\n"
                                 "your preferred data path from your service to a storage directory.\n"
                                 "Note: if you don't use volume_name then all your data will be written on your\n"
                                 "shared storage directory.\n"
@@ -133,7 +137,7 @@ manifesto = {
                                 "https://docs.fandogh.cloud/docs/service-manifest.html\n\n"
 
                 }, "resources": {
-                    "document": "resources indicates how much resource your service will use.\n"
+                    "document": "\"resources\" indicates how much resource your service will use.\n"
                                 "in order to specify desired memory for your service, you have to\n"
                                 "write it in Mib format like -> 1024Mi which means a service that want to use 1Gb "
                                 "memory\n"
@@ -148,7 +152,7 @@ manifesto = {
                                 "https://docs.fandogh.cloud/docs/service-manifest.html\n\n"
 
                 }, "liveness_probe": {
-                    "document": "liveness_probe helps you check your service health each time\n"
+                    "document": "\"liveness_probe\" helps you check your service health each time\n"
                                 "in a specific period of time that you decide.\n"
                                 "kind: SERVICE_KIND[ExternalService, InternalService, ManagedService]\n"
                                 "name:SERVICE_NAME\n"
@@ -156,17 +160,18 @@ manifesto = {
                                 "  ...\n"
                                 "  liveness_probe:\n"
                                 "    initial_delay_seconds: INITIAL_DELAY_IN_SECONDS\n"
-                                "      period_seconds: PERIOD_INTERVAL_IN_SECONDS\n"
-                                "      http_get:\n"
-                                "        path: URL_TO_BE_CHECKED\n"
-                                "        port: PORT_NUMBER"
+                                "    period_seconds: PERIOD_INTERVAL_IN_SECONDS\n"
+                                "    timeout_seconds: TIMEOUT_IN_SECONDS\n"
+                                "    http_get:\n"
+                                "      path: URL_TO_BE_CHECKED\n"
+                                "      port: PORT_NUMBER"
                                 "  ...\n"
                                 "for more info visit manifest in:\n"
                                 "https://docs.fandogh.cloud/docs/service-manifest.html\n\n"
 
                 }, "readiness_probe": {
-                    "document": "readiness_probe helps you check to see whether your service is completely booted up "
-                                "or not. this way you can prevent your dependent services from failing to send "
+                    "document": "\"readiness_probe\" helps you check to see whether your service is completely booted "
+                                "up or not. this way you can prevent your dependent services from failing to send "
                                 "request\n"
                                 "to some services that are still booting up.\n"
                                 "in a specific period of time that you decide.\n"
@@ -176,10 +181,41 @@ manifesto = {
                                 "  ...\n"
                                 "  readiness_probe:\n"
                                 "    initial_delay_seconds: INITIAL_DELAY_IN_SECONDS\n"
-                                "      period_seconds: PERIOD_INTERVAL_IN_SECONDS\n"
-                                "      http_get:\n"
-                                "        path: URL_TO_BE_CHECKED\n"
-                                "        port: PORT_NUMBER"
+                                "    period_seconds: PERIOD_INTERVAL_IN_SECONDS\n"
+                                "    timeout_seconds: TIMEOUT_IN_SECONDS\n"
+                                "    http_get:\n"
+                                "      path: URL_TO_BE_CHECKED\n"
+                                "      port: PORT_NUMBER"
+                                "  ...\n"
+                                "for more info visit manifest in:\n"
+                                "https://docs.fandogh.cloud/docs/service-manifest.html\n\n"
+
+                }, "command": {
+                    "document": "\"command\" variable helps you provide a command list to be executed at the start up\n"
+                                "when your container is deployed and ready\n"
+                                "you can provide container command as described below:\n"
+                                "kind: SERVICE_KIND[ExternalService, InternalService, ManagedService]\n"
+                                "name:SERVICE_NAME\n"
+                                "spec\n"
+                                "  ...\n"
+                                "  command:\n"
+                                "   - COMMAND_ONE\n"
+                                "   - COMMAND_TWO\n"
+                                "   - COMMAND_LAST\n"
+                                "  ...\n"
+                                "for more info visit manifest in:\n"
+                                "https://docs.fandogh.cloud/docs/service-manifest.html\n\n"
+                }, "command_args": {
+                    "document": "\"command_args\" variable defines argument list needed to be passed to the command "
+                                "that\n "
+                                "is being executed at the startup of your container\n"
+                                "you can provide command arguments as described below:\n"
+                                "spec\n"
+                                "  ...\n"
+                                "  command_args:\n"
+                                "   - COMMAND_ARG_ONE\n"
+                                "   - COMMAND_ARG_TWO\n"
+                                "   - COMMAND_ARG_LAST\n"
                                 "  ...\n"
                                 "for more info visit manifest in:\n"
                                 "https://docs.fandogh.cloud/docs/service-manifest.html\n\n"
@@ -200,7 +236,7 @@ manifesto = {
             "spec": {
                 "document": "You should define description",
                 "domains": {
-                    "document": "domains spec is list of domains that you want to add\n"
+                    "document": "\"domains\" spec is list of domains that you want to add\n"
                                 "to your service, below is the sample:\n"
                                 "kind: SERVICE_KIND[ExternalService, InternalService, ManagedService]\n"
                                 "name:SERVICE_NAME\n"
@@ -210,7 +246,7 @@ manifesto = {
                                 "   - name: DOMAIN_NAME_ONE\n"
                                 "   - name: DOMAIN_NAME_TWO\n"
                 }, "allow_http": {
-                    "document": "allow_http helps you to expose your service\n"
+                    "document": "\"allow_http\" helps you to expose your service\n"
                                 "on non-ssl protocol http\n"
                                 "kind: SERVICE_KIND[ExternalService, InternalService, ManagedService]\n"
                                 "name: SERVICE_NAME\n"
@@ -236,7 +272,7 @@ manifesto = {
         },
         "managed": {
             "service_name": {
-                "document": "service_name is the name of your service that you have to specify\n"
+                "document": "\"service_name\" is the name of your service that you have to specify\n"
                             "kind: SERVICE_KIND[ExternalService, InternalService, ManagedService]\n"
                             "name: SERVICE_NAME\n"
                             "spec:\n"
@@ -244,7 +280,7 @@ manifesto = {
                             "for more info visit manifest in:\n"
                             "https://docs.fandogh.cloud/docs/service-manifest.html\n\n"
             }, "version": {
-                "document": "version indicates the version of managed-service image.\n"
+                "document": "\"version\" indicates the version of managed-service image.\n"
                             "kind: SERVICE_KIND[ExternalService, InternalService, ManagedService]\n"
                             "name: SERVICE_NAME\n"
                             "version: SERVICE_IMAGE_VERSION\n"
@@ -255,7 +291,7 @@ manifesto = {
             }, "spec": {
                 "document": "document for managed services",
                 "parameters": {
-                    "document": "parameters are some specific fields that are related to each managed service\n"
+                    "document": "\"parameters\" are some specific fields that are related to each managed service\n"
                                 "using command [fandogh managed-service help] you can see parameters related to each\n"
                                 "managed-managed service.\n"
                                 "kind: SERVICE_KIND[ExternalService, InternalService, ManagedService]\n"
