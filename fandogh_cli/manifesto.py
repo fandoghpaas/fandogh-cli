@@ -49,7 +49,7 @@ manifesto = {
 
                 }, "image_pull_policy": {
                     "document": "\"image_pull_policy\" gives you the option to always pull your image\n"
-                                "for every service deploy that you make if it's value is set to \"Always\"\n"
+                                "for every service deploy that you make if its value is set to \"Always\"\n"
                                 "if you don't specify this field, then the default value will be \"IfNotPresent\"\n"
                                 "kind: SERVICE_KIND[ExternalService, InternalService, ManagedService]\n"
                                 "name:SERVICE_NAME\n"
@@ -75,7 +75,7 @@ manifesto = {
                                 "https://docs.fandogh.cloud/docs/secret.html\n\n"
                 }, "replicas": {
                     "document": "\"replica\" indicates the number of instances that should be made\n"
-                                "from your manifest and it's default value is \"1\"\n"
+                                "from your manifest and its default value is \"1\"\n"
                                 "kind: SERVICE_KIND[ExternalService, InternalService, ManagedService]\n"
                                 "name:SERVICE_NAME\n"
                                 "spec\n"
