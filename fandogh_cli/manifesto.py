@@ -1,16 +1,25 @@
 manifesto = {
     "manifest": {
         "kind": {
-            "document": "You should define description"
+            "document": "\"kind\" variable demonstrates the kind of the service that you want to deploy.\n"
+                        "kind is one of items in the list below:\n"
+                        "[ManagedService, ExternalService, InternalService]\n"
+                        "manifests are usually started with \"kind\" at the top:\n"
+                        "kind: ManagedService or kind: InternalService or kind: ExternalService\n"
+                        "...\n"
         },
         "name": {
-            "document": "You should define description"
+            "document": "\"name\" variable demonstrates the name of the service that you want to deploy\n"
+                        "you should provide it as described below:\n"
+                        "kind: SERVICE_KIND[ManagedService, InternalService, ExternalService]\n"
+                        "name: SERVICE_NAME\n"
+                        "spec:\n"
+                        "...\n"
         },
         "internal": {
             "spec": {
                 "image": {
-                    "document": "Image is name of the image that you want to create\n"
-                                "your service from.\n"
+                    "document": "\"image\" is name of the image that you want to create your service from.\n"
                                 "images can be defined in three ways:\n"
                                 "1- IMAGE_NAME:IMAGE_VERSION, which refers to an image already existing in your "
                                 "namespace\n "
@@ -22,6 +31,7 @@ manifesto = {
                                 "spec:\n"
                                 "  image: IMAGE_NAME:IMAGE_TAG\n"
                                 "  ...\n"
+
                 }, "port": {
                     "document": "port structure should be like this:\n\n"
                                 "kind: InternalService\n"
@@ -174,7 +184,16 @@ manifesto = {
                                 "for more info visit manifest in:\n"
                                 "https://docs.fandogh.cloud/docs/service-manifest.html\n\n"
 
-                }
+                },
+                "document": "\"spec\" is a dictionary, containing list of all configurations that are needed for your\n"
+                            "service to be set on during deployment time.\n"
+                            "if you don't provide it, server will not be able to configure your service correctly, so\n"
+                            "it will throw an exception.\n"
+                            "you can define service spec in manifest as described below:\n"
+                            "kind: SERVICE_KIND[ManagedService, InternalService, ExternalService]\n"
+                            "name: SERVICE_NAME\n"
+                            "spec:\n"
+                            "  ...\n"
             }
         },
         "external": {
