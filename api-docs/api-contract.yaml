@@ -1,212 +1,212 @@
-swagger: "2.0"
+swagger: '2.0'
 info:
-  description: "Fandogh API"
-  version: "1.0.0"
-  title: "Fandogh API"
-host: "api.fandogh.cloud"
-basePath: "/api"
+  description: Fandogh API
+  version: 1.0.0
+  title: Fandogh API
+host: api.fandogh.cloud
+basePath: /api
 schemes:
-- "https"
+  - https
 consumes:
-  - "application/json"
+  - application/json
 produces:
-  - "application/json"
-
+  - application/json
 paths:
+
   /tokens:
     post:
       tags:
-      - "Account"
-      description: "To create a new token"
-      operationId: "Create Token"
-
+        - Account
+      description: To create a new token
+      operationId: Create Token
       parameters:
-      - in: "body"
-        name: "body"
-        description: "User credentials"
-        required: true
-        schema:
-          $ref: "#/definitions/UserCredentials"
-
+        - in: body
+          name: body
+          description: User credentials
+          required: true
+          schema:
+            $ref: '#/definitions/UserCredentials'
       responses:
-        200:
-          description: "Token and user info"
+        '200':
+          description: Token and user info
           schema:
-            $ref: "#/definitions/TokenResponse"
-        400:
-          description: "Invalid input"
+            $ref: '#/definitions/TokenResponse'
+        '400':
+          description: Invalid input
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        500:
-          description: "Server Error, Do not rely on response body"
-
-  /accounts/{username}:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: 'Server Error, Do not rely on response body'
+  '/accounts/{username}':
     get:
       tags:
-      - "Account"
-      description: "To get Account details"
-      operationId: "get Account details"
+        - Account
+      description: To get Account details
+      operationId: get Account details
       parameters:
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
-        type: string
-        required: true
-      - in: "path"
-        name: "username"
-        type: string
-        required: true
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
+        - in: path
+          name: username
+          type: string
+          required: true
       responses:
-        200:
-          description: "User details"
+        '200':
+          description: User details
           schema:
-            $ref: "#/definitions/UserDetails"
-        401:
-          description: "Authentication required"
+            $ref: '#/definitions/UserDetails'
+        '401':
+          description: Authentication required
           schema:
-            $ref: "#/definitions/MessageResponse"
-
+            $ref: '#/definitions/MessageResponse'
     patch:
       tags:
-      - "Account"
-      description: "To update Account password"
-      operationId: "Update account password"
+        - Account
+      description: To update Account password
+      operationId: Update account password
       parameters:
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
-        type: string
-        required: true
-      - in: "path"
-        name: "username"
-        type: string
-        required: true
-      - in: "body"
-        name: "userDetails"
-        schema:
-          $ref: "#/definitions/UserDetails"
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
+        - in: path
+          name: username
+          type: string
+          required: true
+        - in: body
+          name: userDetails
+          schema:
+            $ref: '#/definitions/UserDetails'
       responses:
-        200:
-          description: "General message"
+        '200':
+          description: General message
           schema:
-            $ref: "#/definitions/UserDetails"
-        401:
-          description: "Authentication required"
+            $ref: '#/definitions/UserDetails'
+        '401':
+          description: Authentication required
           schema:
-            $ref: "#/definitions/MessageResponse"
-
+            $ref: '#/definitions/MessageResponse'
   /images:
     get:
       tags:
-      - "Images"
-      description: "To get list of images"
-      operationId: "get Images"
+        - Images
+      description: To get list of images
+      operationId: get Images
       parameters:
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
-        type: string
-        required: true
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
       responses:
-        200:
-          description: "array of images"
+        '200':
+          description: array of images
           schema:
             type: array
             items:
-              $ref: "#/definitions/ImageModel"
-        401:
-          description: "Authentication required"
+              $ref: '#/definitions/ImageModel'
+        '401':
+          description: Authentication required
           schema:
-            $ref: "#/definitions/MessageResponse"
-
+            $ref: '#/definitions/MessageResponse'
     post:
       tags:
-      - "Images"
-      description: "To create a new image"
-      operationId: "Create Image"
+        - Images
+      description: To create a new image
+      operationId: Create Image
       parameters:
-      - in: "body"
-        name: "body"
-        description: "Image name"
-        required: true
-        schema:
-          $ref: "#/definitions/CreateImage"
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
-        type: string
-        required: true
-
+        - in: body
+          name: body
+          description: Image name
+          required: true
+          schema:
+            $ref: '#/definitions/CreateImage'
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
       responses:
-        200:
-          description: "Contains require messages"
+        '200':
+          description: Contains require messages
           schema:
-            $ref: "#/definitions/MessageResponse"
-        400:
-          description: "Invalid input"
+            $ref: '#/definitions/MessageResponse'
+        '400':
+          description: Invalid input
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        401:
-          description: "Authentication required"
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Authentication required
           schema:
-            $ref: "#/definitions/MessageResponse"
-        500:
-          description: "Server Error, Do not rely on response body"
-  /images/{name}:
+            $ref: '#/definitions/MessageResponse'
+        '500':
+          description: 'Server Error, Do not rely on response body'
+  '/images/{name}':
     delete:
       tags:
         - Images
-      description: "To delete an image and all its versions and build info"
+      description: To delete an image and all its versions and build info
       parameters:
-      - in: path
-        name: name
-        description: Image name
-        required: true
-        type: string
+        - in: path
+          name: name
+          description: Image name
+          required: true
+          type: string
       responses:
-        204:
-          description: "Image deleted successfully"
-
-  /images/{name}/versions:
+        '204':
+          description: Image deleted successfully
+  '/images/{name}/versions':
     get:
       tags:
-      - "Images"
-      description: "To get list of image versions"
-      operationId: "get Image Versions"
+        - Images
+      description: To get list of image versions
+      operationId: get Image Versions
       parameters:
         - name: name
           in: path
           required: true
           type: string
-        - in: "header"
-          name: "AUTHORIZATION"
-          description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
           type: string
           required: true
-
       responses:
-        200:
-          description: "array of images versions"
+        '200':
+          description: array of images versions
           schema:
             type: array
             items:
-              $ref: "#/definitions/ImageVersionModel"
-        401:
-          description: "Authentication required"
+              $ref: '#/definitions/ImageVersionModel'
+        '401':
+          description: Authentication required
           schema:
-            $ref: "#/definitions/MessageResponse"
-        404:
-          description: "Image not found"
+            $ref: '#/definitions/MessageResponse'
+        '404':
+          description: Image not found
           schema:
-            $ref: "#/definitions/MessageResponse"
-
+            $ref: '#/definitions/MessageResponse'
     post:
       tags:
-      - "Images"
-      description: "To create a new image version"
-      operationId: "Create Image Version"
+        - Images
+      description: To create a new image version
+      operationId: Create Image Version
       consumes:
-       - "multipart/form-data"
+        - multipart/form-data
       parameters:
         - name: name
           in: path
@@ -222,39 +222,40 @@ paths:
           description: version number
           required: true
           type: string
-        - in: "header"
-          name: "AUTHORIZATION"
-          description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
           type: string
           required: true
-
       responses:
-        200:
-          description: "Contains require messages"
+        '200':
+          description: Contains require messages
           schema:
-            $ref: "#/definitions/MessageResponse"
-        400:
-          description: "Invalid input"
+            $ref: '#/definitions/MessageResponse'
+        '400':
+          description: Invalid input
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        401:
-          description: "Authentication required"
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Authentication required
           schema:
-            $ref: "#/definitions/MessageResponse"
-        404:
-          description: "Image not found"
+            $ref: '#/definitions/MessageResponse'
+        '404':
+          description: Image not found
           schema:
-            $ref: "#/definitions/MessageResponse"
-        500:
-          description: "Server Error, Do not rely on response body"
-  /images/{name}/versions/{version}/builds:
+            $ref: '#/definitions/MessageResponse'
+        '500':
+          description: 'Server Error, Do not rely on response body'
+  '/images/{name}/versions/{version}/builds':
     get:
       tags:
-      - "Images"
-      description: "To get list of builds for an image version"
-      operationId: "get Builds for an Image Version"
+        - Images
+      description: To get list of builds for an image version
+      operationId: get Builds for an Image Version
       produces:
-      - "application/json"
+        - application/json
       parameters:
         - name: name
           in: path
@@ -264,622 +265,796 @@ paths:
           in: path
           required: true
           type: string
-        - in: "header"
-          name: "AUTHORIZATION"
-          description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
           type: string
           required: true
-
       responses:
-        200:
-          description: "array of builds for an image version"
+        '200':
+          description: array of builds for an image version
           schema:
             type: array
             items:
-              $ref: "#/definitions/ImageVersionBuildModel"
-        401:
-          description: "Authentication required"
+              $ref: '#/definitions/ImageVersionBuildModel'
+        '401':
+          description: Authentication required
           schema:
-            $ref: "#/definitions/MessageResponse"
-        404:
-          description: "Image not found"
+            $ref: '#/definitions/MessageResponse'
+        '404':
+          description: Image not found
           schema:
-            $ref: "#/definitions/MessageResponse"
-
+            $ref: '#/definitions/MessageResponse'
   /services:
     get:
       tags:
-      - "Services"
-      description: "To get list of services"
-      operationId: "get Services"
+        - Services
+      description: To get list of services
+      operationId: get Services
       parameters:
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
-        type: string
-        required: true
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
       responses:
-        200:
-          description: "array of services"
+        '200':
+          description: array of services
           schema:
             type: array
             items:
-              $ref: "#/definitions/ServiceModel"
-        401:
-          description: "Authentication required"
+              $ref: '#/definitions/ServiceModel'
+        '401':
+          description: Authentication required
           schema:
-            $ref: "#/definitions/MessageResponse"
-
+            $ref: '#/definitions/MessageResponse'
     post:
       tags:
-      - "Services"
-      description: "To deploy new service"
-      operationId: "Deploy Service"
+        - Services
+      description: To deploy new service
+      operationId: Deploy Service
       parameters:
-      - in: "body"
-        name: "body"
-        description: "Service deployment context"
-        required: true
-        schema:
-          $ref: "#/definitions/ServiceDeploymentModel"
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
-        type: string
-        required: true
-
+        - in: body
+          name: body
+          description: Service deployment context
+          required: true
+          schema:
+            $ref: '#/definitions/ServiceDeploymentModel'
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
       responses:
-        200:
-          description: "Contains require messages"
+        '200':
+          description: Contains require messages
           schema:
-            $ref: "#/definitions/MessageResponse"
-        400:
-          description: "Invalid input"
+            $ref: '#/definitions/MessageResponse'
+        '400':
+          description: Invalid input
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        401:
-          description: "Authentication required"
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Authentication required
           schema:
-            $ref: "#/definitions/MessageResponse"
-        500:
-          description: "Server Error, Do not rely on response body"
-
+            $ref: '#/definitions/MessageResponse'
+        '500':
+          description: 'Server Error, Do not rely on response body'
   /services/manifests:
     post:
       tags:
-      - "Services"
-      description: "To deploy new service using manifest"
-      operationId: "Deploy Service Manifest"
+        - Services
+      description: To deploy new service using manifest
+      operationId: Deploy Service Manifest
       parameters:
-      - in: "body"
-        name: "body"
-        description: "Service deployment context"
-        required: true
-        schema:
-          $ref: "#/definitions/ServiceDeploymentManifestModel"
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
-        type: string
-        required: true
-
+        - in: body
+          name: body
+          description: Service deployment context
+          required: true
+          schema:
+            $ref: '#/definitions/ServiceDeploymentManifestModel'
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
       responses:
-        200:
-          description: "Contains require messages"
+        '200':
+          description: Contains require messages
           schema:
-            $ref: "#/definitions/MessageResponse"
-        400:
-          description: "Invalid input"
+            $ref: '#/definitions/MessageResponse'
+        '400':
+          description: Invalid input
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        401:
-          description: "Authentication required"
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Authentication required
           schema:
-            $ref: "#/definitions/MessageResponse"
-        500:
-          description: "Server Error, Do not rely on response body"
-
-  /services/{service-name}:
+            $ref: '#/definitions/MessageResponse'
+        '500':
+          description: 'Server Error, Do not rely on response body'
+  '/services/{service-name}':
     get:
       tags:
-      - "Services"
-      description: "To get details of a services"
-      operationId: "get service"
+        - Services
+      description: To get details of a services
+      operationId: get service
       parameters:
-      - in: "path"
-        name: service-name
-        required: true
-        type: string
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
-        type: string
-        required: true
+        - in: path
+          name: service-name
+          required: true
+          type: string
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
       responses:
-        200:
-          description: "service has been destroyed"
+        '200':
+          description: service has been destroyed
           schema:
-            $ref: "#/definitions/ServiceModel"
-        401:
-          description: "Authentication required"
+            $ref: '#/definitions/ServiceModel'
+        '401':
+          description: Authentication required
           schema:
-            $ref: "#/definitions/MessageResponse"
-        404:
-          description: "Service not found"
+            $ref: '#/definitions/MessageResponse'
+        '404':
+          description: Service not found
           schema:
-            $ref: "#/definitions/MessageResponse"
+            $ref: '#/definitions/MessageResponse'
     delete:
       tags:
-      - "Services"
-      description: "To destroy a services"
-      operationId: "destroy Services"
+        - Services
+      description: To destroy a services
+      operationId: destroy Services
       parameters:
-      - in: "path"
-        name: service-name
-        required: true
-        type: string
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
-        type: string
-        required: true
+        - in: path
+          name: service-name
+          required: true
+          type: string
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
       responses:
-        200:
-          description: "service has been destroyed"
+        '200':
+          description: service has been destroyed
           schema:
-            $ref: "#/definitions/MessageResponse"
-        401:
-          description: "Authentication required"
+            $ref: '#/definitions/MessageResponse'
+        '401':
+          description: Authentication required
           schema:
-            $ref: "#/definitions/MessageResponse"
-        404:
-          description: "Service not found"
+            $ref: '#/definitions/MessageResponse'
+        '404':
+          description: Service not found
           schema:
-            $ref: "#/definitions/MessageResponse"
-
-  /services/{service-name}/logs:
+            $ref: '#/definitions/MessageResponse'
+  '/services/{service-name}/logs':
     get:
       tags:
-      - "Services"
-      description: "To get logs of a services"
-      operationId: "get logs of a service"
+        - Services
+      description: To get logs of a services
+      operationId: get logs of a service
       parameters:
-      - in: "path"
-        name: service-name
-        required: true
-        type: string
-      - in: "query"
-        name: "last_logged_time"
-        required: false
-        type: string
-        description: "some sort of cursor on log lines"
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
-        type: string
-        required: true
+        - in: path
+          name: service-name
+          required: true
+          type: string
+        - in: query
+          name: last_logged_time
+          required: false
+          type: string
+          description: some sort of cursor on log lines
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
       responses:
-        200:
+        '200':
           $ref: '#/definitions/ServiceLogResponse'
-        401:
-          description: "Authentication required"
+        '401':
+          description: Authentication required
           schema:
-            $ref: "#/definitions/MessageResponse"
-        404:
-          description: "Service not found"
+            $ref: '#/definitions/MessageResponse'
+        '404':
+          description: Service not found
           schema:
-            $ref: "#/definitions/MessageResponse"
+            $ref: '#/definitions/MessageResponse'
   /managed-services:
     get:
       tags:
-      - "Services"
-      description: "To get list of managed services"
-      operationId: "get Managed Services"
+        - Services
+      description: To get list of managed services
+      operationId: get Managed Services
       parameters:
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
-        type: string
-        required: true
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
       responses:
-        200:
-          description: "array of managed services"
+        '200':
+          description: array of managed services
           schema:
             type: array
             items:
-              $ref: "#/definitions/ManagedServiceModel"
-        401:
-          description: "Authentication required"
+              $ref: '#/definitions/ManagedServiceModel'
+        '401':
+          description: Authentication required
           schema:
-            $ref: "#/definitions/MessageResponse"
-
+            $ref: '#/definitions/MessageResponse'
     post:
       tags:
-      - "Services"
-      description: "To deploy new managed service"
-      operationId: "Deploy a managd Service"
+        - Services
+      description: To deploy new managed service
+      operationId: Deploy a managd Service
       parameters:
-      - in: "body"
-        name: "body"
-        description: "Service deployment context"
-        required: true
-        schema:
-          $ref: "#/definitions/ManagedServiceDeploymentModel"
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
-        type: string
-        required: true
-
+        - in: body
+          name: body
+          description: Service deployment context
+          required: true
+          schema:
+            $ref: '#/definitions/ManagedServiceDeploymentModel'
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
       responses:
-        200:
-          description: "Contains require messages"
+        '200':
+          description: Contains require messages
           schema:
-            $ref: "#/definitions/MessageResponse"
-        400:
-          description: "Invalid input"
+            $ref: '#/definitions/MessageResponse'
+        '400':
+          description: Invalid input
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        401:
-          description: "Authentication required"
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Authentication required
           schema:
-            $ref: "#/definitions/MessageResponse"
-        500:
-          description: "Server Error, Do not rely on response body"
-
-
+            $ref: '#/definitions/MessageResponse'
+        '500':
+          description: 'Server Error, Do not rely on response body'
   /volumes:
     get:
       tags:
-      - "Volumes"
-      description: "To get list of user volumes"
-      operationId: "get volumes"
+        - Volumes
+      description: To get list of user volumes
+      operationId: get volumes
       parameters:
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN], where [USER-TOKEN] is user's token"
-        type: string
-        required: true
+        - in: header
+          name: AUTHORIZATION
+          description: 'in this format: JWT [USER-TOKEN], where [USER-TOKEN] is user''s token'
+          type: string
+          required: true
       responses:
-        200:
-          description: "array of user volumes"
+        '200':
+          description: array of user volumes
           schema:
             type: array
             items:
-              $ref: "#/definitions/VolumeModel"
-        401:
-          description: "Authorization required"
+              $ref: '#/definitions/VolumeModel'
+        '401':
+          description: Authorization required
           schema:
-            $ref: "#/definitions/MessageResponse"
-
+            $ref: '#/definitions/MessageResponse'
     post:
       tags:
-      - "Volumes"
-      description: "To create a volume with name and capacity"
-      operationId: "add new volume"
+        - Volumes
+      description: To create a volume with name and capacity
+      operationId: add new volume
       parameters:
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN], where [USER-TOKEN] is user's token"
-        type: string
-        required: true
-      - in: "body"
-        name: "body"
-        description: "Volume model"
-        required: true
-        schema:
-          $ref: "#/definitions/CreateVolumeModel"
-
+        - in: header
+          name: AUTHORIZATION
+          description: 'in this format: JWT [USER-TOKEN], where [USER-TOKEN] is user''s token'
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: Volume model
+          required: true
+          schema:
+            $ref: '#/definitions/CreateVolumeModel'
       responses:
-        200:
-          description: "A volume model"
+        '200':
+          description: A volume model
           schema:
-            $ref: "#/definitions/VolumeModel"
-        400:
-          description: "Invalid input"
+            $ref: '#/definitions/VolumeModel'
+        '400':
+          description: Invalid input
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        401:
-          description: "Authentication required"
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Authentication required
           schema:
-            $ref: "#/definitions/MessageResponse"
-        500:
-          description: "Server Error, Do not rely on response body"
-
-  /volumes/{volume_name}:
+            $ref: '#/definitions/MessageResponse'
+        '500':
+          description: 'Server Error, Do not rely on response body'
+  '/volumes/{volume_name}':
     delete:
       tags:
-      - "Volumes"
-      description: "To delete an existing volume by name"
-      operationId: "delete a volume"
+        - Volumes
+      description: To delete an existing volume by name
+      operationId: delete a volume
       parameters:
-      - in: "path"
-        name: "volume_name"
-        required: true
-        type: string
-        description: "name of the volume to be deleted"
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN], where [USER-TOKEN] is user's token"
-        type: string
-        required: true
-
+        - in: path
+          name: volume_name
+          required: true
+          type: string
+          description: name of the volume to be deleted
+        - in: header
+          name: AUTHORIZATION
+          description: 'in this format: JWT [USER-TOKEN], where [USER-TOKEN] is user''s token'
+          type: string
+          required: true
       responses:
-        200:
-          description: "A message from server"
+        '200':
+          description: A message from server
           schema:
-            $ref: "#/definitions/MessageResponse"
-        400:
-          description: "Invalid input"
+            $ref: '#/definitions/MessageResponse'
+        '400':
+          description: Invalid input
           schema:
-            $ref: "#/definitions/ErrorResponse"
-        401:
-          description: "Authentication required"
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Authentication required
           schema:
-            $ref: "#/definitions/MessageResponse"
-        500:
-          description: "Server Error, Do not rely on response body"
-
+            $ref: '#/definitions/MessageResponse'
+        '500':
+          description: 'Server Error, Do not rely on response body'
   /domains:
     get:
       tags:
-      - "Domains"
-      description: "To get list of user domains"
-      operationId: "get Domains"
+        - Domains
+      description: To get list of user domains
+      operationId: get Domains
       parameters:
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
-        type: string
-        required: true
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
       responses:
-        200:
-          description: "array of user domains"
+        '200':
+          description: array of user domains
           schema:
             type: array
             items:
-              $ref: "#/definitions/DomainModel"
-        401:
-          description: "Authentication required"
+              $ref: '#/definitions/DomainModel'
+        '401':
+          description: Authentication required
           schema:
-            $ref: "#/definitions/MessageResponse"
-
+            $ref: '#/definitions/MessageResponse'
     post:
       tags:
-      - "Domains"
-      description: "To add new domain"
-      operationId: "Add domain"
+        - Domains
+      description: To add new domain
+      operationId: Add domain
       parameters:
-      - in: "body"
-        name: "body"
-        description: "Domain object"
-        required: true
-        schema:
-          $ref: "#/definitions/CreateDomain"
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
-        type: string
-        required: true
-
-      responses:
-        200:
-          description: "Contains require messages"
+        - in: body
+          name: body
+          description: Domain object
+          required: true
           schema:
-            $ref: "#/definitions/MessageResponse"
-        400:
-          description: "Invalid input"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-        401:
-          description: "Authentication required"
-          schema:
-            $ref: "#/definitions/MessageResponse"
-        500:
-          description: "Server Error, Do not rely on response body"
-
-    delete:
-      tags:
-      - "Domains"
-      description: "To delete a domain"
-      operationId: "Delete domain"
-      parameters:
-      - in: "path"
-        name: "domain_name"
-        type: string
-        required: true
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
-        type: string
-        required: true
-      responses:
-        200:
-          description: "Domain object deleted successfully"
-          schema:
-            $ref: "#/definitions/MessageResponse"
-        400:
-          description: "Invalid input"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-        401:
-          description: "Authentication required"
-          schema:
-            $ref: "#/definitions/MessageResponse"
-        500:
-          description: "Server Error, Do not rely on response body"
-
-  /domains/{domain_name}/verifications:
-    post:
-      tags:
-      - "Domains"
-      description: "To verify a domain"
-      operationId: "Verify domain"
-      parameters:
-      - in: "path"
-        name: "domain_name"
-        type: string
-        required: true
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
-        type: string
-        required: true
-      responses:
-        200:
-          description: "Domain object containing verification result"
-          schema:
-            $ref: "#/definitions/DomainModel"
-        401:
-          description: "Authentication required"
-          schema:
-            $ref: "#/definitions/MessageResponse"
-        404:
-          description: "Domain not found"
-          schema:
-            $ref: "#/definitions/MessageResponse"
-        500:
-          description: "Server Error, Do not rely on response body"
-
-  /domains/{domain_name}/certificate:
-    post:
-      tags:
-      - "Domains"
-      description: "To request certificate for a domain"
-      operationId: "Request Certificate"
-      parameters:
-      - in: "path"
-        name: "domain_name"
-        type: string
-        required: true
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
-        type: string
-        required: true
-      responses:
-        201:
-          description: "Request has been submitted and getting certificate is in progress "
-          schema:
-            $ref: "#/definitions/CertificateModel"
-        401:
-          description: "Authentication required"
-          schema:
-            $ref: "#/definitions/MessageResponse"
-        404:
-          description: "Domain not found"
-          schema:
-            $ref: "#/definitions/MessageResponse"
-        500:
-          description: "Server Error, Do not rely on response body"
-    delete:
-        tags:
-        - "Domains"
-        description: "To revoke a certificate for a domain"
-        operationId: "Revoke Certificate"
-        parameters:
-        - in: "path"
-          name: "domain_name"
+            $ref: '#/definitions/CreateDomain'
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
           type: string
           required: true
-        - in: "header"
-          name: "AUTHORIZATION"
-          description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+      responses:
+        '200':
+          description: Contains require messages
+          schema:
+            $ref: '#/definitions/MessageResponse'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/MessageResponse'
+        '500':
+          description: 'Server Error, Do not rely on response body'
+    delete:
+      tags:
+        - Domains
+      description: To delete a domain
+      operationId: Delete domain
+      parameters:
+        - in: path
+          name: domain_name
           type: string
           required: true
-        responses:
-          200:
-            description: "Request has been submitted and getting certificate is in progress "
-            schema:
-              $ref: "#/definitions/MessageResponse"
-          401:
-            description: "Authentication required"
-            schema:
-              $ref: "#/definitions/MessageResponse"
-          404:
-            description: "Domain not found"
-            schema:
-              $ref: "#/definitions/MessageResponse"
-          500:
-            description: "Server Error, Do not rely on response body"
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Domain object deleted successfully
+          schema:
+            $ref: '#/definitions/MessageResponse'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/MessageResponse'
+        '500':
+          description: 'Server Error, Do not rely on response body'
+  '/domains/{domain_name}/verifications':
+    post:
+      tags:
+        - Domains
+      description: To verify a domain
+      operationId: Verify domain
+      parameters:
+        - in: path
+          name: domain_name
+          type: string
+          required: true
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Domain object containing verification result
+          schema:
+            $ref: '#/definitions/DomainModel'
+        '401':
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/MessageResponse'
+        '404':
+          description: Domain not found
+          schema:
+            $ref: '#/definitions/MessageResponse'
+        '500':
+          description: 'Server Error, Do not rely on response body'
+  '/domains/{domain_name}/certificate':
+    post:
+      tags:
+        - Domains
+      description: To request certificate for a domain
+      operationId: Request Certificate
+      parameters:
+        - in: path
+          name: domain_name
+          type: string
+          required: true
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
+      responses:
+        '201':
+          description: 'Request has been submitted and getting certificate is in progress '
+          schema:
+            $ref: '#/definitions/CertificateModel'
+        '401':
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/MessageResponse'
+        '404':
+          description: Domain not found
+          schema:
+            $ref: '#/definitions/MessageResponse'
+        '500':
+          description: 'Server Error, Do not rely on response body'
+    delete:
+      tags:
+        - Domains
+      description: To revoke a certificate for a domain
+      operationId: Revoke Certificate
+      parameters:
+        - in: path
+          name: domain_name
+          type: string
+          required: true
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
+      responses:
+        '200':
+          description: 'Request has been submitted and getting certificate is in progress '
+          schema:
+            $ref: '#/definitions/MessageResponse'
+        '401':
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/MessageResponse'
+        '404':
+          description: Domain not found
+          schema:
+            $ref: '#/definitions/MessageResponse'
+        '500':
+          description: 'Server Error, Do not rely on response body'
   /secrets:
     get:
       tags:
-      - "Secret"
-      description: "To get list of secrets"
-      operationId: "List secrets"
+        - Secret
+      description: To get list of secrets
+      operationId: List secrets
       parameters:
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
-        type: string
-        required: true
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
       responses:
-        200:
-          description: "List of secrets"
+        '200':
+          description: List of secrets
           schema:
-            $ref: "#/definitions/SecretModel"
-        401:
-          description: "Authentication required"
+            $ref: '#/definitions/SecretModel'
+        '401':
+          description: Authentication required
           schema:
-            $ref: "#/definitions/MessageResponse"
-        500:
-          description: "Server Error, Do not rely on response body"
+            $ref: '#/definitions/MessageResponse'
+        '500':
+          description: 'Server Error, Do not rely on response body'
     post:
       tags:
-      - "Secret"
-      description: "to create a secret"
-      operationId: "Create Secret"
+        - Secret
+      description: to create a secret
+      operationId: Create Secret
       parameters:
-      - in: "body"
-        name: "body"
-        description: "Secret object"
-        required: true
-        schema:
-          $ref: "#/definitions/CreateSecretModel"
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
-        type: string
-        required: true
+        - in: body
+          name: body
+          description: Secret object
+          required: true
+          schema:
+            $ref: '#/definitions/CreateSecretModel'
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
       responses:
-        200:
-          description: "Response has been created"
+        '200':
+          description: Response has been created
           schema:
-            $ref: "#/definitions/MessageResponse"
-        400:
-          description: "Invalid input"
+            $ref: '#/definitions/MessageResponse'
+        '400':
+          description: Invalid input
           schema:
-            $ref: "#/definitions/ErrorResponse"
-  /users/namespaces/{namespace}:
+            $ref: '#/definitions/ErrorResponse'
+  '/users/namespaces/{namespace}':
     get:
       tags:
-      - "Namespace"
-      description: "To get namespace status"
-      operationId: "Detail Services"
+        - Namespace
+      description: To get namespace status
+      operationId: Detail Services
       parameters:
-      - in: "path"
-        name: namespace
-        required: true
-        type: string
-      - in: "header"
-        name: "AUTHORIZATION"
-        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
-        type: string
-        required: true
+        - in: path
+          name: namespace
+          required: true
+          type: string
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
       responses:
-        200:
-          description: "details of namespace"
+        '200':
+          description: details of namespace
           schema:
-            $ref: "#/definitions/NamespaceModel"
-        401:
-          description: "Authentication required"
+            $ref: '#/definitions/NamespaceModel'
+        '401':
+          description: Authentication required
           schema:
-            $ref: "#/definitions/MessageResponse"
-        404:
-          description: "Service not found"
+            $ref: '#/definitions/MessageResponse'
+        '404':
+          description: Service not found
           schema:
-            $ref: "#/definitions/MessageResponse"
+            $ref: '#/definitions/MessageResponse'
+  '/namespaces/{namespace}/wallet':
+    get:
+      tags:
+        - Billing
+      description: To get wallet details
+      operationId: Detail Wallet
+      parameters:
+        - in: path
+          name: namespace
+          required: true
+          type: string
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
+      responses:
+        '200':
+          description: details of wallet
+          schema:
+            $ref: '#/definitions/WalletModel'
+        '401':
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/MessageResponse'
+        '404':
+          description: Service not found
+          schema:
+            $ref: '#/definitions/MessageResponse'
+
+  /gateways:
+    get:
+      tags:
+        - Billing
+        - Payment
+      description: To get list of available gateways
+      operationId: List Gateways
+      parameters:
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
+      responses:
+        '200':
+          description: List of gateways
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/GatewayModel'
+        '401':
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/MessageResponse'
+        '404':
+          description: Service not found
+          schema:
+            $ref: '#/definitions/MessageResponse'
+
+  /invoices:
+    get:
+      tags:
+        - Billing
+      description: To get list of invoices
+      operationId: List Invoices
+      parameters:
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
+      responses:
+        '200':
+          description: List of invoices
+          schema:
+            $ref: '#/definitions/PaginatedInvoice'
+        '401':
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/MessageResponse'
+        '404':
+          description: Service not found
+          schema:
+            $ref: '#/definitions/MessageResponse'
+
+  /invoices/{invoiceid}:
+    get:
+      tags:
+        - Billing
+      description: To get details of invoices
+      operationId: Invoice detail
+      parameters:
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
+
+        - in: path
+          name: "invoiceid"
+          type: integer
+          required: true
+
+      responses:
+        '200':
+          description: Detail of invoice
+          schema:
+            $ref: '#/definitions/InvoiceModel'
+        '401':
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/MessageResponse'
+        '404':
+          description: Service not found
+          schema:
+            $ref: '#/definitions/MessageResponse'
+
+  /invoices/{invoiceid}/payment-attempts:
+    get:
+      tags:
+        - Billing
+      description: To get list of attempts for paying an invoice
+      operationId: Payment attempt detail
+      parameters:
+        - in: header
+          name: AUTHORIZATION
+          description: >-
+            in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's
+            token
+          type: string
+          required: true
+
+        - in: path
+          name: "invoiceid"
+          type: integer
+          required: true
+
+      responses:
+        '200':
+          description: List of payment attempts
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PaymentAttemptModel'
+        '401':
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/MessageResponse'
+        '404':
+          description: Service not found
+          schema:
+            $ref: '#/definitions/MessageResponse'
 
 definitions:
   ErrorItem:
@@ -888,15 +1063,13 @@ definitions:
       type: array
       items:
         type: string
-      # in form of "field name": ["error1", "error2",..]
-
   ErrorResponse:
     type: object
     properties:
       errors:
         type: array
         items:
-          $ref: "#/definitions/ErrorItem"
+          $ref: '#/definitions/ErrorItem'
   MessageResponse:
     type: object
     properties:
@@ -912,7 +1085,7 @@ definitions:
     properties:
       name:
         type: string
-        pattern: "^[A-Za-z0-9-_]+$"
+        pattern: '^[A-Za-z0-9-_]+$'
   ImageModel:
     type: object
     properties:
@@ -923,7 +1096,7 @@ definitions:
       owner:
         type: integer
       last_version:
-        $ref: "#/definitions/ImageVersionModel"
+        $ref: '#/definitions/ImageVersionModel'
       created_at:
         type: string
         format: datetime
@@ -944,7 +1117,7 @@ definitions:
     type: object
     properties:
       logs:
-        type: string  # possibly lots of string
+        type: string
       start_date:
         type: string
         format: datetime
@@ -953,20 +1126,18 @@ definitions:
         format: datetime
       state:
         type: string
-
   ContainerModel:
     type: object
     properties:
       name:
         type: string
-        example: "foo"
+        example: foo
       image:
         type: string
-        example: "registry.hub.docker.com/library/nginx:stable-alpine"
+        example: 'registry.hub.docker.com/library/nginx:stable-alpine'
       ready:
         type: boolean
         example: true
-
   PodEventModel:
     type: object
     properties:
@@ -985,27 +1156,24 @@ definitions:
         example: 1
       reason:
         type: string
-
   PodModel:
     type: object
     properties:
       name:
         type: string
-        example: "foo-757f6849bd-4sfvf"
+        example: foo-757f6849bd-4sfvf
       created_at:
         type: string
         format: string
-        example: "2018-09-11T09:36:22Z"
+        example: '2018-09-11T09:36:22Z'
       containers:
         type: array
         items:
-          $ref: "#/definitions/ContainerModel"
+          $ref: '#/definitions/ContainerModel'
       events:
         type: array
         items:
-          $ref: "#/definitions/PodEventModel"
-
-
+          $ref: '#/definitions/PodEventModel'
   ServiceModel:
     type: object
     properties:
@@ -1024,15 +1192,13 @@ definitions:
       pods:
         type: array
         items:
-          $ref: "#/definitions/PodModel"
+          $ref: '#/definitions/PodModel'
       start_date:
         type: string
         format: datetime
       last_update:
         type: string
         format: datetime
-
-
   ServiceDeploymentModel:
     type: object
     required:
@@ -1047,7 +1213,7 @@ definitions:
         type: string
       service_name:
         type: string
-        pattern: "^[a-z]+(-*[a-z0-9]+)*$"
+        pattern: '^[a-z]+(-*[a-z0-9]+)*$'
       environment_variables:
         type: object
         additionalProperties:
@@ -1056,9 +1222,9 @@ definitions:
         type: integer
         default: 80
       service_type:
-        description: "Please consider using a checkbox for being internal or not"
+        description: Please consider using a checkbox for being internal or not
         type: string
-        default: "external"
+        default: external
         enum:
           - internal
           - external
@@ -1069,7 +1235,7 @@ definitions:
         type: string
       options:
         type: object
-        description: "available options and their description"
+        description: available options and their description
         additionalProperties:
           type: string
   ManagedServiceDeploymentModel:
@@ -1085,7 +1251,7 @@ definitions:
         type: string
       config:
         type: object
-        description: "an object containing key=>value of config parameters"
+        description: an object containing key=>value of config parameters
         additionalProperties:
           type: string
   CreateDomain:
@@ -1095,7 +1261,7 @@ definitions:
     properties:
       name:
         type: string
-        description: "a valid domain name"
+        description: a valid domain name
   CertificateModel:
     type: object
     properties:
@@ -1108,7 +1274,7 @@ definitions:
         format: datetime
       details:
         type: object
-        description: "contains further information for user"
+        description: contains further information for user
   DomainModel:
     type: object
     properties:
@@ -1119,7 +1285,7 @@ definitions:
       verified:
         type: boolean
       certificate:
-        $ref: "#/definitions/CertificateModel"
+        $ref: '#/definitions/CertificateModel'
   UserCredentials:
     type: object
     required:
@@ -1152,11 +1318,12 @@ definitions:
         type: string
   ServiceDeploymentManifestModel:
     type: object
-    description: "Service manifest, please refer to https://docs.fandogh.cloud/docs/service-manifest.html for manifest details"
-
+    description: >-
+      Service manifest, please refer to
+      https://docs.fandogh.cloud/docs/service-manifest.html for manifest details
   VolumeModel:
     type: object
-    description: "A model to represent entities of a volume"
+    description: A model to represent entities of a volume
     properties:
       name:
         type: string
@@ -1168,16 +1335,14 @@ definitions:
         type: string
       mounted_to:
         type: boolean
-
   CreateVolumeModel:
     type: object
-    description: "A model to represent desired volume to be created"
+    description: A model to represent desired volume to be created
     properties:
       name:
         type: string
       capacity:
         type: string
-
   SecretModel:
     type: object
     properties:
@@ -1199,7 +1364,7 @@ definitions:
         type: string
       fields:
         type: object
-        description: "depends on type of secret"
+        description: depends on type of secret
   QuotaModel:
     type: object
     properties:
@@ -1228,9 +1393,9 @@ definitions:
       name:
         type: string
       quota:
-        $ref: "#/definitions/QuotaModel"
+        $ref: '#/definitions/QuotaModel'
       current_used_resources:
-        $ref: "#/definitions/UsedResourcesModel"
+        $ref: '#/definitions/UsedResourcesModel'
   UserDetails:
     type: object
     properties:
@@ -1246,3 +1411,136 @@ definitions:
         type: string
       new_password:
         type: string
+
+  WalletModel:
+    type: object
+    properties:
+      id:
+        type: integer
+      balance:
+        type: integer
+  GatewayModel:
+    type: object
+    properties:
+      id:
+        description: "Gateway IDs are string, it'll be more readble"
+        type: string
+      name:
+        type: string
+      logo:
+        description: "url to the Gateway logo"
+        type: string
+
+  InvoiceRowModel:
+    type: object
+    properties:
+      id:
+        type: integer
+      order:
+        description: "actually it's a row-id, which will be displayed in the right-most column of invoice"
+        type: integer
+      description:
+        type: string
+        description: "description of the item, like Saveh's apple for example"
+      count:
+        type: integer
+      unit:
+        type: string
+        description: "Unit of the stuff in this row, Kg for apples for example"
+      unit_price:
+        type: integer
+        description: "price per 1 unit"
+      price:
+        type: integer
+        description: "it's just count * unit_price, total value for this row"
+
+
+  InvoiceModel:
+    type: object
+    properties:
+      id:
+        type: integer
+      state:
+        type: string
+        enum:
+          - "PAID"  # user can pay this one
+          - "UNPAID" # user already paid this one, user should not be able to pay it again
+          - "EXPIRED" # it's a late UNPAID invoice, user should not be able to pay it
+      date:
+        type: string
+        format: datetime
+      due_date:
+        type: string
+        format: datetime
+      last_attempt:
+        $ref: "#/definitions/PaymentAttemptModel"
+      total_net:
+        description: "sum of net prices for all the items in the invoice"
+        type: integer
+      total_tax:
+        description: "sum of tax for all the items in the invoice"
+        type: integer
+      total:
+        description: "Total payable value"
+        type: integer
+      rows:
+        description: "every invoice has a list of rows in it, which invoice contains them"
+        type: array
+        items:
+          $ref: "#/definitions/InvoiceRowModel"
+
+  ThinInvoiceModel:
+    type: object
+    properties:
+      id:
+        type: integer
+      state:
+        type: string
+        enum:
+          - "PAID"  # user can pay this one
+          - "UNPAID" # user already paid this one, user should not be able to pay it again
+          - "EXPIRED" # it's a late UNPAID invoice, user should not be able to pay it
+      date:
+        type: string
+        format: datetime
+      due_date:
+        type: string
+        format: datetime
+      total:
+        description: "Total payable value"
+        type: integer
+
+  PaginatedInvoice:
+    type: object
+    properties:
+      current_page:
+        type: integer
+      pages_count:
+        type: integer
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/ThinInvoiceModel"
+  PaymentAttemptModel:
+    type: object
+    description: "represents an attempt for paying an invoice"
+    properties:
+      id:
+        type: integer
+      status:
+        type: string
+        enum:
+          - "SUCCEED"
+          - "PENDING"
+          - "FAILED"
+      reason:
+        description: "user friendly message to say why this attempt failed, might be null"
+        type: string
+      user:
+        description: "User who initiated this attempt"
+        type: integer
+      gateway:
+        type: string
+      started_at:
+        type: string
+        format: datetime
