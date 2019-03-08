@@ -1,5 +1,5 @@
 import os
-from yaml import load, dump
+from yaml import load, dump, FullLoader
 from fandogh_cli.utils import makedirs
 
 try:
@@ -20,7 +20,7 @@ class ConfigRepository:
     def _load_from_file(self, configuration_file):
         if os.path.exists(configuration_file):
             with open(configuration_file) as cfile:
-                return load(cfile)
+                return load(cfile, Loader=FullLoader)
         makedirs(os.path.dirname(configuration_file))
         with open(configuration_file, mode='w'):
             pass
