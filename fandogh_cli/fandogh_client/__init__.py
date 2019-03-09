@@ -1,8 +1,10 @@
 import json
+
+import click
 import requests
 import os
 from fandogh_cli.config import get_user_config
-from fandogh_cli.utils import convert_datetime, parse_key_values
+from fandogh_cli.utils import convert_datetime, parse_key_values, TextStyle, format_text
 
 fandogh_host = os.getenv('FANDOGH_HOST', 'https://api.fandogh.cloud')
 fandogh_ssh_host = os.getenv('FANDOGH_SSH_HOST', 'wss://ssh.fandogh.cloud')
@@ -11,6 +13,7 @@ base_images_url = '%simages' % base_url
 base_services_url = '%sservices' % base_url
 base_managed_services_url = '%smanaged-services' % base_url
 base_volume_url = '%svolumes' % base_url
+base_schema_url = '%sschema' % base_url
 max_workspace_size = 20  # MB
 
 session = requests.Session()
@@ -294,6 +297,9 @@ def deploy_manifest(manifest):
                                   json=manifest
                                   )
     if response.status_code != 200:
+        if response.status_code == 400:
+            document = _get_manifest_document(list(response.json().keys())[0])
+            click.echo(format_text(document, TextStyle.WARNING))
         raise get_exception(response)
     else:
         return response.json()
@@ -412,3 +418,13 @@ def list_volumes():
         raise get_exception(response)
     else:
         return response.json()
+
+
+def _get_manifest_document(doc_key):
+    token = get_stored_token()
+    response = requests.get(base_schema_url + '/' + doc_key,
+                            headers={'Authorization': 'JWT ' + token})
+    if response.status_code != 200:
+        return ''
+    else:
+        return response.json().get('document', '')
