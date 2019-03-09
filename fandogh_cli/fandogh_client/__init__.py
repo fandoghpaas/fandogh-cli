@@ -16,6 +16,16 @@ base_volume_url = '%svolumes' % base_url
 base_schema_url = '%sschema' % base_url
 max_workspace_size = 20  # MB
 
+session = requests.Session()
+
+
+def get_session():
+    session.headers.update({
+        'Authorization': 'JWT ' + get_stored_token(),
+        'ACTIVE-NAMESPACE': get_user_config().get('namespace', None)
+    })
+    return session
+
 
 class TooLargeWorkspace(Exception):
     pass
@@ -104,10 +114,7 @@ def get_exception(response):
 
 
 def create_image(image_name):
-    token = get_stored_token()
-    response = requests.post(base_images_url,
-                             json={'name': image_name},
-                             headers={'Authorization': 'JWT ' + token})
+    response = get_session().post(base_images_url, json={'name': image_name})
     if response.status_code != 200:
         raise get_exception(response)
     else:
@@ -115,9 +122,7 @@ def create_image(image_name):
 
 
 def delete_image(image_name):
-    token = get_stored_token()
-    response = requests.delete(base_images_url + '/' + image_name,
-                               headers={'Authorization': 'JWT ' + token})
+    response = get_session().delete(base_images_url + '/' + image_name)
 
     if response.status_code != 200:
         raise get_exception(response)
@@ -126,9 +131,7 @@ def delete_image(image_name):
 
 
 def get_images():
-    token = get_stored_token()
-    response = requests.get(base_images_url,
-                            headers={'Authorization': 'JWT ' + token})
+    response = get_session().get(base_images_url)
     if response.status_code != 200:
         raise get_exception(response)
     else:
@@ -140,11 +143,8 @@ def get_images():
 
 
 def get_image_build(image_name, version, image_offset):
-    token = get_stored_token()
-
-    response = requests.get(
-        base_images_url + '/' + image_name + '/versions/' + version + '/builds', params={'image_offset': image_offset},
-        headers={'Authorization': 'JWT ' + token})
+    response = get_session().get(
+        base_images_url + '/' + image_name + '/versions/' + version + '/builds', params={'image_offset': image_offset})
 
     if response.status_code != 200:
         raise get_exception(response)
@@ -156,7 +156,6 @@ from requests_toolbelt.multipart import encoder
 
 
 def create_version(image_name, version, workspace_path, monitor_callback):
-    token = get_stored_token()
     with open(workspace_path, 'rb') as file:
         e = encoder.MultipartEncoder(
             fields={'version': version,
@@ -164,10 +163,7 @@ def create_version(image_name, version, workspace_path, monitor_callback):
         )
         m = encoder.MultipartEncoderMonitor(e, monitor_callback)
 
-        response = requests.post(base_images_url + '/' + image_name + '/versions',
-                                 data=m,
-                                 headers={'Content-Type': m.content_type,
-                                          'Authorization': 'JWT ' + token})
+        response = get_session().post(base_images_url + '/' + image_name + '/versions', data=m, headers={'Content-Type': m.content_type})
 
         if response.status_code == 404:
             raise ResourceNotFoundError(
@@ -181,9 +177,7 @@ def create_version(image_name, version, workspace_path, monitor_callback):
 
 
 def list_versions(image_name):
-    token = get_stored_token()
-    response = requests.get(base_images_url + '/' + image_name + '/versions',
-                            headers={'Authorization': 'JWT ' + token})
+    response = get_session().get(base_images_url + '/' + image_name + '/versions')
     if response.status_code != 200:
         raise get_exception(response)
     else:
@@ -225,9 +219,7 @@ def deploy_service(image_name, version, service_name, envs, hosts, port, interna
 
 
 def list_services():
-    token = get_stored_token()
-    response = requests.get(base_services_url,
-                            headers={'Authorization': 'JWT ' + token})
+    response = get_session().get(base_services_url)
     if response.status_code != 200:
         raise get_exception(response)
     else:
@@ -241,9 +233,7 @@ def list_services():
 
 
 def destroy_service(service_name):
-    token = get_stored_token()
-    response = requests.delete(base_services_url + '/' + service_name,
-                               headers={'Authorization': 'JWT ' + token})
+    response = get_session().delete(base_services_url + '/' + service_name)
     if response.status_code != 200:
         raise get_exception(response)
     else:
@@ -259,10 +249,7 @@ def get_token(username, password):
 
 
 def get_logs(service_name, last_logged_time):
-    token = get_stored_token()
-
-    response = requests.get(base_services_url + '/' + service_name + '/logs',
-                            headers={'Authorization': 'JWT ' + token}, params={'last_logged_time': last_logged_time})
+    response = get_session().get(base_services_url + '/' + service_name + '/logs', params={'last_logged_time': last_logged_time})
 
     if response.status_code == 200:
         return response.json()
@@ -271,9 +258,7 @@ def get_logs(service_name, last_logged_time):
 
 
 def get_details(service_name):
-    token = get_stored_token()
-    response = requests.get(base_services_url + '/' + service_name,
-                            headers={'Authorization': 'JWT ' + token})
+    response = get_session().get(base_services_url + '/' + service_name)
     if response.status_code != 200:
         raise get_exception(response)
     else:
@@ -287,14 +272,12 @@ def get_details(service_name):
 
 
 def deploy_managed_service(service_name, version, configs):
-    token = get_stored_token()
     configution = parse_key_values(configs)
-    response = requests.post(base_managed_services_url,
-                             json={'name': service_name,
-                                   'version': version,
-                                   'config': configution},
-                             headers={'Authorization': 'JWT ' + token}
-                             )
+    response = get_session().post(base_managed_services_url,
+                                  json={'name': service_name,
+                                        'version': version,
+                                        'config': configution}
+                                  )
     if response.status_code != 200:
         raise get_exception(response)
     else:
@@ -302,11 +285,7 @@ def deploy_managed_service(service_name, version, configs):
 
 
 def help_managed_service():
-    token = get_stored_token()
-    response = requests.get(
-        base_managed_services_url,
-        headers=dict(Authorization='JWT ' + token)
-    )
+    response = get_session().get(base_managed_services_url)
     if response.status_code != 200:
         raise get_exception(response)
     else:
@@ -314,11 +293,9 @@ def help_managed_service():
 
 
 def deploy_manifest(manifest):
-    token = get_stored_token()
-    response = requests.post(base_services_url + '/manifests',
-                             json=manifest,
-                             headers={'Authorization': 'JWT ' + token}
-                             )
+    response = get_session().post(base_services_url + '/manifests',
+                                  json=manifest
+                                  )
     if response.status_code != 200:
         if response.status_code == 400:
             document = _get_manifest_document(list(response.json().keys())[0])
@@ -374,11 +351,9 @@ def _generate_manifest(image, version, name, port, envs, hosts, internal, regist
 
 
 def dump_manifest(service_name):
-    token = get_stored_token()
-    response = requests.get(base_services_url + '/manifests',
-                            params={'service_name': service_name},
-                            headers={'Authorization': 'JWT ' + token}
-                            )
+    response = get_session().get(base_services_url + '/manifests',
+                                 params={'service_name': service_name}
+                                 )
 
     if response.status_code != 200:
         raise get_exception(response)
@@ -405,12 +380,10 @@ method list:
 
 
 def create_volume_claim(volume_name, capacity):
-    token = get_stored_token()
     body = dict({'name': volume_name, 'capacity': capacity})
-    response = requests.post(base_volume_url,
-                             json=body,
-                             headers={'Authorization': 'JWT ' + token}
-                             )
+    response = get_session().post(base_volume_url,
+                                  json=body
+                                  )
     if response.status_code != 200:
         raise get_exception(response)
     else:
@@ -426,10 +399,7 @@ def create_volume_claim(volume_name, capacity):
 
 
 def delete_volume_claim(volume_name):
-    token = get_stored_token()
-    response = requests.delete(base_volume_url + '/{}'.format(volume_name),
-                               headers={'Authorization': 'JWT ' + token}
-                               )
+    response = get_session().delete(base_volume_url + '/{}'.format(volume_name))
     if response.status_code != 200:
         raise get_exception(response)
     else:
@@ -443,10 +413,7 @@ def delete_volume_claim(volume_name):
 
 
 def list_volumes():
-    token = get_stored_token()
-    response = requests.get(base_volume_url,
-                            headers={'Authorization': 'JWT ' + token}
-                            )
+    response = get_session().get(base_volume_url)
     if response.status_code != 200:
         raise get_exception(response)
     else:
