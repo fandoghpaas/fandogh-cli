@@ -269,7 +269,7 @@ def service_apply(file, parameters, detach, hide_manifest):
 
 
 @click.command('dump', cls=FandoghCommand)
-@click.option('-s', '--service', '--name', prompt='Service name')
+@click.option('-s', '--service', '--name', 'name', prompt='Service name')
 def service_dump(name):
     click.echo(yaml.safe_dump(dump_manifest(name), default_flow_style=False))
 

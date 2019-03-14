@@ -1,6 +1,6 @@
 import requests
 
-from fandogh_cli.fandogh_client import base_url, get_exception, parse_key_values
+from fandogh_cli.fandogh_client import base_url, get_exception, parse_key_values, get_session
 from fandogh_cli.fandogh_client import get_stored_token
 from fandogh_cli.utils import convert_datetime
 
@@ -8,9 +8,7 @@ base_secrets_url = '%ssecrets' % base_url
 
 
 def list_secret():
-    token = get_stored_token()
-    response = requests.get(base_secrets_url,
-                            headers={'Authorization': 'JWT ' + token})
+    response = get_session().get(base_secrets_url)
     if response.status_code != 200:
         raise get_exception(response)
     else:
@@ -24,15 +22,13 @@ def list_secret():
 
 
 def create_secret(name, secret_type, fields):
-    token = get_stored_token()
-    response = requests.post(base_secrets_url,
-                             headers={'Authorization': 'JWT ' + token},
-                             json={
-                                 "name": name,
-                                 "type": secret_type,
-                                 "fields": parse_key_values(fields)
-                             },
-                             )
+    response = get_session().post(base_secrets_url,
+                                  json={
+                                      "name": name,
+                                      "type": secret_type,
+                                      "fields": parse_key_values(fields)
+                                  },
+                                  )
     if response.status_code != 200:
         raise get_exception(response)
     else:
@@ -40,15 +36,13 @@ def create_secret(name, secret_type, fields):
 
 
 def put_secret(name, secret_type, fields):
-    token = get_stored_token()
-    response = requests.put(base_secrets_url + "/" + name,
-                            headers={'Authorization': 'JWT ' + token},
-                            json={
-                                "name": name,
-                                "type": secret_type,
-                                "fields": parse_key_values(fields)
-                            },
-                            )
+    response = get_session().put(base_secrets_url + "/" + name,
+                                 json={
+                                     "name": name,
+                                     "type": secret_type,
+                                     "fields": parse_key_values(fields)
+                                 },
+                                 )
     if response.status_code != 200:
         raise get_exception(response)
     else:
@@ -56,11 +50,9 @@ def put_secret(name, secret_type, fields):
 
 
 def delete_secret(name):
-    token = get_stored_token()
-    response = requests.delete(base_secrets_url + "/" + name,
-                               headers={'Authorization': 'JWT ' + token},
-                               json={},
-                               )
+    response = get_session().delete(base_secrets_url + "/" + name,
+                                    json={},
+                                    )
     if response.status_code != 200:
         raise get_exception(response)
     else:

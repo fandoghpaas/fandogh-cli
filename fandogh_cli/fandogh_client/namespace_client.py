@@ -1,14 +1,20 @@
-import requests
-from fandogh_cli.fandogh_client import base_url, get_exception
-from fandogh_cli.fandogh_client import get_stored_token
+from fandogh_cli.fandogh_client import base_url, get_exception, get_session
 
 base_namespace_url = '%sapi/users/namespaces' % base_url
 
 
+def list_namespaces():
+    response = get_session().get(base_namespace_url)
+
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        return response.json()
+
+
 def details_namespace():
-    token = get_stored_token()
-    response = requests.get("%s/%s" % (base_namespace_url, "NAMESPACE"),  # use user's namespace
-                            headers={'Authorization': 'JWT ' + token})
+    # TODO: use user's namespace)
+    response = get_session().get("%s/%s" % (base_namespace_url, "NAMESPACE"))
     if response.status_code != 200:
         raise get_exception(response)
     else:
