@@ -7,6 +7,7 @@ from .config import *
 from .fandogh_client import *
 from time import sleep
 from .workspace import Workspace
+import sys
 
 
 @click.group("image")
@@ -78,7 +79,7 @@ def show_image_logs(image_name, version):
             break
         sleep(1)
     if response.get('state') == 'FAILED':
-        exit(1)
+        sys.exit(201)
 
 
 @click.command('logs', cls=FandoghCommand)

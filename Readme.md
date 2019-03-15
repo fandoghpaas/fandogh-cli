@@ -192,3 +192,17 @@ if everything goes well, you should be able to use your domain to access your se
 
 **Tip: If you verify a domain, all subdomains of that domain will not require verification, but you should add them before using them**    
 **Remember**, if you use a domain like `api.somedomain.com`, then you should set TXT record on `api.somedomain.com` not `somedomain.com`.
+
+## Table of exit status codes
+ 
+| Status code   | Reason                            |
+| ------------- |:----------------------------------|
+| 101           | Command parameter exception       |
+| 102           | Fandogh API exception             |
+| 103           | Authentication error              |
+| 104           | Request exception                 |
+| 201           | State of the image is FAILED      |
+| 301           | Invalid image name                |
+| 302           | Couldn't get service details      |
+| 303           | Service details has unknown state |
+

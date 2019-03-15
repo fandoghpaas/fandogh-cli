@@ -10,6 +10,7 @@ from fandogh_cli.version_check import get_latest_version, get_current_version, V
 from fandogh_cli.config import get_user_config
 from fandogh_cli.info_collector import collect
 import os
+import sys
 
 
 class VersionException(Exception):
@@ -24,26 +25,28 @@ class FandoghCommand(Command):
             return super(FandoghCommand, self).invoke(ctx)
         except CommandParameterException as exp:
             click.echo(format_text(exp.message, TextStyle.FAIL), err=True)
-            exit(1)
+            sys.exit(101)
         except FandoghAPIError as exp:
             debug('APIError. status code: {}, content: {}'.format(
                 exp.response.status_code,
                 exp.response.content))
             click.echo(format_text(exp.message, TextStyle.FAIL), err=True)
-            exit(1)
+            sys.exit(102)
         except VersionException as exp:
             click.echo(format_text("New Version of {} is available, please update to continue "
-                                   "using Fandogh services using : `pip install {} --upgrade`".format(NAME, NAME),
+                                   "using Fandogh services using : `pip install {} --upgrade`".format(
+                                       NAME, NAME),
                                    TextStyle.FAIL), err=True)
         except AuthenticationError:
             click.echo(format_text(
                 "Please login first. You can do it by running 'fandogh login' command", TextStyle.FAIL
             ), err=True)
-
+            sys.exit(103)
         except requests.exceptions.RequestException as req_err:
             click.echo(format_text('Error in your network connection! trying again might help to fix this issue \n'
-                       'if it is keep happening, please inform us!', TextStyle.FAIL), err=True)
+                                   'if it is keep happening, please inform us!', TextStyle.FAIL), err=True)
             collect(self, ctx, req_err)
+            sys.exit(104)
         except Exception as exp:
             collect(self, ctx, exp)
             raise exp
@@ -54,7 +57,8 @@ class FandoghCommand(Command):
         if version_diff < -2:  # -1:Major -2:Minor -3:Patch
             click.echo(format_text("New version is available, "
                                    "please update to new version"
-                                   " using `pip install {} --upgrade` to access latest bugfixes".format(NAME),
+                                   " using `pip install {} --upgrade` to access latest bugfixes".format(
+                                       NAME),
                                    TextStyle.WARNING))
             debug("New Version is available: {}".format(latest_version))
         elif version_diff < 0:
@@ -72,24 +76,25 @@ class FandoghCommand(Command):
             if latest_version is None or (datetime.now() - last_check) > timedelta(hours=6):
                 latest_version = get_latest_version()
                 last_check = datetime.now()
-        get_user_config().set("version_info", dict(last_check=last_check, latest_version=str(latest_version)), )
+        get_user_config().set("version_info", dict(
+            last_check=last_check, latest_version=str(latest_version)), )
         return latest_version
 
     def _check_for_error_collection_permission(self):
         def get_value(value):
             if value is None:
                 return None
-            
+
             value = str(value).lower()
             if value in ['no', '0', 'n', 'false']:
                 return 'NO'
             return 'YES'
-        
+
         collect_error = get_user_config().get('collect_error')
         if collect_error is None:
             env_value = get_value(os.environ.get('COLLECT_ERROR'))
             if env_value is not None:
-                get_user_config().set('collect_error', env_value)                
+                get_user_config().set('collect_error', env_value)
             else:
                 confirmed = click.confirm(
                     'Would you like to let Fandogh CLI to send context information in case any unhandled error happens?')

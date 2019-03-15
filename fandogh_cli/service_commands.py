@@ -1,6 +1,6 @@
 import click
 import yaml
-
+import sys
 from .fandogh_client import *
 from .config import get_project_config
 from .utils import format_text, TextStyle, read_manifest
@@ -47,7 +47,7 @@ def deploy(image, version, name, port, envs, hosts, internal, registry_secret, i
                     format_text(
                         "It's not possible to perform deploy operation withou image name", TextStyle.FAIL),
                     err=True)
-                exit(-1)
+                sys.exit(301)
     deployment_result = deploy_service(image, version, name, envs, hosts, port, internal, registry_secret,
                                        image_pull_policy, internal_ports)
 
@@ -74,7 +74,7 @@ def deploy(image, version, name, port, envs, hosts, internal, registry_secret, i
             details = get_details(name)
 
             if not details:
-                exit(1)
+                sys.exit(302)
 
             click.clear()
 
@@ -96,15 +96,15 @@ def deploy(image, version, name, port, envs, hosts, internal, registry_secret, i
                         deployment_result['name']
                     )
                     message += '\n'
-                    click.secho(message, bold=True, fg='yellow')
-                exit(0)
+                    click.secho(message, bold=True, fg='yellow')      
+                    sys.exit(0)
             elif details.get('state') == 'UNSTABLE':
                 present_service_detail(details)
                 click.echo(
                     'You can press ctrl + C to exit details service state monitoring')
                 sleep(3)
             else:
-                exit(1)
+                sys.exit(303)
 
 
 @click.command('list', cls=FandoghCommand)
@@ -245,7 +245,7 @@ def service_apply(file, parameters, detach, hide_manifest):
                 details = get_details(service_name)
 
                 if not details:
-                    exit(1)
+                    sys.exit(302)
 
                 click.clear()
 
@@ -253,7 +253,7 @@ def service_apply(file, parameters, detach, hide_manifest):
                     present_service_detail(details)
                     click.echo(message)
                     if index == len(manifest_content) - 1:
-                        exit(0)
+                        sys.exit(0)
                     else:
                         break
                 elif details.get('state') == 'UNSTABLE':
@@ -263,7 +263,7 @@ def service_apply(file, parameters, detach, hide_manifest):
                     sleep(3)
                 else:
                     if index == len(manifest_content) - 1:
-                        exit(1)
+                        sys.exit(304)
                     else:
                         break
 
