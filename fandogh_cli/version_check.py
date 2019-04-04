@@ -72,10 +72,9 @@ class Version:
 
 def get_latest_version():
     latest_version = get_fandogh_latest_version()
-    try:
+    if latest_version is not None:
         return Version(latest_version)
-    except KeyError as missing_key:
-        raise RuntimeError("Unexpected response: {} is missing from response".format(missing_key))
+    return None
 
 
 def get_current_version():
