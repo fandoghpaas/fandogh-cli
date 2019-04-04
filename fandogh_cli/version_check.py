@@ -1,5 +1,6 @@
 import requests
 from fandogh_cli import VERSION, NAME
+from fandogh_cli.fandogh_client import get_fandogh_latest_version
 
 
 class Version:
@@ -69,21 +70,10 @@ class Version:
         return str(self)
 
 
-def get_package_info():
-    url = "https://pypi.org/pypi/{}/json".format(NAME)
-    try:
-        response = requests.get(url)
-        if response.status_code == 200:
-            return response.json()
-        raise RuntimeError("Unexpected response status while calling pypi")
-    except Exception as exp:
-        raise RuntimeError("Unable to connect to pypi.org: {}".format(exp))
-
-
 def get_latest_version():
-    package_info = get_package_info()
+    latest_version = get_fandogh_latest_version()
     try:
-        return Version(package_info['info']['version'])
+        return Version(latest_version)
     except KeyError as missing_key:
         raise RuntimeError("Unexpected response: {} is missing from response".format(missing_key))
 
