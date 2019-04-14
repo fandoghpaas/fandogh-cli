@@ -96,8 +96,8 @@ def deploy(image, version, name, port, envs, hosts, internal, registry_secret, i
                         deployment_result['name']
                     )
                     message += '\n'
-                    click.secho(message, bold=True, fg='yellow')      
-                    sys.exit(0)
+                    click.secho(message, bold=True, fg='yellow')
+                sys.exit(0)
             elif details.get('state') == 'UNSTABLE':
                 present_service_detail(details)
                 click.echo(
