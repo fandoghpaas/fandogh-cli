@@ -248,8 +248,10 @@ def get_token(username, password):
         return response.json()
 
 
-def get_logs(service_name, last_logged_time):
-    response = get_session().get(base_services_url + '/' + service_name + '/logs', params={'last_logged_time': last_logged_time})
+def get_logs(service_name, last_logged_time, max: bool):
+    response = get_session().get(base_services_url + '/' + service_name + '/logs',
+                                 params={'last_logged_time': last_logged_time,
+                                         'max_logs': max})
 
     if response.status_code == 200:
         return response.json()
