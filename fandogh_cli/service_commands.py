@@ -141,8 +141,8 @@ def service_destroy(service_name):
 @click.command('logs', cls=FandoghCommand)
 @click.option('--name', 'service_name', prompt='Service name', help="Service name")
 @click.option('--follow', '-f', 'follow', is_flag=True, default=False, help='Monitoring service real-time logs')
-@click.option('--max', '-m', 'max_logs', is_flag=True, default=False, help='if true, returns last 2000 logs')
-def service_logs(service_name, follow, max_logs: bool):
+@click.option('--max', '-m', 'max_logs', default=100, help='if true, returns last 2000 logs')
+def service_logs(service_name, follow, max_logs: int):
     """Display service logs"""
     last_logged_time = 0
 
