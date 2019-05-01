@@ -1,12 +1,8 @@
-import click
-import yaml
-import sys
-from .fandogh_client import *
-from .config import get_project_config, ConfigRepository
-from .utils import format_text, TextStyle, read_manifest
+from fandogh_client.source_client import upload_source
 from .base_commands import FandoghCommand
-from time import sleep
-from .presenter import present_service_detail, present
+from .config import ConfigRepository
+from .fandogh_client import *
+from .workspace import Workspace
 
 
 @click.group("source")
@@ -23,13 +19,22 @@ def init(name):
 
 
 @click.command('run', cls=FandoghCommand)
-def run(service_name):
-    """Destroy service"""
-    click.echo(
-        'you are about to destroy service with name {}.'.format(service_name))
-    click.echo('It might take a while!')
-    message = present(lambda: destroy_service(service_name))
-    click.echo(message)
+def run():
+    workspace = Workspace()
+
+    bar = click.progressbar(length=int(workspace.zip_file_size_kb), label='Uploading the workspace')
+    shared_values = {'diff': 0}
+
+    def monitor_callback(monitor):
+        progress = monitor.bytes_read - shared_values['diff']
+        bar.update(progress)
+        shared_values['diff'] += progress
+
+    try:
+        response = upload_source(str(workspace), monitor_callback)
+        bar.render_finish()
+    finally:
+        workspace.clean()
 
 
 def prompt_project_types():
