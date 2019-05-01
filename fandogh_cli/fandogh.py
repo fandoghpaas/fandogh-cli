@@ -1,18 +1,17 @@
 #!/usr/bin/env python
 
-import click
 from fandogh_cli.namespace_commands import namespace
 from fandogh_cli.secret_commands import secret
-from .volume_commands import volume
-from .domain_commands import domain
-from .image_commands import image
-from .service_commands import service
-from .exec_commands import exec_command
-from .managed_service_commands import managed_service
-
 from .base_commands import FandoghCommand
-from .presenter import present
+from .domain_commands import domain
+from .exec_commands import exec_command
 from .fandogh_client import *
+from .image_commands import image
+from .managed_service_commands import managed_service
+from .presenter import present
+from .service_commands import service
+from .source_commands import source
+from .volume_commands import volume
 
 
 @click.group("cli")
@@ -45,6 +44,7 @@ def login(username, password):
 
 base.add_command(login)
 base.add_command(image)
+base.add_command(source)
 base.add_command(service)
 base.add_command(managed_service)
 base.add_command(domain)
