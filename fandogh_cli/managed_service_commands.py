@@ -1,7 +1,6 @@
-import click
+from .base_commands import FandoghCommand
 from .fandogh_client import *
 from .utils import format_text, TextStyle, parse_key_values
-from .base_commands import FandoghCommand
 
 
 @click.group("managed-service")

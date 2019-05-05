@@ -1,4 +1,4 @@
-from fandogh_client.source_client import upload_source
+from .fandogh_client.source_client import upload_source
 from .base_commands import FandoghCommand
 from .config import ConfigRepository
 from .fandogh_client import *
