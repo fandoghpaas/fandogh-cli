@@ -1,3 +1,4 @@
+from .image_commands import show_image_logs
 from .fandogh_client.source_client import upload_source
 from .base_commands import FandoghCommand
 from .config import ConfigRepository
@@ -21,6 +22,7 @@ def init(name):
 @click.command('run', cls=FandoghCommand)
 def run():
     workspace = Workspace()
+    manifestRepository = ConfigRepository(os.path.join(os.getcwd(), 'fandogh.yml'))
 
     bar = click.progressbar(length=int(workspace.zip_file_size_kb), label='Uploading the workspace')
     shared_values = {'diff': 0}
@@ -31,14 +33,17 @@ def run():
         shared_values['diff'] += progress
 
     try:
-        response = upload_source(str(workspace), monitor_callback)
+        name = manifestRepository.get('name')
+        response = upload_source(str(workspace), name, manifestRepository.get('spec', {}).get('project_type'), monitor_callback)
         bar.render_finish()
     finally:
         workspace.clean()
 
+    show_image_logs(name, 'latest')
+
 
 def prompt_project_types():
-    project_types = ['Static Website',
+    project_types = ['static_website',
                      'Laravel',
                      'Dango',
                      'ASP.net core'
@@ -57,13 +62,13 @@ def prompt_project_types():
 
 
 def initialize_project(name, project_type):
-    if project_type == 'Static Website':
+    if project_type == 'static_website':
         setup_manifest(name, project_type)
         setup_sample(name, project_type)
 
 
 def setup_manifest(name, project_type):
-    if project_type == 'Static Website':
+    if project_type == 'static_website':
         manifest = {
             'kind': 'ExternalService',
             'name': name,
