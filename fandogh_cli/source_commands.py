@@ -118,7 +118,8 @@ def setup_manifest(name, project_type):
             'spec': {
                 'project_type': project_type,
                 'context': '.',
-                'port': 80
+                'port': 80,
+                'image_pull_policy': 'Always'
             }
         }
 
