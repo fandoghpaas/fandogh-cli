@@ -20,5 +20,11 @@ def upload_source(workspace_path, name, project_type, monitor_callback):
 
         if response.status_code != 200:
             raise get_exception(response)
-        else:
-            return response.json()
+        return response.json()
+
+
+def get_project_types():
+    response = get_session().get(base_sources_url + '/project-types')
+    if response.status_code != 200:
+        raise get_exception(response)
+    return response.json()

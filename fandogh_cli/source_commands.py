@@ -4,7 +4,7 @@ import yaml
 
 from .presenter import present_service_detail
 from .image_commands import show_image_logs
-from .fandogh_client.source_client import upload_source
+from .fandogh_client.source_client import upload_source, get_project_types
 from .base_commands import FandoghCommand
 from .config import ConfigRepository
 from .fandogh_client import *
@@ -21,7 +21,9 @@ def source():
 @click.option('-n', '--name', 'name', prompt='Service Name')
 def init(name):
     """Initializes a project based on the selected framework"""
-    project_type = prompt_project_types()
+    project_types = get_project_types()
+    project_type = prompt_project_types(project_types)
+
     initialize_project(name, project_type)
 
 
@@ -40,7 +42,8 @@ def run():
 
     try:
         name = manifest_repository.get('name')
-        response = upload_source(str(workspace), name, manifest_repository.get('spec', {}).get('project_type'), monitor_callback)
+        response = upload_source(str(workspace), name, manifest_repository.get('spec', {}).get('project_type'),
+                                 monitor_callback)
         bar.render_finish()
     finally:
         workspace.clean()
@@ -85,14 +88,9 @@ def run():
             sleep(3)
 
 
-def prompt_project_types():
-    project_types = ['static_website',
-                     'Laravel',
-                     'Dango',
-                     'ASP.net core'
-                     ]
+def prompt_project_types(project_types):
     for idx, project_type in enumerate(project_types):
-        click.echo('-[{}] {}'.format(idx + 1, project_type))
+        click.echo('-[{}] {}'.format(idx + 1, project_type['label']))
 
     project_type_index = click.prompt('Please choose one of the project types above',
                                       type=click.Choice(list(map(lambda i: str(i), range(1, len(project_types) + 1)))),
@@ -105,29 +103,29 @@ def prompt_project_types():
 
 
 def initialize_project(name, project_type):
-    if project_type == 'static_website':
-        setup_manifest(name, project_type)
-        setup_sample(name, project_type)
+    project_type_name = project_type['name']
+    setup_manifest(name, project_type_name)
+    if project_type_name == 'static_website':
+        setup_sample(name, project_type_name)
 
 
-def setup_manifest(name, project_type):
-    if project_type == 'static_website':
-        manifest = {
-            'kind': 'ExternalService',
-            'name': name,
-            'spec': {
-                'project_type': project_type,
-                'context': '.',
-                'port': 80,
-                'image_pull_policy': 'Always'
-            }
+def setup_manifest(name, project_type_name):
+    manifest = {
+        'kind': 'ExternalService',
+        'name': name,
+        'spec': {
+            'project_type': project_type_name,
+            'context': '.',
+            'port': 80,
+            'image_pull_policy': 'Always'
         }
+    }
 
-        manifest_repository = ConfigRepository(os.path.join(os.getcwd(), 'fandogh.yml'), manifest)
-        manifest_repository.save()
+    manifest_repository = ConfigRepository(os.path.join(os.getcwd(), 'fandogh.yml'), manifest)
+    manifest_repository.save()
 
 
-def setup_sample(name, project_type):
+def setup_sample(name, project_type_name):
     with open('index.html', 'w') as sample:
         sample.write('''
         <html>
