@@ -248,8 +248,10 @@ def get_token(username, password):
         return response.json()
 
 
-def get_logs(service_name, last_logged_time):
-    response = get_session().get(base_services_url + '/' + service_name + '/logs', params={'last_logged_time': last_logged_time})
+def get_logs(service_name, last_logged_time, max_logs):
+    response = get_session().get(base_services_url + '/' + service_name + '/logs',
+                                 params={'last_logged_time': last_logged_time,
+                                         'max_logs': max_logs})
 
     if response.status_code == 200:
         return response.json()
@@ -428,3 +430,11 @@ def _get_manifest_document(doc_key):
         return ''
     else:
         return response.json().get('document', '')
+
+
+def get_fandogh_latest_version():
+    response = requests.get(base_url + "/api/latest-version", timeout=5)
+    if response.status_code != 200:
+        return None
+    else:
+        return response.json().get('latest_version', None)
