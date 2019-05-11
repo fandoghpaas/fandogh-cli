@@ -28,7 +28,7 @@ def list_domains():
                 domain['certificate'] = "No Certificate"
             else:
                 domain['certificate'] = "Requested"
-                domain['certificate_status'] = cert.get("details", {}).get('status', ' - ')
+                domain['certificate_status'] = (cert.get("details", {}) or {}).get('status', ' - ')
             result.append(domain)
         return result
 
