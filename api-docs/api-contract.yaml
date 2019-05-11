@@ -178,6 +178,16 @@ paths:
           in: path
           required: true
           type: string
+        - name: state
+          in: query
+          required: false
+          type: string
+          enum:
+            - PENDING
+            - BUILDING
+            - BUILT
+            - FAILED
+            - BUILD_FAILED
         - in: "header"
           name: "AUTHORIZATION"
           description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
