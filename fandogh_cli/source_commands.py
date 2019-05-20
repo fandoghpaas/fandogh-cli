@@ -24,7 +24,12 @@ def init(name):
     project_types = get_project_types()
     project_type = prompt_project_types(project_types)
 
-    initialize_project(name, project_type)
+    if project_type.get('parameters', None):
+        chosen_params = {}
+        for param in project_type.get('parameters'):
+            chosen_params[param['key']] = click.prompt(param['name'])
+
+    initialize_project(name, project_type, chosen_params)
 
 
 @click.command('run', cls=FandoghCommand)
@@ -42,7 +47,8 @@ def run():
 
     try:
         name = manifest_repository.get('name')
-        response = upload_source(str(workspace), name, manifest_repository.get('spec', {}).get('project_type'),
+        response = upload_source(str(workspace), name,
+                                 manifest_repository.get('spec', {}).get('source', {}).get('project_type'),
                                  monitor_callback)
         bar.render_finish()
     finally:
@@ -99,23 +105,29 @@ def prompt_project_types(project_types):
 
     selected_project_type = project_types[int(project_type_index) - 1]
     click.echo('You selected {}'.format(selected_project_type))
+
     return selected_project_type
 
 
-def initialize_project(name, project_type):
+def initialize_project(name, project_type, chosen_params):
     project_type_name = project_type['name']
-    setup_manifest(name, project_type_name)
+    setup_manifest(name, project_type_name, chosen_params)
     if project_type_name == 'static_website':
-        setup_sample(name, project_type_name)
+        setup_sample(name, project_type_name, chosen_params)
 
 
-def setup_manifest(name, project_type_name):
+def setup_manifest(name, project_type_name, chosen_params):
+    source = {
+        'context': '.',
+        'project_type': project_type_name
+    }
+
+    source.update(chosen_params)
     manifest = {
         'kind': 'ExternalService',
         'name': name,
         'spec': {
-            'project_type': project_type_name,
-            'context': '.',
+            'source': source,
             'port': 80,
             'image_pull_policy': 'Always'
         }
@@ -125,7 +137,7 @@ def setup_manifest(name, project_type_name):
     manifest_repository.save()
 
 
-def setup_sample(name, project_type_name):
+def setup_sample(name, project_type_name, chosen_params):
     with open('index.html', 'w') as sample:
         sample.write('''
         <html>
