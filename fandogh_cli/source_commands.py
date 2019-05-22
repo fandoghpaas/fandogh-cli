@@ -2,6 +2,7 @@ from time import sleep
 
 import yaml
 
+from .source import key_hints
 from .presenter import present_service_detail
 from .image_commands import show_image_logs
 from .fandogh_client.source_client import upload_source, get_project_types
@@ -27,6 +28,9 @@ def init(name):
     if project_type.get('parameters', None):
         chosen_params = {}
         for param in project_type.get('parameters'):
+            hint = key_hints.get(param['key'], None)
+            if hint:
+                hint()
             chosen_params[param['key']] = click.prompt(param['name'])
 
     initialize_project(name, project_type, chosen_params)
@@ -104,7 +108,6 @@ def prompt_project_types(project_types):
                                       )
 
     selected_project_type = project_types[int(project_type_index) - 1]
-    click.echo('You selected {}'.format(selected_project_type))
 
     return selected_project_type
 
