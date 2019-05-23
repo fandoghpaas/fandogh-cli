@@ -24,9 +24,13 @@ def init(name):
     """Initializes a project based on the selected framework"""
     project_types = get_project_types()
     project_type = prompt_project_types(project_types)
+    project_type_hint = key_hints.get(project_type['name'])
+    if project_type_hint:
+        project_type_hint()
 
+    chosen_params = {}
     if project_type.get('parameters', None):
-        chosen_params = {}
+
         for param in project_type.get('parameters'):
             hint = key_hints.get(param['key'], None)
             if hint:
