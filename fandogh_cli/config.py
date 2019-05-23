@@ -12,9 +12,9 @@ class ConfigRepository:
     def __init__(self, configuration_file=None, configurations=None):
         if configuration_file is not None:
             self.configuration_file = configuration_file
-            configurations = self._load_from_file(configuration_file)
-            self._load_from_dict(configurations)
-        elif configurations is not None:
+            _configurations = self._load_from_file(configuration_file)
+            self._load_from_dict(_configurations)
+        if configurations is not None:
             self._load_from_dict(configurations)
 
     def _load_from_file(self, configuration_file):
@@ -36,6 +36,9 @@ class ConfigRepository:
 
     def get(self, key, default=None):
         return self._configs.get(key, default)
+
+    def get_dict(self):
+        return self._configs
 
     def save(self):
         if self.configuration_file:

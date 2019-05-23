@@ -10,7 +10,7 @@ setup(
     version=VERSION,
     description='Official CLI for Fandogh PaaS',
     author='Soroosh Sarabadani',
-    install_requires=["click",
+    install_requires=["click>=7.0",
                       "pyOpenSSL",
                       "requests[security]",
                       "requests-toolbelt",
