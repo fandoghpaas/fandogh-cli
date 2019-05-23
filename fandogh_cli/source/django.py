@@ -27,7 +27,7 @@ def wsgi_name_hint():
 def requirements_hint():
     req_path = os.path.join(os.getcwd(), 'requirements.txt')
     if os.path.isfile(req_path):
-        pass
+        return
     click.echo(
         format_text(
             'Please consider to add a requirements.txt file contains all the dependencies your project has and try again.',
