@@ -2,7 +2,7 @@ from time import sleep
 
 import yaml
 
-from .source import key_hints
+from .source import key_hints, manifest_builders
 from .presenter import present_service_detail
 from .image_commands import show_image_logs
 from .fandogh_client.source_client import upload_source, get_project_types
@@ -127,21 +127,25 @@ def initialize_project(name, project_type, chosen_params):
 
 
 def setup_manifest(name, project_type_name, chosen_params):
-    source = {
-        'context': '.',
-        'project_type': project_type_name
-    }
-
-    source.update(chosen_params)
-    manifest = {
-        'kind': 'ExternalService',
-        'name': name,
-        'spec': {
-            'source': source,
-            'port': 80,
-            'image_pull_policy': 'Always'
+    manifest_builder = manifest_builders.get(project_type_name, None)
+    if None:
+        source = {
+            'context': '.',
+            'project_type': project_type_name
         }
-    }
+
+        source.update(chosen_params)
+        manifest = {
+            'kind': 'ExternalService',
+            'name': name,
+            'spec': {
+                'source': source,
+                'port': 80,
+                'image_pull_policy': 'Always'
+            }
+        }
+    else:
+        manifest = manifest_builder(name, project_type_name, chosen_params)
 
     manifest_repository = ConfigRepository(os.path.join(os.getcwd(), 'fandogh.yml'), manifest)
     manifest_repository.save()
