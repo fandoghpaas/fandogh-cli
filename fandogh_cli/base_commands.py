@@ -2,7 +2,9 @@ from datetime import datetime, timedelta
 import click
 import requests
 from click import Command
+
 from fandogh_cli import NAME
+from fandogh_cli.exceptions import ValidationException
 from fandogh_cli.fandogh_client import FandoghAPIError, CommandParameterException
 from fandogh_cli.fandogh_client import AuthenticationError
 from fandogh_cli.utils import debug, TextStyle, format_text
@@ -47,6 +49,9 @@ class FandoghCommand(Command):
                                    'if it is keep happening, please inform us!', TextStyle.FAIL), err=True)
             collect(self, ctx, req_err)
             sys.exit(104)
+        except ValidationException as e:
+            click.echo(format_text(e.message, TextStyle.FAIL), err=True)
+            collect(self, ctx, e)
         except Exception as exp:
             collect(self, ctx, exp)
             raise exp
