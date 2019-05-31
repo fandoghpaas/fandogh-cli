@@ -112,7 +112,7 @@ def revoke_certificate(name):
 @click.command('delete', cls=FandoghCommand)
 @click.option('--name', '-n', 'name', prompt='Domain name', help='The domain name')
 def delete(name):
-    click.echo(delete_domain(name))
+    click.echo(delete_domain(name).get('message', 'Something went wrong ! Try `fandogh domain list` to verify delete operation.'))
 
 
 def _display_domain_details(domain_details, clear=True):
