@@ -1,13 +1,21 @@
 import os
 import zipfile
 from fnmatch import fnmatch
-from fandogh_cli.utils import debug
+
+from .exceptions import ValidationException
+from .utils import debug
 
 
 class Workspace:
-    def __init__(self, workspace_config=None):
+    def __init__(self, workspace_config=None, context=None):
         workspace_config = workspace_config or {}
         self.path = workspace_config.get('path', os.getcwd())
+        if context and context != '.':
+            self.path = os.path.abspath(os.path.join(self.path, context))
+        self.context = context
+
+        if not os.path.exists(self.path):
+            raise ValidationException('No directory or path with path {} exists!'.format(self.path))
         self.zip_file_name = os.path.join(self.path, 'workspace.zip')
         files = os.listdir(self.path)
         self.has_docker_ignore = '.dockerignore' in files
@@ -52,9 +60,12 @@ class Workspace:
         for root, dirs, files in os.walk(path):
             for file in files:
                 if file != 'workspace.zip':
+
                     file_path = os.path.join(os.path.relpath(root, path), file)
+
                     if file.lower() != "dockerfile" and any(
                             fnmatch(file_path, ignore.strip()) for ignore in ignored_entries):
                         debug('{} filtered out.'.format(file_path))
                         continue
-                    ziph.write(file_path)
+                    ziph.write(os.path.join(self.context, file_path), arcname=file_path)
+                    print('result', os.path.join(self.context, file_path), file_path)
