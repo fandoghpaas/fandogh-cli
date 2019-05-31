@@ -39,7 +39,11 @@ class Workspace:
             return []
         with open(os.path.join(self.path, '.dockerignore'), 'r') as file:
             entries = file.readlines()
-        return entries
+        expand_entries = []
+        for entry in entries:
+            expand_entries.append(entry.strip() + os.sep + '*')
+
+        return entries + expand_entries
 
     def zipdir(self, path, ziph):
         ignored_entries = self.get_ignored_entries()

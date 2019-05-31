@@ -35,7 +35,7 @@ def init(name):
             hint = key_hints.get(param['key'], None)
             if hint:
                 hint()
-            chosen_params[param['key']] = click.prompt(param['name'])
+            chosen_params[param['key']] = click.prompt(param['name'], default=param.get('default', None))
 
     initialize_project(name, project_type, chosen_params)
     click.echo(format_text('Your source has been initialized.\n'
