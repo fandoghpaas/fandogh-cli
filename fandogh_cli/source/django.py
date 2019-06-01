@@ -33,3 +33,33 @@ def requirements_hint():
             'Please consider to add a requirements.txt file contains all the dependencies your project has and try again.',
             TextStyle.FAIL), err=True)
     sys.exit(401)
+
+
+def build_manifest(name, project_type_name, chosen_params):
+    source = {
+        'context': '.',
+        'project_type': project_type_name,
+    }
+    source.update(chosen_params)
+
+    manifest = {
+        'kind': 'ExternalService',
+        'name': name,
+        'spec': {
+            'source': source,
+            'port': 80,
+            'image_pull_policy': 'Always'
+        }
+    }
+
+    if chosen_params.get('media_path', None):
+        volume = {
+            'volume_mounts': [
+                {
+                    'mount_path': '/usr/src/app/' + chosen_params.get('media_path'),
+                    'sub_path': name + '/media'
+                }
+            ]
+        }
+        manifest['spec'].update(volume)
+    return manifest

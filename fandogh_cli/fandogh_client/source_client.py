@@ -5,13 +5,12 @@ from fandogh_cli.fandogh_client import base_url, get_exception, get_session
 base_sources_url = '{}sources'.format(base_url)
 
 
-def upload_source(workspace_path, name, project_type, monitor_callback):
+def upload_source(workspace_path, manifest, monitor_callback):
     with open(workspace_path, 'rb') as file:
         e = encoder.MultipartEncoder(
             fields={
                 'source': ('workspace', file, 'text/plain'),
-                'name': name,
-                'project_type': project_type
+                'manifest': manifest
             }
         )
         m = encoder.MultipartEncoderMonitor(e, monitor_callback)

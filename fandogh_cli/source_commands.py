@@ -1,8 +1,9 @@
 from time import sleep
 
 import yaml
+import json
 
-from .source import key_hints
+from .source import key_hints, manifest_builders
 from .presenter import present_service_detail
 from .image_commands import show_image_logs
 from .fandogh_client.source_client import upload_source, get_project_types
@@ -45,8 +46,9 @@ def init(name):
 
 @click.command('run', cls=FandoghCommand)
 def run():
-    workspace = Workspace()
     manifest_repository = ConfigRepository(os.path.join(os.getcwd(), 'fandogh.yml'))
+    context_pth = manifest_repository.get('spec', {}).get('source', {}).get('context', '.')
+    workspace = Workspace(context=context_pth)
 
     bar = click.progressbar(length=int(workspace.zip_file_size_kb), label='Uploading the workspace')
     shared_values = {'diff': 0}
@@ -58,14 +60,14 @@ def run():
 
     try:
         name = manifest_repository.get('name')
-        response = upload_source(str(workspace), name,
-                                 manifest_repository.get('spec', {}).get('source', {}).get('project_type'),
-                                 monitor_callback)
+        upload_source(str(workspace),
+                      json.dumps(manifest_repository.get_dict()),
+                      monitor_callback)
         bar.render_finish()
     finally:
         workspace.clean()
 
-    show_image_logs(name, 'latest')
+    show_image_logs(name.lower(), 'latest')
 
     def hide_manifest_env_content(content):
         if 'spec' not in content:
@@ -127,21 +129,25 @@ def initialize_project(name, project_type, chosen_params):
 
 
 def setup_manifest(name, project_type_name, chosen_params):
-    source = {
-        'context': '.',
-        'project_type': project_type_name
-    }
-
-    source.update(chosen_params)
-    manifest = {
-        'kind': 'ExternalService',
-        'name': name,
-        'spec': {
-            'source': source,
-            'port': 80,
-            'image_pull_policy': 'Always'
+    manifest_builder = manifest_builders.get(project_type_name, None)
+    if manifest_builder is None:
+        source = {
+            'context': '.',
+            'project_type': project_type_name
         }
-    }
+
+        source.update(chosen_params)
+        manifest = {
+            'kind': 'ExternalService',
+            'name': name,
+            'spec': {
+                'source': source,
+                'port': 80,
+                'image_pull_policy': 'Always'
+            }
+        }
+    else:
+        manifest = manifest_builder(name, project_type_name, chosen_params)
 
     manifest_repository = ConfigRepository(os.path.join(os.getcwd(), 'fandogh.yml'), manifest)
     manifest_repository.save()
