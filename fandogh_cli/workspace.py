@@ -68,4 +68,3 @@ class Workspace:
                         debug('{} filtered out.'.format(file_path))
                         continue
                     ziph.write(os.path.join(self.context, file_path), arcname=file_path)
-                    print('result', os.path.join(self.context, file_path), file_path)
