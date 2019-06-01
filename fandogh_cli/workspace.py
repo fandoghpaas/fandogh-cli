@@ -12,7 +12,7 @@ class Workspace:
         self.path = workspace_config.get('path', os.getcwd())
         if context and context != '.':
             self.path = os.path.abspath(os.path.join(self.path, context))
-        self.context = context
+        self.context = context or '.'
 
         if not os.path.exists(self.path):
             raise ValidationException('No directory or path with path {} exists!'.format(self.path))
