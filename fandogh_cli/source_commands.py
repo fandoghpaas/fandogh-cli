@@ -40,7 +40,7 @@ def init(name):
 
     initialize_project(name, project_type, chosen_params)
     click.echo(format_text('Your source has been initialized.\n'
-                           'Please consire to run `fandogh source run` command whenever you are going to deploy your changes',
+                           'Please consider to run `fandogh source run` command whenever you are going to deploy your changes',
                            TextStyle.OKGREEN))
 
 
