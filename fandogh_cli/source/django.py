@@ -37,7 +37,7 @@ def requirements_hint():
 
 def build_manifest(name, project_type_name, chosen_params):
     source = {
-        'context': '.',
+        'context': chosen_params.get('context', '.'),
         'project_type': project_type_name,
     }
     source.update(chosen_params)

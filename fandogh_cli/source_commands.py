@@ -29,7 +29,7 @@ def init(name):
     if project_type_hint:
         project_type_hint()
 
-    chosen_params = {}
+    chosen_params = {'context': click.prompt('The context directory', default='.')}
     if project_type.get('parameters', None):
 
         for param in project_type.get('parameters'):
@@ -97,7 +97,7 @@ def run():
 
         if details.get('state') == 'RUNNING':
             present_service_detail(details)
-            # click.echo(message)
+            click.echo(format_text("You project deployed successfully.\nWill be available in a few seconds via domains you setup.", TextStyle.OKGREEN))
             sys.exit(0)
 
         elif details.get('state') == 'UNSTABLE':
@@ -132,7 +132,7 @@ def setup_manifest(name, project_type_name, chosen_params):
     manifest_builder = manifest_builders.get(project_type_name, None)
     if manifest_builder is None:
         source = {
-            'context': '.',
+            'context': chosen_params.get('context', '.'),
             'project_type': project_type_name
         }
 
