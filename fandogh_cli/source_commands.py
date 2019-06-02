@@ -124,8 +124,6 @@ def prompt_project_types(project_types):
 def initialize_project(name, project_type, chosen_params):
     project_type_name = project_type['name']
     setup_manifest(name, project_type_name, chosen_params)
-    if project_type_name == 'static_website':
-        setup_sample(name, project_type_name, chosen_params)
 
 
 def setup_manifest(name, project_type_name, chosen_params):
@@ -151,22 +149,6 @@ def setup_manifest(name, project_type_name, chosen_params):
 
     manifest_repository = ConfigRepository(os.path.join(os.getcwd(), 'fandogh.yml'), manifest)
     manifest_repository.save()
-
-
-def setup_sample(name, project_type_name, chosen_params):
-    with open('index.html', 'w') as sample:
-        sample.write('''
-        <html>
-            <head>
-                <title> Welcome to {}</title>
-            </head>
-            <body>
-            Project {}
-            </br>
-            Powered by Fandogh 
-            </body>
-        </html>
-        '''.format(name, name))
 
 
 source.add_command(init)
