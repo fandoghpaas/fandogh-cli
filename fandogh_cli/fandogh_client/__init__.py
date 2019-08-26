@@ -363,6 +363,14 @@ def dump_manifest(service_name):
         return response.json()['data']
 
 
+def request_service_history(service_name):
+    response = get_session().get(base_services_url + '/{}/history'.format(service_name))
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        return response.json()
+
+
 '''
 Volume Requests Section
 

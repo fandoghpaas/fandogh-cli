@@ -275,6 +275,23 @@ def service_dump(name):
     click.echo(yaml.safe_dump(dump_manifest(name), default_flow_style=False))
 
 
+@click.command('history', cls=FandoghCommand)
+@click.option('-s', '--service', '--name','name', prompt='Service name')
+def service_history(name):
+    """List of Service Deployments"""
+    service_histories = request_service_history(name)
+    table = present(lambda: service_histories,
+                    renderer='table',
+                    headers=['History ID', 'Service Name', 'Date Created', 'Manifest'],
+                    columns=['id', 'name', 'created_at', 'manifest'])
+    if table:
+        click.echo(table)
+    else:
+        click.echo('There is no record of your service deployments available.')
+        # click.echo('https://docs.fandogh.cloud/docs/services.html\n')
+
+
+
 service.add_command(deploy)
 service.add_command(service_apply)
 service.add_command(service_list)
@@ -282,3 +299,4 @@ service.add_command(service_destroy)
 service.add_command(service_logs)
 service.add_command(service_details)
 service.add_command(service_dump)
+service.add_command(service_history)
