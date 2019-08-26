@@ -275,6 +275,11 @@ def service_dump(name):
     click.echo(yaml.safe_dump(dump_manifest(name), default_flow_style=False))
 
 
+@click.group('history')
+def history():
+    """Service History Commands"""
+
+
 @click.command('history', cls=FandoghCommand)
 @click.option('-s', '--service', '--name','name', prompt='Service name')
 def service_history(name):
@@ -282,7 +287,7 @@ def service_history(name):
     service_histories = request_service_history(name)
     table = present(lambda: service_histories,
                     renderer='table',
-                    headers=['History ID', 'Service Name', 'Date Created', 'Manifest'],
+                    headers=['History Version', 'Service Name', 'Date Created', 'Manifest'],
                     columns=['id', 'name', 'created_at', 'manifest'])
     if table:
         click.echo(table)
@@ -290,6 +295,16 @@ def service_history(name):
         click.echo('There is no record of your service deployments available.')
         # click.echo('https://docs.fandogh.cloud/docs/services.html\n')
 
+
+@click.command('delete', cls=FandoghCommand)
+@click.option('-s', '--service', '--name', 'name', prompt='Service Name')
+@click.option('--version', '-v', 'version', prompt='History Version')
+def delete_service_history(name, version):
+    """Delete Service History Item"""
+    if click.confirm(format_text('Deleting service history is a permanent action, are you sure you want to delete '
+                                 'this record?',
+                                 TextStyle.WARNING)):
+        click.echo(remove_service_history(name, version))
 
 
 service.add_command(deploy)
@@ -299,4 +314,7 @@ service.add_command(service_destroy)
 service.add_command(service_logs)
 service.add_command(service_details)
 service.add_command(service_dump)
-service.add_command(service_history)
+service.add_command(history)
+
+history.add_command(service_history)
+history.add_command(delete_service_history)

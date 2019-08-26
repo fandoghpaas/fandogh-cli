@@ -371,6 +371,15 @@ def request_service_history(service_name):
         return response.json()
 
 
+def remove_service_history(service_name, history_id):
+    response = get_session().delete(base_services_url + '/{}/history/{}'.format(service_name, history_id))
+
+    if response.status_code != 200:
+        return get_exception(response)
+    else:
+        return response.json().get('message', "`{}` service has been destroyed successfully".format(service_name))
+
+
 '''
 Volume Requests Section
 
