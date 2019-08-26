@@ -163,7 +163,8 @@ def create_version(image_name, version, workspace_path, monitor_callback):
         )
         m = encoder.MultipartEncoderMonitor(e, monitor_callback)
 
-        response = get_session().post(base_images_url + '/' + image_name + '/versions', data=m, headers={'Content-Type': m.content_type})
+        response = get_session().post(base_images_url + '/' + image_name + '/versions', data=m,
+                                      headers={'Content-Type': m.content_type})
 
         if response.status_code == 404:
             raise ResourceNotFoundError(
@@ -378,6 +379,16 @@ def remove_service_history(service_name, history_id):
         return get_exception(response)
     else:
         return response.json().get('message', "`{}` service has been destroyed successfully".format(service_name))
+
+
+def request_service_rollback(service_name, history_id):
+    body = dict({'service_name': service_name, 'history_id': history_id})
+    response = get_session().post(base_services_url + '/rollback', json=body)
+
+    if response.status_code != 200:
+        return get_exception(response)
+    else:
+        return response.json()
 
 
 '''
