@@ -383,7 +383,7 @@ def remove_service_history(service_name, history_id):
 
 def request_service_rollback(service_name, history_id):
     body = dict({'service_name': service_name, 'history_id': history_id})
-    response = get_session().post(base_services_url + '/rollback', json=body)
+    response = get_session().post(base_services_url + '/rollbacks', json=body)
 
     if response.status_code != 200:
         return get_exception(response)
