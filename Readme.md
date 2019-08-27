@@ -1,4 +1,4 @@
-[![PyPI version](https://badge.fury.io/py/fandogh_cli.svg)](https://badge.fury.io/py/fandogh_cli)
+ [![PyPI version](https://badge.fury.io/py/fandogh-cli.svg)](https://badge.fury.io/py/fandogh-cli)
 [![Downloads](http://pepy.tech/badge/fandogh-cli)](http://pepy.tech/project/fandogh-cli)
 [![Build Status](https://travis-ci.org/fandoghpaas/fandogh-cli.svg?branch=master)](https://travis-ci.org/fandoghpaas/fandogh-cli)
 
