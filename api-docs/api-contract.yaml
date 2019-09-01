@@ -562,7 +562,7 @@ paths:
           200:
             description: "Contains require messages"
             schema:
-              $ref: "#/definitions/MessageResponse"
+              $ref: "#/definitions/ServiceModel"
           400:
             description: "Invalid input"
             schema:
