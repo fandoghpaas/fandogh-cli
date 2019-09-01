@@ -479,6 +479,102 @@ paths:
           description: "Service not found"
           schema:
             $ref: "#/definitions/MessageResponse"
+            
+            
+  /services/{service-name}/history:
+    get:
+      tags:
+      - "Services"
+      description: "To get history of a service deployments"
+      operationId: "get deployment history of a service"
+      parameters:
+      - in: "path"
+        name: service-name
+        required: true
+        type: string
+      - in: "header"
+        name: "AUTHORIZATION"
+        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+        type: string
+        required: true
+      responses:
+        200:
+          $ref: '#/definitions/ServiceHistoryResponse'
+        401:
+          description: "Authentication required"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        404:
+          description: "Service not found"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+            
+  /services/{service-name}/history/{history-id}:
+    delete:
+      tags:
+      - "Services"
+      description: "To delete deployment history record of a service"
+      operationId: "delete deployment history record of a service"
+      parameters:
+      - in: "path"
+        name: service-name
+        required: true
+        type: string
+      - in: "path"
+        name: history-id
+        required: true
+        type: string
+      - in: "header"
+        name: "AUTHORIZATION"
+        description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+        type: string
+        required: true
+      responses:
+        200:
+          $ref: '#/definitions/MessageResponse'
+        401:
+          description: "Authentication required"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+        404:
+          description: "Service not found"
+          schema:
+            $ref: "#/definitions/MessageResponse"
+            
+  /services/rollbacks:
+    post:
+        tags:
+        - "Services"
+        description: "To rollback deployment of a service"
+        operationId: "rollback deployment of a service"
+        parameters:
+        - in: "body"
+          name: service
+          required: true
+          schema:
+            $ref: "#/definitions/ServiceRollbackModel"
+        - in: "header"
+          name: "AUTHORIZATION"
+          description: "in this format: JWT [USER-TOKEN],  where [USER-TOKEN] is user's token"
+          type: string
+          required: true
+        responses:
+          200:
+            description: "Contains require messages"
+            schema:
+              $ref: "#/definitions/ServiceModel"
+          400:
+            description: "Invalid input"
+            schema:
+              $ref: "#/definitions/ErrorResponse"
+          401:
+            description: "Authentication required"
+            schema:
+              $ref: "#/definitions/MessageResponse"
+          500:
+            description: "Server Error, Do not rely on response body"
+    
+    
   /managed-services:
     get:
       tags:
@@ -1160,6 +1256,24 @@ definitions:
         type: string
       logs:
         type: string
+  ServiceHistoryResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      manifest:
+        type: object
+      created_at:
+        type: string
+  ServiceRollbackModel:
+    type: object
+    properties:
+      service_name:
+        type: string
+      history_id:
+        type: integer
   ServiceDeploymentManifestModel:
     type: object
     description: "Service manifest, please refer to https://docs.fandogh.cloud/docs/service-manifest.html for manifest details"
