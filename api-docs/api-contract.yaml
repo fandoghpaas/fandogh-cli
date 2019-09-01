@@ -549,7 +549,7 @@ paths:
         operationId: "rollback deployment of a service"
         parameters:
         - in: "body"
-          name: service-name
+          name: service
           required: true
           schema:
             $ref: "#/definitions/ServiceRollbackModel"
