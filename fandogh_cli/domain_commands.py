@@ -30,7 +30,7 @@ def _verify_ownership(name):
 @click.option('--name', prompt='domain name', help='your domain name')
 def add(name):
     """
-    Upload project on the server
+    Add new domain
     """
     response = add_domain(name)
     if response['verified'] is True:
@@ -55,7 +55,7 @@ def add(name):
 @click.command('list', cls=FandoghCommand)
 def list():
     """
-    List images
+    List domains
     """
     table = present(lambda: list_domains(),
                     renderer='table',
