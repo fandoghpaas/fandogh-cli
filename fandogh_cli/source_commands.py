@@ -6,7 +6,7 @@ import json
 from .source import key_hints, manifest_builders
 from .presenter import present_service_detail
 from .image_commands import show_image_logs
-from .fandogh_client.source_client import upload_source, get_project_types
+from .fandogh_client.source_client import upload_source, get_project_types, create_deployment, get_deployment
 from .base_commands import FandoghCommand
 from .config import ConfigRepository
 from .fandogh_client import *
@@ -46,10 +46,12 @@ def init(name):
 
 @click.command('run', cls=FandoghCommand)
 def run():
+    # Creating workspace archive
     manifest_repository = ConfigRepository(os.path.join(os.getcwd(), 'fandogh.yml'))
     context_pth = manifest_repository.get('spec', {}).get('source', {}).get('context', '.')
     workspace = Workspace(context=context_pth)
 
+    # Uploading Archive
     bar = click.progressbar(length=int(workspace.zip_file_size_kb), label='Uploading the workspace')
     shared_values = {'diff': 0}
 
@@ -60,14 +62,38 @@ def run():
 
     try:
         name = manifest_repository.get('name')
-        upload_source(str(workspace),
-                      json.dumps(manifest_repository.get_dict()),
-                      monitor_callback)
+        deployment_detail = create_deployment(
+            service_name=name,
+            workspace_path=str(workspace),
+            manifest=json.dumps(manifest_repository.get_dict()),
+            monitor_callback=monitor_callback
+        )
         bar.render_finish()
     finally:
         workspace.clean()
 
-    show_image_logs(name.lower(), 'latest')
+    # Waiting for image to be built
+    deployment_detail = get_deployment(service_name=name, deployment_id=deployment_detail['id'])
+    if deployment_detail['state'] == "PENDING_IMAGE":
+        show_image_logs(name.lower(), deployment_detail['image_version']['version'])
+        # will exit(201) on failure
+
+    # Waiting for deployment validation
+
+    deployment_detail = get_deployment(service_name=name, deployment_id=deployment_detail['id'])
+    click.echo("Validating deployment request...")
+    while deployment_detail['state'] == "PENDING_SERVICE":
+        sleep(1)
+        deployment_detail = get_deployment(service_name=name, deployment_id=deployment_detail['id'])
+
+    # validation has been finished, now it's either DONE or FAILED
+
+    # Checking if validation FAILED
+    if deployment_detail['state'] == "FAILED":
+        click.echo("Deployment failed because: '{}' ".format(deployment_detail['failure_reason']))
+        exit(201)
+
+    # if it's not FAILED, it is DONE
 
     def hide_manifest_env_content(content):
         if 'spec' not in content:
