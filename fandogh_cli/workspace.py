@@ -19,7 +19,6 @@ class Workspace:
         self.zip_file_name = os.path.join(self.path, 'workspace.zip')
         files = os.listdir(self.path)
         self.has_docker_ignore = '.dockerignore' in files
-        self.has_fand_ignore = '.fandoghignore' in files
         self.has_docker_file = 'Dockerfile' in files
         self._create_zip_file()
         self.zip_file_size_kb = os.path.getsize(self.zip_file_name)
