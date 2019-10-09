@@ -43,18 +43,21 @@ class Workspace:
         return str(self)
 
     def get_ignored_entries(self):
-        files = ['.fandoghignore', 'dockerignore']
-        entries = None
-        expand_entries = None
+        files = ['.fandoghignore', '.dockerignore']
+        entries = []
         for file in files:
             if os.path.exists(os.path.join(self.path, file)):
                 with open(os.path.join(self.path, file), 'r') as f:
-                    entries = f.readlines()
+                    line = f.readline()
+                    cnt = 1
+                    while line:
+                        entries.append(line)
+                        line = f.readline()
+                        cnt += 1
+        expand_entries = []
+        for entry in entries:
+            expand_entries.append(entry.strip() + os.sep + '*')
         if entries:
-            expand_entries = []
-            for entry in entries:
-                expand_entries.append(entry.strip() + os.sep + '*')
-        if entries and expand_entries:
             return entries + expand_entries
         return []
 
