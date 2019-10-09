@@ -19,6 +19,7 @@ class Workspace:
         self.zip_file_name = os.path.join(self.path, 'workspace.zip')
         files = os.listdir(self.path)
         self.has_docker_ignore = '.dockerignore' in files
+        self.has_fand_ignore = '.fandoghignore' in files
         self.has_docker_file = 'Dockerfile' in files
         self._create_zip_file()
         self.zip_file_size_kb = os.path.getsize(self.zip_file_name)
@@ -43,26 +44,30 @@ class Workspace:
         return str(self)
 
     def get_ignored_entries(self):
-        if not self.has_docker_ignore:
-            return []
-        with open(os.path.join(self.path, '.dockerignore'), 'r') as file:
-            entries = file.readlines()
-        expand_entries = []
-        for entry in entries:
-            expand_entries.append(entry.strip() + os.sep + '*')
-
-        return entries + expand_entries
+        files = ['.fandoghignore', 'dockerignore']
+        entries = None
+        expand_entries = None
+        for file in files:
+            if os.path.exists(os.path.join(self.path, file)):
+                with open(os.path.join(self.path, file), 'r') as f:
+                    entries = f.readlines()
+        if entries:
+            expand_entries = []
+            for entry in entries:
+                expand_entries.append(entry.strip() + os.sep + '*')
+        if entries and expand_entries:
+            return entries + expand_entries
+        return []
 
     def zipdir(self, path, ziph):
         ignored_entries = self.get_ignored_entries()
         ignored_entries.append('*dockerignore')
+        ignored_entries.append('*fandoghignore')
         debug(ignored_entries)
         for root, dirs, files in os.walk(path):
             for file in files:
                 if file != 'workspace.zip':
-
                     file_path = os.path.join(os.path.relpath(root, path), file)
-
                     if file.lower() != "dockerfile" and any(
                             fnmatch(file_path, ignore.strip()) for ignore in ignored_entries):
                         debug('{} filtered out.'.format(file_path))
