@@ -26,7 +26,12 @@ def init(name):
     """Initializes a project based on the selected framework"""
     service_name_pattern = re.compile("^([a-z]+(-*[a-z0-9]+)*){1,100}$")
     if not service_name_pattern.match(name):
-        raise BaseException('manifest.name:service names must match regex \"[a-z]([-a-z0-9]*[a-z0-9])?\" ''and length lower than 100 char')
+        click.echo(
+            format_text(
+                'manifest.name:service names must match regex "[a-z]([-a-z0-9]*[a-z0-9])?" '
+                'and length lower than 100 char.',
+                TextStyle.FAIL), err=True)
+        return
 
     project_types = get_project_types()
     project_type = prompt_project_types(project_types)
