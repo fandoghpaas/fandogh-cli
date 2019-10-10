@@ -12,6 +12,7 @@ from .config import ConfigRepository
 from .fandogh_client import *
 from .workspace import Workspace
 import sys
+import re
 
 
 @click.group("source")
@@ -23,6 +24,10 @@ def source():
 @click.option('-n', '--name', 'name', prompt='Service Name')
 def init(name):
     """Initializes a project based on the selected framework"""
+    service_name_pattern = re.compile("^([a-z]+(-*[a-z0-9]+)*){1,100}$")
+    if not service_name_pattern.match(name):
+        raise BaseException('manifest.name:service names must match regex \"[a-z]([-a-z0-9]*[a-z0-9])?\" ''and length lower than 100 char')
+
     project_types = get_project_types()
     project_type = prompt_project_types(project_types)
     project_type_hint = key_hints.get(project_type['name'])
@@ -97,7 +102,9 @@ def run():
 
         if details.get('state') == 'RUNNING':
             present_service_detail(details)
-            click.echo(format_text("You project deployed successfully.\nWill be available in a few seconds via domains you setup.", TextStyle.OKGREEN))
+            click.echo(format_text(
+                "You project deployed successfully.\nWill be available in a few seconds via domains you setup.",
+                TextStyle.OKGREEN))
             sys.exit(0)
 
         elif details.get('state') == 'UNSTABLE':
