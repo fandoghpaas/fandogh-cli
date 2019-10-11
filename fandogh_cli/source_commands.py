@@ -2,7 +2,7 @@ from time import sleep
 
 import yaml
 import json
-
+import os
 from .source import key_hints, manifest_builders
 from .presenter import present_service_detail
 from .image_commands import show_image_logs
@@ -39,6 +39,8 @@ def init(name):
             chosen_params[param['key']] = click.prompt(param['name'], default=param.get('default', None))
 
     initialize_project(name, project_type, chosen_params)
+    create_fandoghignore_file(project_type.get('name'))
+
     click.echo(format_text('Your source has been initialized.\n'
                            'Please consider to run `fandogh source run` command whenever you are going to deploy your changes',
                            TextStyle.OKGREEN))
@@ -149,6 +151,52 @@ def setup_manifest(name, project_type_name, chosen_params):
 
     manifest_repository = ConfigRepository(os.path.join(os.getcwd(), 'fandogh.yml'), manifest)
     manifest_repository.save()
+
+
+project_type_ignore_dict = {
+    'django': ['*.log', '*.pot', '*.pyc', '__pycache__/', 'local_settings.py', '.env', 'db.sqlite3', '*.mo', '*.pot'],
+    'laravel': [
+        '/node_modules', '/public/hot', '/public/storage', '/storage/*.key', '/vendor', '.env', '.env.backup',
+        '.phpunit.result.cache', 'Homestead.json', 'Homestead.yaml', 'npm-debug.log', 'yarn - error.log'],
+    'static_website': ['.tern-port', '.dynamodb/', '.fusebox/', '.serverless/', 'serverless', 'public', '.cache/',
+                       '.nuxt',
+                       '.next', '.cache', '.env.test', '.env', '.yarn-integrity', '*.tgz', '.node_repl_history',
+                       '.rts2_cache_umd/', '.rts2_cache_es/', '.rts2_cache_cjs/', '.rpt2_cache/', '.eslintcache',
+                       '.npm',
+                       '*.tsbuildinfo', 'typings/', 'jspm_packages/', 'build/Release', '.lock-wscript',
+                       'bower_components',
+                       '.grunt', '.nyc_output', '*.lcov', 'coverage', 'lib-cov', '*.pid.lock', '*.seed', '*.pid',
+                       'pids',
+                       'logs', '*.log', 'npm-debug.log*', 'yarn-debug.log*', 'yarn-error.log*', 'lerna-debug.log*'],
+    'aspnetcore': ['.vs/', '[Dd]ebug/', '[Dd]ebugPublic/', '[Rr]elease/', '[Rr]eleases/', 'x64/', 'x86/', 'build/',
+                   'bld/',
+                   '[Bb]in/', '[Oo]bj/', '[Oo]ut/', 'msbuild.log', 'msbuild.err', 'msbuild.wrn', '.idea', '*.pyc',
+                   '.vscode', 'nupkg/'],
+    'nodejs': ['.tern-port', '.dynamodb/', '.fusebox/', '.serverless/', 'serverless', 'public', '.cache/', '.nuxt',
+               '.next', '.cache', '.env.test', '.env', '.yarn-integrity', '*.tgz', '.node_repl_history',
+               '.rts2_cache_umd/', '.rts2_cache_es/', '.rts2_cache_cjs/', '.rpt2_cache/', '.eslintcache', '.npm',
+               '*.tsbuildinfo', 'typings/', 'jspm_packages/', 'build/Release', '.lock-wscript', 'bower_components',
+               '.grunt', '.nyc_output', '*.lcov', 'coverage', 'lib-cov', '*.pid.lock', '*.seed', '*.pid', 'pids',
+               'logs', '*.log', 'npm-debug.log*', 'yarn-debug.log*', 'yarn-error.log*', 'lerna-debug.log*'],
+    'spring_boot': [
+        '*.iml', '*.ipr', '*.iws', '*.jar', '*.sw?', '*~', '.#*', '.*.md.html', '.DS_Store', '.classpath',
+        '.factorypath', '.gradle', '.idea', '.metadata', '.project', '.recommenders', '.settings',
+        '.springBeans', '/build', '/code', 'MANIFEST.MF', '_site/', 'activemq-data', 'bin', 'build', 'build.log',
+        'dependency-reduced-pom.xml', 'dump.rdb', 'interpolated*.xml', 'lib/', 'manifest.yml', 'overridedb.*',
+        'target', 'transaction-logs', '.flattened-pom.xml', 'secrets.yml', '.gradletasknamecache', '.sts4-cache']
+}
+
+
+def create_fandoghignore_file(project_name):
+    exist_ignore_list = []
+    if os.path.exists('.fandoghignore'):
+        exist_ignore_list = [line.rstrip() for line in open('.fandoghignore')]
+        os.remove('.fandoghignore')
+    total_ignore_list = exist_ignore_list + project_type_ignore_dict.get(project_name)
+    unique_ignore_list = set(total_ignore_list)
+    with open('.fandoghignore', 'w+') as file:
+        for item in unique_ignore_list:
+            file.write("{}\n".format(item))
 
 
 source.add_command(init)
