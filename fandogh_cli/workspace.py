@@ -18,7 +18,6 @@ class Workspace:
             raise ValidationException('No directory or path with path {} exists!'.format(self.path))
         self.zip_file_name = os.path.join(self.path, 'workspace.zip')
         files = os.listdir(self.path)
-        self.has_docker_ignore = '.dockerignore' in files
         self.has_docker_file = 'Dockerfile' in files
         self._create_zip_file()
         self.zip_file_size_kb = os.path.getsize(self.zip_file_name)
@@ -43,10 +42,13 @@ class Workspace:
         return str(self)
 
     def get_ignored_entries(self):
-        if not self.has_docker_ignore:
-            return []
-        with open(os.path.join(self.path, '.dockerignore'), 'r') as file:
-            entries = file.readlines()
+        ignore_files = ('.dockerignore', '.fandoghignore')
+        entries = []
+        for ignore_file in ignore_files:
+            ignore_file_path = os.path.join(self.path, ignore_file)
+            if os.path.exists(ignore_file_path):
+                with open(ignore_file_path, 'r') as file:
+                    entries = entries + file.readlines()
         expand_entries = []
         for entry in entries:
             expand_entries.append(entry.strip() + os.sep + '*')
