@@ -13,10 +13,11 @@ def managed_service():
 @click.argument('version', nargs=1)
 @click.option('-c', '--config', 'configs', help='Managed service configuration (format: VARIABLE_NAME=VARIABLE_VALUE)',
               multiple=True)
-def deploy(name, version, configs):
+@click.option('-m', '--memory', 'memory', help='Managed service memory', default='200Mi')
+def deploy(name, version, configs, memory):
     """Deploy Managed Service"""
     try:
-        response = deploy_manifest(_generate_managed_manifest(name, version, configs))
+        response = deploy_manifest(_generate_managed_manifest(name, version, configs, memory))
         help_message = response.get("help_message", None)
         if help_message:
             click.echo(help_message)
@@ -49,7 +50,7 @@ def help():
             click.echo("\t\t. {}:\t{}".format(parameter_name.ljust(20), description))
 
 
-def _generate_managed_manifest(service_type, version, config):
+def _generate_managed_manifest(service_type, version, config, memory):
     manifest = dict()
     manifest['kind'] = 'ManagedService'
 
@@ -66,6 +67,7 @@ def _generate_managed_manifest(service_type, version, config):
             param_list.append({'name': key, 'value': service_parameters[key]})
 
     spec['parameters'] = param_list
+    spec['resources'] = {'memory': memory}
     manifest['spec'] = spec
     return manifest
 

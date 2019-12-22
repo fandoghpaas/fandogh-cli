@@ -142,12 +142,13 @@ def service_destroy(service_name):
 @click.option('--name', 'service_name', prompt='Service name', help="Service name")
 @click.option('--follow', '-f', 'follow', is_flag=True, default=False, help='Monitoring service real-time logs')
 @click.option('--max', '-m', 'max_logs', default=100, help='max log count from 100 to 2000')
-def service_logs(service_name, follow, max_logs):
+@click.option('--with-timestamp', 'with_timestamp', is_flag=True, default=False, help='enable timestamp for logs')
+def service_logs(service_name, follow, max_logs, with_timestamp):
     """Display service logs"""
     last_logged_time = 0
 
     while True:
-        logs_response = get_logs(service_name, last_logged_time, max_logs)
+        logs_response = get_logs(service_name, last_logged_time, max_logs, with_timestamp)
 
         if logs_response['logs']:
             click.echo(logs_response['logs'])
