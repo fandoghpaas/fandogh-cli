@@ -249,10 +249,11 @@ def get_token(username, password):
         return response.json()
 
 
-def get_logs(service_name, last_logged_time, max_logs):
+def get_logs(service_name, last_logged_time, max_logs, with_timestamp):
     response = get_session().get(base_services_url + '/' + service_name + '/logs',
                                  params={'last_logged_time': last_logged_time,
-                                         'max_logs': max_logs})
+                                         'max_logs': max_logs,
+                                         'with_timestamp': with_timestamp})
 
     if response.status_code == 200:
         return response.json()
