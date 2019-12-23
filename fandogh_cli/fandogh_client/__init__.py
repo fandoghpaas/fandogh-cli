@@ -301,7 +301,7 @@ def deploy_manifest(manifest):
                                   )
     if response.status_code != 200:
         if response.status_code == 400:
-            document = _get_manifest_document(list(response.json().keys())[0])
+            document = get_manifest_document(list(response.json().keys())[0])
             click.echo(format_text(document, TextStyle.WARNING))
         raise get_exception(response)
     else:
@@ -450,7 +450,7 @@ def list_volumes():
         return response.json()
 
 
-def _get_manifest_document(doc_key):
+def get_manifest_document(doc_key):
     token = get_stored_token()
     response = requests.get(base_schema_url + '/' + doc_key,
                             headers={'Authorization': 'JWT ' + token})
