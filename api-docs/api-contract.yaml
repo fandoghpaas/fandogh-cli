@@ -406,8 +406,7 @@ paths:
         type: string
         required: true
       responses:
-        200:
-          description: "service has been destroyed"
+        200:          
           schema:
             $ref: "#/definitions/ServiceModel"
         401:
