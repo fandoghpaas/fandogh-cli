@@ -166,9 +166,9 @@ def setup_manifest(name, project_type_name, chosen_params):
 
 
 project_type_ignore_dict = {
-    'django': ['*.log', '*.pot', '*.pyc', '__pycache__/', 'local_settings.py', '.env', 'db.sqlite3', '*.mo', '*.pot'],
+    'django': ['.git', '*.log', '*.pot', '*.pyc', '__pycache__/', 'local_settings.py', '.env', 'db.sqlite3', '*.mo', '*.pot'],
     'laravel': [
-        '/node_modules', '/public/hot', '/public/storage', '/storage/*.key', '/vendor', '.env', '.env.backup',
+        '.git', '/node_modules', '/public/hot', '/public/storage', '/storage/*.key', '/vendor', '.env', '.env.backup',
         '.phpunit.result.cache', 'Homestead.json', 'Homestead.yaml', 'npm-debug.log', 'yarn - error.log'],
     'static_website': ['.tern-port', '.dynamodb/', '.fusebox/', '.serverless/', 'serverless', 'public', '.cache/',
                        '.nuxt',
@@ -180,18 +180,18 @@ project_type_ignore_dict = {
                        '.grunt', '.nyc_output', '*.lcov', 'coverage', 'lib-cov', '*.pid.lock', '*.seed', '*.pid',
                        'pids',
                        'logs', '*.log', 'npm-debug.log*', 'yarn-debug.log*', 'yarn-error.log*', 'lerna-debug.log*'],
-    'aspnetcore': ['.vs/', '[Dd]ebug/', '[Dd]ebugPublic/', '[Rr]elease/', '[Rr]eleases/', 'x64/', 'x86/', 'build/',
+    'aspnetcore': ['.git', '.vs/', '[Dd]ebug/', '[Dd]ebugPublic/', '[Rr]elease/', '[Rr]eleases/', 'x64/', 'x86/', 'build/',
                    'bld/',
                    '[Bb]in/', '[Oo]bj/', '[Oo]ut/', 'msbuild.log', 'msbuild.err', 'msbuild.wrn', '.idea', '*.pyc',
                    '.vscode', 'nupkg/'],
-    'nodejs': ['.tern-port', '.dynamodb/', '.fusebox/', '.serverless/', 'serverless', 'public', '.cache/', '.nuxt',
+    'nodejs': ['.git', '.tern-port', '.dynamodb/', '.fusebox/', '.serverless/', 'serverless', 'public', '.cache/', '.nuxt',
                '.next', '.cache', '.env.test', '.env', '.yarn-integrity', '*.tgz', '.node_repl_history',
                '.rts2_cache_umd/', '.rts2_cache_es/', '.rts2_cache_cjs/', '.rpt2_cache/', '.eslintcache', '.npm',
                '*.tsbuildinfo', 'typings/', 'jspm_packages/', 'build/Release', '.lock-wscript', 'bower_components',
                '.grunt', '.nyc_output', '*.lcov', 'coverage', 'lib-cov', '*.pid.lock', '*.seed', '*.pid', 'pids',
                'logs', '*.log', 'npm-debug.log*', 'yarn-debug.log*', 'yarn-error.log*', 'lerna-debug.log*'],
     'spring_boot': [
-        '*.iml', '*.ipr', '*.iws', '*.jar', '*.sw?', '*~', '.#*', '.*.md.html', '.DS_Store', '.classpath',
+        '.git', '*.iml', '*.ipr', '*.iws', '*.jar', '*.sw?', '*~', '.#*', '.*.md.html', '.DS_Store', '.classpath',
         '.factorypath', '.gradle', '.idea', '.metadata', '.project', '.recommenders', '.settings',
         '.springBeans', '/build', '/code', 'MANIFEST.MF', '_site/', 'activemq-data', 'bin', 'build', 'build.log',
         'dependency-reduced-pom.xml', 'dump.rdb', 'interpolated*.xml', 'lib/', 'manifest.yml', 'overridedb.*',
