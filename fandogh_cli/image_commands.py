@@ -101,6 +101,9 @@ def publish(version, detach):
     """
     Publish new version of image
     """
+
+    # to implicitly check whether user's token is still valid or not
+    get_images()
     image_name = get_project_config().get('image.name')
     if not image_name:
         click.echo("It looks you are either not in a fandogh workspace or you didn't init yet.")

@@ -58,6 +58,8 @@ def init(name):
 
 @click.command('run', cls=FandoghCommand)
 def run():
+    # to implicitly check whether user's token is still valid or not
+    get_images()
     manifest_repository = ConfigRepository(os.path.join(os.getcwd(), 'fandogh.yml'))
     context_pth = manifest_repository.get('spec', {}).get('source', {}).get('context', '.')
     workspace = Workspace(context=context_pth)
