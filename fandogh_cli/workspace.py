@@ -50,6 +50,7 @@ class Workspace:
             if os.path.exists(ignore_file_path):
                 with open(ignore_file_path, 'r') as file:
                     entries = entries + file.readlines()
+        entries = self.add_custom_ignore_folder_to_entries(entries, [".git/", ".git"])
         expand_entries = []
         for entry in entries:
             expand_entries.append(entry.strip() + os.sep + '*')
@@ -71,3 +72,10 @@ class Workspace:
                         debug('{} filtered out.'.format(file_path))
                         continue
                     ziph.write(os.path.join(self.context, file_path), arcname=file_path)
+
+    @staticmethod
+    def add_custom_ignore_folder_to_entries(entries: list, ignore_folders: list) -> list:
+        for folder in ignore_folders:
+            if folder not in entries:
+                entries.append(folder)
+        return entries
