@@ -195,7 +195,8 @@ project_type_ignore_dict = {
                '.rts2_cache_umd/', '.rts2_cache_es/', '.rts2_cache_cjs/', '.rpt2_cache/', '.eslintcache', '.npm',
                '*.tsbuildinfo', 'typings/', 'jspm_packages/', 'build/Release', '.lock-wscript', 'bower_components',
                '.grunt', '.nyc_output', '*.lcov', 'coverage', 'lib-cov', '*.pid.lock', '*.seed', '*.pid', 'pids',
-               'logs', '*.log', 'npm-debug.log*', 'yarn-debug.log*', 'yarn-error.log*', 'lerna-debug.log*'],
+               'logs', '*.log', 'npm-debug.log*', 'yarn-debug.log*', 'yarn-error.log*', 'lerna-debug.log*',
+               'node_modules', 'node_modules/', ],
     'spring_boot': [
         '.git', '*.iml', '*.ipr', '*.iws', '*.jar', '*.sw?', '*~', '.#*', '.*.md.html', '.DS_Store', '.classpath',
         '.factorypath', '.gradle', '.idea', '.metadata', '.project', '.recommenders', '.settings',
