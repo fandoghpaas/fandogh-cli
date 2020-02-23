@@ -74,7 +74,7 @@ class Workspace:
                     ziph.write(os.path.join(self.context, file_path), arcname=file_path)
 
     @staticmethod
-    def add_custom_ignore_folder_to_entries(entries: list, ignore_folders: list) -> list:
+    def add_custom_ignore_folder_to_entries(entries, ignore_folders):
         for folder in ignore_folders:
             if folder not in entries:
                 entries.append(folder)
