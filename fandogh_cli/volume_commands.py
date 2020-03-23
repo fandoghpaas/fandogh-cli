@@ -103,11 +103,12 @@ def delete_volume(name):
   options:
   
   . --name or -n: this option is required and will be used as volume name
+  . --capacity or -c: this option is required and will be used as volume new size
   
 '''
 
 
-@click.command('delete', help='Resize specific volume capacity', cls=FandoghCommand)
+@click.command('resize', help='Resize volume capacity', cls=FandoghCommand)
 @click.option('--name', '-n', help='Name of the volume', prompt='Volume Name')
 @click.option('--capacity', '-c', help='New capacity of the volume', prompt='Volume New Capacity')
 def resize_volume(name, capacity):
