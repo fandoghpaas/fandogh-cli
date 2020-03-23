@@ -3,7 +3,7 @@ from fandogh_cli.utils import format_text, TextStyle
 
 from .presenter import present
 from .base_commands import FandoghCommand
-from .fandogh_client import create_volume_claim, delete_volume_claim, list_volumes
+from .fandogh_client import create_volume_claim, delete_volume_claim, list_volumes, resize_volume_claim
 
 '''
     This class is for volume commands
@@ -109,12 +109,13 @@ def delete_volume(name):
 
 @click.command('delete', help='Resize specific volume capacity', cls=FandoghCommand)
 @click.option('--name', '-n', help='Name of the volume', prompt='Volume Name')
-def resize_volume(name):
+@click.option('--capacity', '-c', help='New capacity of the volume', prompt='Volume New Capacity')
+def resize_volume(name, capacity):
     if click.confirm(format_text('Warning, resizing may take time and it\'s better to have backup before resizing '
                                  'volume. are you sure you want to continue?',
                                  TextStyle.WARNING)):
         click.echo('Volume resizing may take some times, please wait...')
-        click.echo(resize_volume_claim(name))
+        click.echo(resize_volume_claim(name, capacity))
 
 
 '''
