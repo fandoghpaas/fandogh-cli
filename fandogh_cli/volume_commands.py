@@ -94,6 +94,31 @@ def delete_volume(name):
 
 '''
   Fandogh user calls this cli command
+  in order to resize an existing volume capacity.
+  
+  command name:
+  
+  - resize
+  
+  options:
+  
+  . --name or -n: this option is required and will be used as volume name
+  
+'''
+
+
+@click.command('delete', help='Resize specific volume capacity', cls=FandoghCommand)
+@click.option('--name', '-n', help='Name of the volume', prompt='Volume Name')
+def resize_volume(name):
+    if click.confirm(format_text('Warning, resizing may take time and it\'s better to have backup before resizing '
+                                 'volume. are you sure you want to continue?',
+                                 TextStyle.WARNING)):
+        click.echo('Volume resizing may take some times, please wait...')
+        click.echo(resize_volume_claim(name))
+
+
+'''
+  Fandogh user calls this cli command
   in order to get the list of volumes available
   in her/his namespace
   
