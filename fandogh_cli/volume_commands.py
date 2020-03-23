@@ -148,5 +148,6 @@ def volume_list():
 
 
 volume.add_command(create_volume)
+volume.add_command(resize_volume)
 volume.add_command(delete_volume)
 volume.add_command(volume_list)
