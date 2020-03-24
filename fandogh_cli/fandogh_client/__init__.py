@@ -448,7 +448,7 @@ def delete_volume_claim(volume_name):
 
 def resize_volume_claim(volume_name, new_capacity):
     data = {'new_size': new_capacity}
-    response = get_session().post(base_volume_url + '/{}'.format(volume_name), data=data)
+    response = get_session().patch(base_volume_url + '/{}'.format(volume_name), data=data)
     if response.status_code != 200:
         raise get_exception(response)
     else:
