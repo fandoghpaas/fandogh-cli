@@ -112,11 +112,8 @@ def delete_volume(name):
 @click.option('--name', '-n', help='Name of the volume', prompt='Volume Name')
 @click.option('--capacity', '-c', help='New capacity of the volume', prompt='Volume New Capacity')
 def resize_volume(name, capacity):
-    if click.confirm(format_text('Warning, resizing may take time and it\'s better to have backup before resizing '
-                                 'volume. are you sure you want to continue?',
-                                 TextStyle.WARNING)):
-        click.echo('Volume resizing may take some times, please wait...')
-        click.echo(resize_volume_claim(name, capacity))
+    click.echo('Volume resizing may take some times, please wait...')
+    click.echo(resize_volume_claim(name, capacity))
 
 
 '''
