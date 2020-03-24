@@ -63,8 +63,8 @@ def create_volume(name, capacity, detach):
         click.echo('volume \'{}\' was built successfully and is ready to attach'.format(data.get('name')))
         table = present(lambda: [data],
                         renderer='table',
-                        headers=['Name', 'Status', 'Mounted To', 'Volume', 'Capacity', 'Creation Date'],
-                        columns=['name', 'status', 'mounted_to', 'volume', 'capacity', 'age'])
+                        headers=['Name', 'Status', 'Condition', 'Mounted To', 'Volume', 'Capacity', 'Creation Date'],
+                        columns=['name', 'status', 'condition', 'mounted_to', 'volume', 'capacity', 'age'])
         click.echo(table)
 
 
@@ -139,8 +139,8 @@ def resize_volume(name, capacity):
 def volume_list():
     table = present(lambda: list_volumes(),
                     renderer='table',
-                    headers=['Name', 'Status', 'Mounted To', 'Volume', 'Capacity', 'Creation Date'],
-                    columns=['name', 'status', 'mounted_to', 'volume', 'capacity', 'age'])
+                    headers=['Name', 'Status', 'Condition', 'Mounted To', 'Volume', 'Capacity', 'Creation Date'],
+                    columns=['name', 'status', 'condition', 'mounted_to', 'volume', 'capacity', 'age'])
 
     if table:
         click.echo(table)

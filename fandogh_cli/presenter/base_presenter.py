@@ -24,8 +24,10 @@ def table_renderer(data, **kwargs):
         for cn in column_names:
             if cn == 'replicas':
                 row.append(len(data[index].get('pods')))
-            elif cn == 'status':
-                row.append(item['condition'] if item['condition'] else item['status'])
+            elif cn == 'condition':
+                row.append(
+                    'Resizing' if item['condition'] == 'Resizing' or item['condition'] == 'FileSystemResizePending' else
+                    'Operative')
             elif item.get(cn) is True:
                 row.append('Yes')
             elif item.get(cn) is False:
