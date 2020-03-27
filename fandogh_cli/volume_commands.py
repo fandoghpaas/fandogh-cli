@@ -3,7 +3,7 @@ from fandogh_cli.utils import format_text, TextStyle
 
 from .presenter import present
 from .base_commands import FandoghCommand
-from .fandogh_client import create_volume_claim, delete_volume_claim, list_volumes
+from .fandogh_client import create_volume_claim, delete_volume_claim, list_volumes, resize_volume_claim
 
 '''
     This class is for volume commands
@@ -63,8 +63,8 @@ def create_volume(name, capacity, detach):
         click.echo('volume \'{}\' was built successfully and is ready to attach'.format(data.get('name')))
         table = present(lambda: [data],
                         renderer='table',
-                        headers=['Name', 'Status', 'Mounted To', 'Volume', 'Capacity', 'Creation Date'],
-                        columns=['name', 'status', 'mounted_to', 'volume', 'capacity', 'age'])
+                        headers=['Name', 'Status', 'Condition', 'Mounted To', 'Volume', 'Capacity', 'Creation Date'],
+                        columns=['name', 'status', 'condition', 'mounted_to', 'volume', 'capacity', 'age'])
         click.echo(table)
 
 
@@ -94,6 +94,30 @@ def delete_volume(name):
 
 '''
   Fandogh user calls this cli command
+  in order to resize an existing volume capacity.
+  
+  command name:
+  
+  - resize
+  
+  options:
+  
+  . --name or -n: this option is required and will be used as volume name
+  . --capacity or -c: this option is required and will be used as volume new size
+  
+'''
+
+
+@click.command('resize', help='Resize volume capacity', cls=FandoghCommand)
+@click.option('--name', '-n', help='Name of the volume', prompt='Volume Name')
+@click.option('--capacity', '-c', help='New capacity of the volume', prompt='Volume New Capacity')
+def resize_volume(name, capacity):
+    click.echo('Volume resizing may take some times, please wait...')
+    click.echo(resize_volume_claim(name, capacity))
+
+
+'''
+  Fandogh user calls this cli command
   in order to get the list of volumes available
   in her/his namespace
   
@@ -112,8 +136,8 @@ def delete_volume(name):
 def volume_list():
     table = present(lambda: list_volumes(),
                     renderer='table',
-                    headers=['Name', 'Status', 'Mounted To', 'Volume', 'Capacity', 'Creation Date'],
-                    columns=['name', 'status', 'mounted_to', 'volume', 'capacity', 'age'])
+                    headers=['Name', 'Status', 'Condition', 'Mounted To', 'Volume', 'Capacity', 'Creation Date'],
+                    columns=['name', 'status', 'condition', 'mounted_to', 'volume', 'capacity', 'age'])
 
     if table:
         click.echo(table)
@@ -122,5 +146,6 @@ def volume_list():
 
 
 volume.add_command(create_volume)
+volume.add_command(resize_volume)
 volume.add_command(delete_volume)
 volume.add_command(volume_list)

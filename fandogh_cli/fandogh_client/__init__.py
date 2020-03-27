@@ -438,6 +438,24 @@ def delete_volume_claim(volume_name):
 
 
 '''
+  Request ro resize a volume with:
+  
+  - volume_name: name of the volume to resize
+  - new_capacity: new size for specified volume
+  
+'''
+
+
+def resize_volume_claim(volume_name, new_capacity):
+    data = {'capacity': new_capacity}
+    response = get_session().patch(base_volume_url + '/{}'.format(volume_name), data=data)
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        return response.json()['message']
+
+
+'''
   Request to fetch list of volumes for a user:
   
 '''
