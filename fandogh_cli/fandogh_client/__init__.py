@@ -438,9 +438,9 @@ def delete_volume_claim(volume_name):
 
 
 '''
-  Request ro resize a volume with:
+  Request ro expand a volume capacity with:
   
-  - volume_name: name of the volume to resize
+  - volume_name: name of the volume to expand
   - new_capacity: new size for specified volume
   
 '''

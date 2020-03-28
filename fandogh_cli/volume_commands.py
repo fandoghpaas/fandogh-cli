@@ -94,11 +94,11 @@ def delete_volume(name):
 
 '''
   Fandogh user calls this cli command
-  in order to resize an existing volume capacity.
+  in order to expand an existing volume capacity.
   
   command name:
   
-  - resize
+  - expand
   
   options:
   
@@ -108,11 +108,11 @@ def delete_volume(name):
 '''
 
 
-@click.command('resize', help='Resize volume capacity', cls=FandoghCommand)
+@click.command('expand', help='Expand volume capacity', cls=FandoghCommand)
 @click.option('--name', '-n', help='Name of the volume', prompt='Volume Name')
 @click.option('--capacity', '-c', help='New capacity of the volume', prompt='Volume New Capacity')
 def resize_volume(name, capacity):
-    click.echo('Volume resizing may take some times, please wait...')
+    click.echo('Volume expansion may take some times, please wait...')
     click.echo(resize_volume_claim(name, capacity))
 
 
