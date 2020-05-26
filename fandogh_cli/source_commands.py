@@ -189,7 +189,7 @@ project_type_ignore_dict = {
                    'bld/',
                    '[Bb]in/', '[Oo]bj/', '[Oo]ut/', 'msbuild.log', 'msbuild.err', 'msbuild.wrn', '.idea', '*.pyc',
                    '.vscode', 'nupkg/'],
-    'nodejs': ['.git', '.tern-port', '.dynamodb/', '.fusebox/', '.serverless/', 'serverless', 'public', '.cache/',
+    'nodejs': ['.git', '.tern-port', '.dynamodb/', '.fusebox/', '.serverless/', 'serverless', '.cache/',
                '.nuxt',
                '.next', '.cache', '.env.test', '.env', '.yarn-integrity', '*.tgz', '.node_repl_history',
                '.rts2_cache_umd/', '.rts2_cache_es/', '.rts2_cache_cjs/', '.rpt2_cache/', '.eslintcache', '.npm',
