@@ -169,9 +169,9 @@ def setup_manifest(name, project_type_name, chosen_params):
 
 project_type_ignore_dict = {
     'django': ['.git', '*.log', '*.pot', '*.pyc', '__pycache__/', 'local_settings.py', '.env', 'db.sqlite3', '*.mo',
-               '*.pot'],
+               '*.pot', 'venv', 'venv/'],
     'laravel': [
-        '.git', '/node_modules', '/public/hot', '/public/storage', '/storage/*.key', '/vendor', '.env', '.env.backup',
+        '.git', 'node_modules', '/public/hot', '/public/storage', '/storage/*.key', '/vendor', '.env', '.env.backup',
         '.phpunit.result.cache', 'Homestead.json', 'Homestead.yaml', 'npm-debug.log', 'yarn - error.log',
         'node_modules', 'node_modules/', 'vendor', 'vendor/'],
     'static_website': ['.tern-port', '.dynamodb/', '.fusebox/', '.serverless/', 'serverless', 'public', '.cache/',
