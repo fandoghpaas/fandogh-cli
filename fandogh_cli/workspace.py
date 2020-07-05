@@ -1,5 +1,5 @@
 import os
-import zipfile
+import tarfile
 from fnmatch import fnmatch
 
 from .exceptions import ValidationException
@@ -16,25 +16,25 @@ class Workspace:
 
         if not os.path.exists(self.path):
             raise ValidationException('No directory or path with path {} exists!'.format(self.path))
-        self.zip_file_name = os.path.join(self.path, 'workspace.zip')
+        self.tar_file_name = os.path.join(self.path, 'workspace.tar.gz')
         files = os.listdir(self.path)
         self.has_docker_ignore = '.dockerignore' in files or '.fandoghignore' in files
         self.has_docker_file = 'Dockerfile' in files
-        self._create_zip_file()
-        self.zip_file_size_kb = os.path.getsize(self.zip_file_name)
-        self.zip_file_size = self.zip_file_size_kb / 1048576
+        self._create_tar_file()
+        self.tar_file_size_kb = os.path.getsize(self.tar_file_name)
+        self.tar_file_size = self.tar_file_size_kb / 1048576
 
-    def _create_zip_file(self):
-        zipf = zipfile.ZipFile(self.zip_file_name, 'w', zipfile.ZIP_DEFLATED)
-        self.zipdir(self.path, zipf)
-        zipf.close()
+    def _create_tar_file(self):
+        tarf = tarfile.TarFile(name=self.tar_file_name, mode='w')
+        self.tardir(self.path, tarf)
+        tarf.close()
 
     def clean(self):
-        if os.path.exists(self.zip_file_name):
-            os.remove(self.zip_file_name)
+        if os.path.exists(self.tar_file_name):
+            os.remove(self.tar_file_name)
 
     def __str__(self):
-        return self.zip_file_name
+        return self.tar_file_name
 
     def __repr__(self):
         return str(self)
@@ -57,13 +57,13 @@ class Workspace:
 
         return entries + expand_entries
 
-    def zipdir(self, path, ziph):
+    def tardir(self, path, tarh):
         ignored_entries = self.get_ignored_entries()
         ignored_entries.append('*dockerignore')
         debug(ignored_entries)
         for root, dirs, files in os.walk(path):
             for file in files:
-                if file != 'workspace.zip':
+                if file != 'workspace.tar.gz':
 
                     file_path = os.path.join(os.path.relpath(root, path), file)
 
@@ -71,7 +71,7 @@ class Workspace:
                             fnmatch(file_path, ignore.strip()) for ignore in ignored_entries):
                         debug('{} filtered out.'.format(file_path))
                         continue
-                    ziph.write(os.path.join(self.context, file_path), arcname=file_path)
+                    tarh.add(os.path.join(self.context, file_path), arcname=file_path)
 
     @staticmethod
     def add_custom_ignore_folder_to_entries(entries, ignore_folders):
