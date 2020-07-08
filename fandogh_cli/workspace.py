@@ -1,6 +1,6 @@
 import os
 import zipfile
-from fnmatch import fnmatch
+from fnmatch import fnmatch, fnmatchcase
 
 from .exceptions import ValidationException
 from .utils import debug
@@ -54,8 +54,12 @@ class Workspace:
         expand_entries = []
         for entry in entries:
             expand_entries.append(entry.strip() + os.sep + '*')
+        entries = entries + expand_entries
+        for index, entry in enumerate(entries):
+            if entry.startswith("/"):
+                entries[index] = entry[1:]
 
-        return entries + expand_entries
+        return entries
 
     def zipdir(self, path, ziph):
         ignored_entries = self.get_ignored_entries()
@@ -68,7 +72,7 @@ class Workspace:
                     file_path = os.path.join(os.path.relpath(root, path), file)
 
                     if file.lower() != "dockerfile" and any(
-                            fnmatch(file_path, ignore.strip()) for ignore in ignored_entries):
+                            fnmatchcase(file, ignore.strip()) for ignore in ignored_entries):
                         debug('{} filtered out.'.format(file_path))
                         continue
                     ziph.write(os.path.join(self.context, file_path), arcname=file_path)
