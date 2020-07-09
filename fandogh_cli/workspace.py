@@ -1,6 +1,6 @@
 import os
 import zipfile
-from fnmatch import fnmatch, fnmatchcase
+from fnmatch import fnmatch
 
 from .exceptions import ValidationException
 from .utils import debug
@@ -72,7 +72,7 @@ class Workspace:
                     file_path = os.path.join(os.path.relpath(root, path), file)
 
                     if file.lower() != "dockerfile" and any(
-                            fnmatch(file, ignore.strip()) for ignore in ignored_entries):
+                            fnmatch(file_path, ignore.strip()) for ignore in ignored_entries):
                         debug('{} filtered out.'.format(file_path))
                         continue
                     ziph.write(os.path.join(self.context, file_path), arcname=file_path)
