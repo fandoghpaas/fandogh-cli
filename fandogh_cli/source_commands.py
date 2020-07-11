@@ -64,7 +64,7 @@ def run():
     context_pth = manifest_repository.get('spec', {}).get('source', {}).get('context', '.')
     workspace = Workspace(context=context_pth)
 
-    bar = click.progressbar(length=int(workspace.zip_file_size_kb), label='Uploading the workspace')
+    bar = click.progressbar(length=int(workspace.tar_file_size_kb), label='Uploading the workspace')
     shared_values = {'diff': 0}
 
     def monitor_callback(monitor):
