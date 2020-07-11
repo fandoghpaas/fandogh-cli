@@ -54,8 +54,12 @@ class Workspace:
         expand_entries = []
         for entry in entries:
             expand_entries.append(entry.strip() + os.sep + '*')
+        entries = entries + expand_entries
+        for index, entry in enumerate(entries):
+            if entry.startswith("/"):
+                entries[index] = entry[1:]
 
-        return entries + expand_entries
+        return entries
 
     def zipdir(self, path, ziph):
         ignored_entries = self.get_ignored_entries()
