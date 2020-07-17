@@ -114,7 +114,7 @@ def publish(version, detach):
         else:
             return
     workspace = Workspace()
-    click.echo(message='workspace size is : {} MB'.format(round(workspace.zip_file_size)))
+    click.echo(message='workspace size is : {} MB'.format(round(workspace.tar_file_size)))
     if not workspace.has_docker_file:
         click.echo("In order to publish your image you must have a Dockerfile in the current directory")
         return

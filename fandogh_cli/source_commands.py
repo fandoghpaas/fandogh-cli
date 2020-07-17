@@ -63,11 +63,11 @@ def run():
     manifest_repository = ConfigRepository(os.path.join(os.getcwd(), 'fandogh.yml'))
     context_pth = manifest_repository.get('spec', {}).get('source', {}).get('context', '.')
     workspace = Workspace(context=context_pth)
-    click.echo(message='workspace size is : {} MB'.format(round(workspace.zip_file_size)))
-    if workspace.zip_file_size > max_workspace_size:
+    click.echo(message='workspace size is : {} MB'.format(round(workspace.tar_file_size)))
+    if workspace.tar_file_size > max_workspace_size:
         click.echo(format_text(
             "The workspace size should not be larger than {}MB, its {}MB.".format(max_workspace_size,
-                                                                                  round(workspace.zip_file_size, 2)),
+                                                                                  round(workspace.tar_file_size, 2)),
             TextStyle.WARNING
         ))
 
