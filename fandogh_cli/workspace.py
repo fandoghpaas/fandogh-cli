@@ -49,7 +49,7 @@ class Workspace:
             ignore_file_path = os.path.join(self.path, ignore_file)
             if os.path.exists(ignore_file_path):
                 with open(ignore_file_path, 'r') as file:
-                    entries = entries + file.readlines()
+                    entries = [line for line in file.readlines() if line.strip() and not line.startswith('#')]
         entries = self.add_custom_ignore_folder_to_entries(entries, [".git/", ".git"])
         expand_entries = []
         for entry in entries:
