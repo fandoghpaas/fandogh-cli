@@ -118,10 +118,10 @@ def publish(version, detach):
     if not workspace.has_docker_file:
         click.echo("In order to publish your image you must have a Dockerfile in the current directory")
         return
-    if workspace.zip_file_size > max_workspace_size:
+    if workspace.tar_file_size > max_workspace_size:
         click.echo(format_text(
             "The workspace size should not be larger than {}MB, its {}MB.".format(max_workspace_size,
-                                                                                  round(workspace.zip_file_size, 2)),
+                                                                                  round(workspace.tar_file_size, 2)),
             TextStyle.WARNING
         ))
 
@@ -132,7 +132,7 @@ def publish(version, detach):
                 "https://docs.docker.com/engine/reference/builder/#dockerignore-file]", TextStyle.BOLD
             ))
 
-    bar = click.progressbar(length=int(workspace.zip_file_size_kb), label='Uploading the workspace')
+    bar = click.progressbar(length=int(workspace.tar_file_size_kb), label='Uploading the workspace')
     shared_values = {'diff': 0}
 
     def monitor_callback(monitor):

@@ -71,7 +71,7 @@ def run():
             TextStyle.WARNING
         ))
 
-    bar = click.progressbar(length=int(workspace.zip_file_size_kb), label='Uploading the workspace')
+    bar = click.progressbar(length=int(workspace.tar_file_size_kb), label='Uploading the workspace')
     shared_values = {'diff': 0}
 
     def monitor_callback(monitor):
