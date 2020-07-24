@@ -25,7 +25,7 @@ class Workspace:
         self.tar_file_size = self.tar_file_size_kb / 1048576
 
     def _create_tar_file(self):
-        tarf = tarfile.TarFile(name=self.tar_file_name, mode='w')
+        tarf = tarfile.open(name=self.tar_file_name, mode='w:gz')
         self.tardir(self.path, tarf)
         tarf.close()
 
