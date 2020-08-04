@@ -16,16 +16,15 @@ def cluster():
 @click.option('--name', prompt='name', help="Enter name for cluster url")
 @click.option('--url', prompt='url', help="Enter cluster URL")
 def add(name, url):
-    old_clusters = get_cluster_config().get('clusters')
-    clusters_names = [d['name'] for d in old_clusters]
+    clusters_names = [d['name'] for d in clusters]
     if name in clusters_names:
         click.echo("This name is already exist first you have to delete it")
         return
-    if not old_clusters:
+    if not clusters:
         custom_dict = [dict(name=name, url=url, active=False),
                        *fandogh]
     else:
-        custom_dict = [dict(name=name, url=url, active=False), *old_clusters]
+        custom_dict = [dict(name=name, url=url, active=False), *clusters]
     get_cluster_config().set('clusters', custom_dict)
 
 
