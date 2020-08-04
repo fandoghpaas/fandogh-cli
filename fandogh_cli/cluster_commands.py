@@ -17,6 +17,10 @@ def cluster():
 @click.option('--url', prompt='url', help="Enter cluster URL")
 def add(name, url):
     old_clusters = get_cluster_config().get('clusters')
+    clusters_names = [d['name'] for d in old_clusters]
+    if name in clusters_names:
+        click.echo("This name is already exist first you have to delete it")
+        return
     if not old_clusters:
         custom_dict = [dict(name=name, url=url, active=False),
                        *fandogh]
