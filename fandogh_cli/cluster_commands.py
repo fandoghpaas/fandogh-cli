@@ -30,7 +30,7 @@ def add(name, url):
 
 @click.command("list", cls=FandoghCommand)
 def cluster_list():
-    if get_cluster_config().get('clusters') is None:
+    if clusters is None:
         get_cluster_config().set('clusters', fandogh)
     for zone in get_cluster_config().get('clusters'):
         message = f' * {zone["name"]}'
@@ -39,7 +39,7 @@ def cluster_list():
         click.echo(message)
 
 
-@click.command('active',cls=FandoghCommand)
+@click.command('active', cls=FandoghCommand)
 def cluster_active():
     for idx, project_type in enumerate(clusters):
         click.echo('-[{}] {}'.format(idx + 1, project_type['name']))
@@ -53,7 +53,7 @@ def cluster_active():
     get_cluster_config().set('clusters', clusters)
 
 
-@click.command('delete',cls=FandoghCommand)
+@click.command('delete', cls=FandoghCommand)
 def cluster_delete():
     for idx, project_type in enumerate(clusters):
         click.echo('-[{}] {}'.format(idx + 1, project_type['name']))
@@ -63,10 +63,10 @@ def cluster_delete():
                                       )
     selected_cluster = clusters[int(cluster_name_index) - 1]
     if selected_cluster['active']:
-        click.echo("Pay Attention this cluster is ACTIVE you have to change active cluster then try again ")
+        click.echo("Pay Attention this cluster is ACTIVE you have to change active cluster then try again!")
         return
     if selected_cluster['name'] == 'fandogh':
-        click.echo("You can not delete fandogh cluster ")
+        click.echo("You can not delete fandogh cluster!")
         return
     del clusters[int(cluster_name_index) - 1]
     get_cluster_config().set('clusters', clusters)
