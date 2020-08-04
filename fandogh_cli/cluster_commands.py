@@ -4,6 +4,7 @@ from .base_commands import FandoghCommand
 from .config import *
 
 fandogh = [{'name': 'fandogh', 'url': 'https://api.fandogh.cloud', 'active': True}]
+clusters = get_cluster_config().get('clusters')
 
 
 @click.group("cluster")
@@ -36,19 +37,39 @@ def cluster_list():
 
 
 @click.command('active')
-@click.option('--name', prompt='name', help='Enter name of Cluster')
-def cluster_active(name):
-    clusters = get_cluster_config().get('clusters')
-    for index, zone in enumerate(clusters):
-        if zone['name'] == name:
-            zone.update(active=True)
-            [d.update(active=False) for d in clusters]
-            clusters[index]['active'] = True
-            get_cluster_config().set('clusters', clusters)
-            return
-    click.echo(message='This cluster Does not exist please select from cluster list')
+def cluster_active():
+    for idx, project_type in enumerate(clusters):
+        click.echo('-[{}] {}'.format(idx + 1, project_type['name']))
+    cluster_name_index = click.prompt('Please choose one of the clusters above',
+                                      type=click.Choice(list(map(lambda i: str(i), range(1, len(clusters) + 1)))),
+                                      show_choices=False,
+                                      )
+
+    [d.update(active=False) for d in clusters]
+    clusters[int(cluster_name_index) - 1]['active'] = True
+    get_cluster_config().set('clusters', clusters)
+
+
+@click.command('delete')
+def cluster_delete():
+    for idx, project_type in enumerate(clusters):
+        click.echo('-[{}] {}'.format(idx + 1, project_type['name']))
+    cluster_name_index = click.prompt('Please choose one of the clusters above',
+                                      type=click.Choice(list(map(lambda i: str(i), range(1, len(clusters) + 1)))),
+                                      show_choices=False,
+                                      )
+    selected_cluster = clusters[int(cluster_name_index) - 1]
+    if selected_cluster['active']:
+        click.echo("Pay Attention this cluster is ACTIVE you have to change active cluster then try again ")
+        return
+    if selected_cluster['name'] == 'fandogh':
+        click.echo("You can not delete fandogh cluster ")
+        return
+    del clusters[int(cluster_name_index) - 1]
+    get_cluster_config().set('clusters', clusters)
 
 
 cluster.add_command(add)
 cluster.add_command(cluster_list)
 cluster.add_command(cluster_active)
+cluster.add_command(cluster_delete)
