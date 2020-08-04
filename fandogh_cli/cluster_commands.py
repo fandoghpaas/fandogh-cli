@@ -40,7 +40,7 @@ def cluster_list():
         click.echo(message)
 
 
-@click.command('active')
+@click.command('active',cls=FandoghCommand)
 def cluster_active():
     for idx, project_type in enumerate(clusters):
         click.echo('-[{}] {}'.format(idx + 1, project_type['name']))
@@ -54,7 +54,7 @@ def cluster_active():
     get_cluster_config().set('clusters', clusters)
 
 
-@click.command('delete')
+@click.command('delete',cls=FandoghCommand)
 def cluster_delete():
     for idx, project_type in enumerate(clusters):
         click.echo('-[{}] {}'.format(idx + 1, project_type['name']))
