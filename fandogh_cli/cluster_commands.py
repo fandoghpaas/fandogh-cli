@@ -32,7 +32,7 @@ def add(name, url):
 def cluster_list():
     if clusters is None:
         set_cluster_config(fandogh)
-    for zone in clusters:
+    for zone in get_cluster_config():
         message = f' * {zone["name"]}'
         if zone['active']:
             message += ' (active)'
