@@ -4,7 +4,7 @@ from .base_commands import FandoghCommand
 from .config import *
 
 fandogh = [{'name': 'fandogh', 'url': 'https://api.fandogh.cloud', 'active': True}]
-clusters = get_cluster_config().get('clusters')
+clusters = get_cluster_config()
 
 
 @click.group("cluster")
@@ -25,14 +25,14 @@ def add(name, url):
                        *fandogh]
     else:
         custom_dict = [dict(name=name, url=url, active=False), *clusters]
-    get_cluster_config().set('clusters', custom_dict)
+    set_cluster_config(custom_dict)
 
 
 @click.command("list", cls=FandoghCommand)
 def cluster_list():
     if clusters is None:
-        get_cluster_config().set('clusters', fandogh)
-    for zone in get_cluster_config().get('clusters'):
+        set_cluster_config(fandogh)
+    for zone in clusters:
         message = f' * {zone["name"]}'
         if zone['active']:
             message += ' (active)'
@@ -50,7 +50,7 @@ def cluster_active():
 
     [d.update(active=False) for d in clusters]
     clusters[int(cluster_name_index) - 1]['active'] = True
-    get_cluster_config().set('clusters', clusters)
+    set_cluster_config(clusters)
 
 
 @click.command('delete', cls=FandoghCommand)
@@ -69,7 +69,7 @@ def cluster_delete():
         click.echo("You can not delete fandogh cluster!")
         return
     del clusters[int(cluster_name_index) - 1]
-    get_cluster_config().set('clusters', clusters)
+    set_cluster_config(clusters)
 
 
 cluster.add_command(add)
