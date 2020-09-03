@@ -61,3 +61,19 @@ def get_user_config():
             os.path.join(os.path.expanduser('~'), '.fandogh', 'credentials.yml')
         )
     return _config_repository['user']
+
+
+def cluster_config():
+    if 'cluster' not in _config_repository:
+        _config_repository['cluster'] = ConfigRepository(
+            os.path.join(os.path.expanduser('~'), '.fandogh', 'credentials.yml')
+        )
+    return _config_repository['cluster']
+
+
+def get_cluster_config():
+    return cluster_config().get('clusters')
+
+
+def set_cluster_config(clusters):
+    return cluster_config().set('clusters', clusters)

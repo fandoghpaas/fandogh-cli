@@ -3,10 +3,12 @@ import json
 import click
 import requests
 import os
-from fandogh_cli.config import get_user_config
+from fandogh_cli.config import get_user_config, get_cluster_config
 from fandogh_cli.utils import convert_datetime, parse_key_values, TextStyle, format_text
 
-fandogh_host = os.getenv('FANDOGH_HOST', 'https://api.fandogh.cloud')
+cluster_url = [key['url'] for key in get_cluster_config() if key['active']][
+    0] if get_cluster_config() else None
+fandogh_host = os.getenv('FANDOGH_HOST', cluster_url if cluster_url else 'https://api.fandogh.cloud')
 fandogh_ssh_host = os.getenv('FANDOGH_SSH_HOST', 'wss://ssh.fandogh.cloud')
 base_url = '%s/api/' % fandogh_host
 base_images_url = '%simages' % base_url

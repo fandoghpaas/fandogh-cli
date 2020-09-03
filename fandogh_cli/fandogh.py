@@ -12,6 +12,7 @@ from .presenter import present
 from .service_commands import service
 from .source_commands import source
 from .volume_commands import volume
+from .cluster_commands import cluster
 
 
 @click.group("cli")
@@ -52,6 +53,6 @@ base.add_command(secret)
 base.add_command(namespace)
 base.add_command(exec_command)
 base.add_command(volume)
-
+base.add_command(cluster)
 if __name__ == '__main__':
     base()
