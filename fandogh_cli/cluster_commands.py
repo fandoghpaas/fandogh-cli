@@ -33,7 +33,7 @@ def cluster_list():
     if clusters is None:
         set_cluster_config(fandogh)
     for zone in get_cluster_config():
-        message = f' * {zone["name"]}'
+        message = ' * {}'.format(zone["name"])
         if zone['active']:
             message += ' (active)'
         click.echo(message)
