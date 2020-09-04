@@ -25,7 +25,7 @@ class Workspace:
         self.tar_file_size = self.tar_file_size_kb / 1048576
 
     def _create_tar_file(self):
-        tarf = tarfile.TarFile(name=self.tar_file_name, mode='w')
+        tarf = tarfile.open(name=self.tar_file_name, mode='w:gz')
         self.tardir(self.path, tarf)
         tarf.close()
 
@@ -49,7 +49,7 @@ class Workspace:
             ignore_file_path = os.path.join(self.path, ignore_file)
             if os.path.exists(ignore_file_path):
                 with open(ignore_file_path, 'r') as file:
-                    entries = entries + file.readlines()
+                    entries = [line for line in file.readlines() if line.strip() and not line.startswith('#')]
         entries = self.add_custom_ignore_folder_to_entries(entries, [".git/", ".git"])
         expand_entries = []
         for entry in entries:
