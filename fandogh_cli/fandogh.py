@@ -13,6 +13,8 @@ from .service_commands import service
 from .source_commands import source
 from .volume_commands import volume
 from .cluster_commands import cluster
+from .config import get_user_token, get_cluster_config, set_cluster_config
+from .cluster_commands import fandogh as fandogh_cluster
 
 
 @click.group("cli")
@@ -29,6 +31,18 @@ def login(username, password):
 
     def handle_token():
         token_obj = get_token(username, password)
+        clusters = get_cluster_config()
+        if clusters is None:
+            fandogh_cluster[0]['token'] = token_obj['token']
+            set_cluster_config(fandogh_cluster)
+        else:
+            for index, cluster in enumerate(clusters):
+                if cluster['active'] and cluster.get('token') is None:
+                    del clusters[index]
+                    custom_dict = [
+                        dict(name=cluster['name'], url=cluster['url'], active=True, token=token_obj['token']),
+                        *clusters]
+                    set_cluster_config(custom_dict)
         get_user_config().set('token', token_obj['token'])
 
     message = present(lambda: handle_token(), post='Logged in successfully')
