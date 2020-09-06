@@ -1,4 +1,4 @@
-VERSION = "1.25.3"
+VERSION = "1.21.3"
 NAME = "fandogh_cli"
 
 if __name__ == "__main__":
