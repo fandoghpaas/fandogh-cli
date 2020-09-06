@@ -32,18 +32,19 @@ def login(username, password):
     def handle_token():
         token_obj = get_token(username, password)
         clusters = get_cluster_config()
+        get_user_config().set('token', token_obj['token'])
         if clusters is None:
             fandogh_cluster[0]['token'] = token_obj['token']
             set_cluster_config(fandogh_cluster)
         else:
             for index, cluster in enumerate(clusters):
-                if cluster['active'] and cluster.get('token') is None:
+                if cluster['active']:
                     del clusters[index]
                     custom_dict = [
                         dict(name=cluster['name'], url=cluster['url'], active=True, token=token_obj['token']),
                         *clusters]
                     set_cluster_config(custom_dict)
-        get_user_config().set('token', token_obj['token'])
+
 
     message = present(lambda: handle_token(), post='Logged in successfully')
 
