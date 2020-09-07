@@ -144,9 +144,10 @@ def get_images():
         return result
 
 
-def get_image_build(image_name, version, image_offset):
+def get_image_build(image_name, version, image_offset, with_timestamp):
     response = get_session().get(
-        base_images_url + '/' + image_name + '/versions/' + version + '/builds', params={'image_offset': image_offset})
+        base_images_url + '/' + image_name + '/versions/' + version + '/builds', params={'image_offset': image_offset,
+                                                                                         'with_timestamp': with_timestamp})
 
     if response.status_code != 200:
         raise get_exception(response)
