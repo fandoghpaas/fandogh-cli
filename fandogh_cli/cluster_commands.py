@@ -3,7 +3,7 @@ from .base_commands import FandoghCommand
 
 from .config import *
 
-fandogh = [{'name': 'fandogh', 'url': 'https://api.fandogh.cloud', 'active': True}]
+fandogh = [{'name': 'fandogh', 'url': 'fandogh.cloud', 'active': True}]
 clusters = get_cluster_config()
 
 

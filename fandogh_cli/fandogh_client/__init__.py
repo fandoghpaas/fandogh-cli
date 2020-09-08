@@ -7,9 +7,9 @@ from fandogh_cli.config import get_user_config, get_cluster_config, get_user_tok
 from fandogh_cli.utils import convert_datetime, parse_key_values, TextStyle, format_text
 
 cluster_url = [key['url'] for key in get_cluster_config() if key['active']][0] if get_cluster_config() else None
-fandogh_host = os.getenv('FANDOGH_HOST', cluster_url if cluster_url else 'https://api.fandogh.cloud')
-fandogh_ssh_host = os.getenv('FANDOGH_SSH_HOST', 'wss://ssh.fandogh.cloud')
-base_url = '%s/api/' % fandogh_host
+fandogh_host = os.getenv('FANDOGH_HOST', cluster_url if cluster_url else 'fandogh.cloud')
+fandogh_ssh_host = os.getenv('FANDOGH_SSH_HOST', 'wss://ssh.{}'.format(fandogh_host))
+base_url = "https://api.{}/api/".format(fandogh_host)
 base_images_url = '%simages' % base_url
 base_services_url = '%sservices' % base_url
 base_managed_services_url = '%smanaged-services' % base_url
