@@ -61,13 +61,13 @@ def list_images():
         click.echo('https://docs.fandogh.cloud/docs/images.html\n')
 
 
-def show_image_logs(image_name, version):
+def show_image_logs(image_name, version, with_timestamp):
     image_offset = 0
 
     if not image_name:
         image_name = get_project_config().get('image.name')
     while True:
-        response = get_image_build(image_name, version, image_offset)
+        response = get_image_build(image_name, version, image_offset, with_timestamp)
 
         image_offset = response.get('lines_count')
         logs = response.get('logs')
@@ -86,11 +86,13 @@ def show_image_logs(image_name, version):
 @click.option('-i', '--image', 'image', prompt='Image name', help='The image name',
               default=lambda: get_project_config().get('image.name'))
 @click.option('--version', '-v', prompt='Image version', help='your image version')
-def logs(image, version):
+@click.option('--with_timestamp', 'with_timestamp', is_flag=True, default=False,
+              help='timestamp for each line of image build process')
+def logs(image, version, with_timestamp):
     """
     Display image log
     """
-    show_image_logs(image, version)
+    show_image_logs(image, version, with_timestamp)
 
 
 @click.command("publish", cls=FandoghCommand)

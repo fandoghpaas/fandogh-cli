@@ -146,9 +146,10 @@ def get_images():
 
 
 @retry(stop_max_attempt_number=5, wait_fixed=5000)
-def get_image_build(image_name, version, image_offset):
+def get_image_build(image_name, version, image_offset, with_timestamp):
     response = get_session().get(
-        base_images_url + '/' + image_name + '/versions/' + version + '/builds', params={'image_offset': image_offset},
+        base_images_url + '/' + image_name + '/versions/' + version + '/builds', params={'image_offset': image_offset,
+                                                                                         'with_timestamp': with_timestamp},
         timeout=3.5)
 
     if response.status_code != 200:

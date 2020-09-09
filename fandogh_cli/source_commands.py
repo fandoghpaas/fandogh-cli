@@ -57,7 +57,9 @@ def init(name):
 
 
 @click.command('run', cls=FandoghCommand)
-def run():
+@click.option('--with_timestamp', 'with_timestamp', is_flag=True, default=False,
+              help='timestamp for each line of image build process')
+def run(with_timestamp):
     # to implicitly check whether user's token is still valid or not
     get_images()
     manifest_repository = ConfigRepository(os.path.join(os.getcwd(), 'fandogh.yml'))
@@ -88,7 +90,7 @@ def run():
     finally:
         workspace.clean()
 
-    show_image_logs(name.lower(), 'latest')
+    show_image_logs(name.lower(), 'latest', with_timestamp)
 
     def hide_manifest_env_content(content):
         if 'spec' not in content:
