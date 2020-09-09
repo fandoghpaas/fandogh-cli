@@ -5,6 +5,7 @@ import requests
 import os
 from fandogh_cli.config import get_user_config, get_cluster_config
 from fandogh_cli.utils import convert_datetime, parse_key_values, TextStyle, format_text
+from retrying import retry
 
 cluster_url = [key['url'] for key in get_cluster_config() if key['active']][
     0] if get_cluster_config() else None
@@ -144,9 +145,11 @@ def get_images():
         return result
 
 
+@retry(stop_max_attempt_number=5, wait_fixed=5000)
 def get_image_build(image_name, version, image_offset):
     response = get_session().get(
-        base_images_url + '/' + image_name + '/versions/' + version + '/builds', params={'image_offset': image_offset})
+        base_images_url + '/' + image_name + '/versions/' + version + '/builds', params={'image_offset': image_offset},
+        timeout=3.5)
 
     if response.status_code != 200:
         raise get_exception(response)
@@ -158,6 +161,7 @@ from requests_toolbelt.multipart import encoder
 
 
 def create_version(image_name, version, workspace_path, monitor_callback):
+
     with open(workspace_path, 'rb') as file:
         e = encoder.MultipartEncoder(
             fields={'version': version,
@@ -251,12 +255,14 @@ def get_token(username, password):
         return response.json()
 
 
+@retry(stop_max_attempt_number=3, wait_fixed=4000)
 def get_logs(service_name, last_logged_time, max_logs, with_timestamp, previous):
     response = get_session().get(base_services_url + '/' + service_name + '/logs',
                                  params={'last_logged_time': last_logged_time,
                                          'max_logs': max_logs,
                                          'previous': previous,
-                                         'with_timestamp': with_timestamp})
+                                         'with_timestamp': with_timestamp},
+                                 timeout=2.5)
 
     if response.status_code == 200:
         return response.json()
@@ -264,8 +270,9 @@ def get_logs(service_name, last_logged_time, max_logs, with_timestamp, previous)
         raise get_exception(response)
 
 
+@retry(stop_max_attempt_number=5, wait_fixed=5000)
 def get_details(service_name):
-    response = get_session().get(base_services_url + '/' + service_name)
+    response = get_session().get(base_services_url + '/' + service_name, timeout=3.5)
     if response.status_code != 200:
         raise get_exception(response)
     else:
