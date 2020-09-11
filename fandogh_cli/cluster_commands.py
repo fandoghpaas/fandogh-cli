@@ -16,6 +16,9 @@ def cluster():
 @click.option('--name', prompt='name', help="Enter name for cluster url")
 @click.option('--url', prompt='url', help="Enter cluster URL")
 def add(name, url):
+    if url.startswith("http"):
+        click.echo("Please enter URL without https or http just use domain url like 'FANDOGH.CLOUD'")
+        return
     clusters_names = [d['name'] for d in clusters]
     if name in clusters_names:
         click.echo("This name is already exist first you have to delete it")
