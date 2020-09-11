@@ -1,5 +1,5 @@
 import click
-from fandogh_cli.config import get_user_config, set_cluster_namespace
+from fandogh_cli.config import get_user_config, set_cluster_namespace,get_cluster_namespace
 
 from fandogh_cli.fandogh_client.namespace_client import *
 from .base_commands import FandoghCommand
@@ -14,7 +14,7 @@ def namespace():
 @click.command("list", cls=FandoghCommand)
 def list():
     namespaces = list_namespaces()
-    default_name_space = get_user_config().get('namespace', None)
+    default_name_space = get_cluster_namespace()
     if default_name_space is None and len(namespaces) > 1:
         click.echo(format_text(
             'You already have more than 1 namespace and none selected as default namespace.\n Please select a namespace as default one',
