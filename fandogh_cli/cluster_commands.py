@@ -27,7 +27,8 @@ def add(name, url):
         custom_dict = [dict(name=name, url=url, active=False),
                        fandogh[0]]
     else:
-        custom_dict = [dict(name=name, url=url, active=False)].extend(clusters)
+        custom_dict = [dict(name=name, url=url, active=False)]
+        custom_dict.extend(clusters)
     set_cluster_config(custom_dict)
 
 
