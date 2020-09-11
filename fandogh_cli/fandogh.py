@@ -42,9 +42,9 @@ def login(username, password):
                     del clusters[index]
                     custom_dict = [
                         dict(name=cluster['name'], url=cluster['url'], active=True, token=token_obj['token']),
-                        *clusters]
+                    ]
+                    custom_dict.extend(clusters)
                     set_cluster_config(custom_dict)
-
 
     message = present(lambda: handle_token(), post='Logged in successfully')
 

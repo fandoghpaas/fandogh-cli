@@ -1,5 +1,5 @@
 import click
-from fandogh_cli.config import get_user_config, set_cluster_namespace,get_cluster_namespace
+from fandogh_cli.config import get_user_config, set_cluster_namespace, get_cluster_namespace
 
 from fandogh_cli.fandogh_client.namespace_client import *
 from .base_commands import FandoghCommand

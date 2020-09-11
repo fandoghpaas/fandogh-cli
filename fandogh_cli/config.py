@@ -92,7 +92,8 @@ def set_cluster_token(token):
             del clusters[index]
             custom_dict = [
                 dict(name=cluster['name'], url=cluster['url'], active=True, token=token),
-                *clusters]
+            ]
+            custom_dict.extend(clusters)
             set_cluster_config(custom_dict)
 
 
@@ -109,8 +110,10 @@ def set_cluster_namespace(namespace):
             if cluster['active']:
                 token = cluster.get('token', None)
                 del clusters[index]
+                print(locals().get('clusters', None))
                 custom_dict = [
                     dict(name=cluster['name'], url=cluster['url'], active=True, token=token,
                          namespace=namespace),
-                    *clusters]
+                ]
+                custom_dict.extend(clusters)
                 set_cluster_config(custom_dict)

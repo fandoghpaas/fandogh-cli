@@ -17,7 +17,7 @@ def cluster():
 @click.option('--url', prompt='url', help="Enter cluster URL")
 def add(name, url):
     if url.startswith("http"):
-        click.echo("Please enter URL without https or http just use domain url like 'FANDOGH.CLOUD'")
+        click.echo("Please enter URL without https or http just use domain url like 'fandogh.cloud")
         return
     clusters_names = [d['name'] for d in clusters]
     if name in clusters_names:
@@ -25,9 +25,9 @@ def add(name, url):
         return
     if not clusters:
         custom_dict = [dict(name=name, url=url, active=False),
-                       *fandogh]
+                       fandogh[0]]
     else:
-        custom_dict = [dict(name=name, url=url, active=False), *clusters]
+        custom_dict = [dict(name=name, url=url, active=False)].extend(clusters)
     set_cluster_config(custom_dict)
 
 
