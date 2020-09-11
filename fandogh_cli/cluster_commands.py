@@ -22,9 +22,10 @@ def add(name, url):
         return
     if not clusters:
         custom_dict = [dict(name=name, url=url, active=False),
-                       *fandogh]
+                       fandogh[0]]
     else:
-        custom_dict = [dict(name=name, url=url, active=False), *clusters]
+        custom_dict = [dict(name=name, url=url, active=False)]
+        custom_dict.extend(clusters)
     set_cluster_config(custom_dict)
 
 
