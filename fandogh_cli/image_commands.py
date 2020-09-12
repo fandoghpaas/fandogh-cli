@@ -99,7 +99,9 @@ def logs(image, version, with_timestamp):
 @click.option('--version', '-v', prompt='Image version', help='your image version')
 @click.option('-d', 'detach', is_flag=True, default=False,
               help='detach terminal, by default the image build logs will be shown synchronously.')
-def publish(version, detach):
+@click.option('--with_timestamp', 'with_timestamp', is_flag=True, default=False,
+              help='timestamp for each line of image build process')
+def publish(version, detach, with_timestamp):
     """
     Publish new version of image
     """
@@ -151,7 +153,7 @@ def publish(version, detach):
     if detach:
         return
     else:
-        show_image_logs(image_name, version)
+        show_image_logs(image_name, version, with_timestamp)
 
 
 @click.command("versions", cls=FandoghCommand)
