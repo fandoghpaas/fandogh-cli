@@ -78,12 +78,18 @@ def get_user_token():
 clusters = get_user_config().get('clusters', None)
 
 
-def get_cluster_token():
+def get_active_cluster():
     if clusters:
         for index, cluster in enumerate(clusters):
             if cluster['active']:
-                if cluster.get('token', None):
-                    return cluster['token']
+                return cluster
+    return None
+
+
+def get_cluster_token():
+    if get_active_cluster():
+        return get_active_cluster().get('token', None)
+    return None
 
 
 def set_cluster_token(token):
@@ -98,10 +104,9 @@ def set_cluster_token(token):
 
 
 def get_cluster_namespace():
-    if clusters:
-        for index, cluster in enumerate(clusters):
-            if cluster['active']:
-                return cluster.get('namespace', None)
+    if get_active_cluster():
+        return get_active_cluster().get('namespace', None)
+    return None
 
 
 def set_cluster_namespace(namespace):
@@ -110,7 +115,6 @@ def set_cluster_namespace(namespace):
             if cluster['active']:
                 token = cluster.get('token', None)
                 del clusters[index]
-                print(locals().get('clusters', None))
                 custom_dict = [
                     dict(name=cluster['name'], url=cluster['url'], active=True, token=token,
                          namespace=namespace),
