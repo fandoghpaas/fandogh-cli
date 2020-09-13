@@ -1,5 +1,5 @@
 import click
-from fandogh_cli.config import get_user_config
+from fandogh_cli.config import get_user_config, set_cluster_namespace, get_cluster_namespace
 
 from fandogh_cli.fandogh_client.namespace_client import *
 from .base_commands import FandoghCommand
@@ -14,9 +14,11 @@ def namespace():
 @click.command("list", cls=FandoghCommand)
 def list():
     namespaces = list_namespaces()
-    default_name_space = get_user_config().get('namespace', None)
+    default_name_space = get_cluster_namespace()
     if default_name_space is None and len(namespaces) > 1:
-        click.echo(format_text('You already have more than 1 namespace and none selected as default namespace.\n Please select a namespace as default one', TextStyle.FAIL))
+        click.echo(format_text(
+            'You already have more than 1 namespace and none selected as default namespace.\n Please select a namespace as default one',
+            TextStyle.FAIL))
     click.echo('Your namespaces: ')
     for namespace in namespaces:
         message = ' * {}'.format(namespace['name'])
@@ -26,12 +28,13 @@ def list():
 
 
 @click.command("active", cls=FandoghCommand)
-@click.option('--name', '-n', 'name', prompt='Namespace name', help='Namespace name that should be default', default=None)
+@click.option('--name', '-n', 'name', prompt='Namespace name', help='Namespace name that should be default',
+              default=None)
 def active(name):
     namespaces = list_namespaces()
     if name in map(lambda n: n['name'], namespaces):
         click.echo("Setting the active namespace to {}".format(name))
-        get_user_config().set('namespace', name)
+        set_cluster_namespace(name)
     else:
         click.echo(format_text('Namespace not found', TextStyle.FAIL))
 

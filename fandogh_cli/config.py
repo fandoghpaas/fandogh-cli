@@ -63,17 +63,61 @@ def get_user_config():
     return _config_repository['user']
 
 
-def cluster_config():
-    if 'cluster' not in _config_repository:
-        _config_repository['cluster'] = ConfigRepository(
-            os.path.join(os.path.expanduser('~'), '.fandogh', 'credentials.yml')
-        )
-    return _config_repository['cluster']
-
-
 def get_cluster_config():
-    return cluster_config().get('clusters')
+    return get_user_config().get('clusters')
 
 
 def set_cluster_config(clusters):
-    return cluster_config().set('clusters', clusters)
+    return get_user_config().set('clusters', clusters)
+
+
+def get_user_token():
+    return get_cluster_token()
+
+
+clusters = get_user_config().get('clusters', None)
+
+
+def get_active_cluster():
+    if clusters:
+        for index, cluster in enumerate(clusters):
+            if cluster['active']:
+                return cluster
+    return None
+
+
+def get_cluster_token():
+    if get_active_cluster():
+        return get_active_cluster().get('token', None)
+    return None
+
+
+def set_cluster_token(token):
+    for index, cluster in enumerate(clusters):
+        if cluster['active']:
+            del clusters[index]
+            custom_dict = [
+                dict(name=cluster['name'], url=cluster['url'], active=True, token=token),
+            ]
+            custom_dict.extend(clusters)
+            set_cluster_config(custom_dict)
+
+
+def get_cluster_namespace():
+    if get_active_cluster():
+        return get_active_cluster().get('namespace', None)
+    return None
+
+
+def set_cluster_namespace(namespace):
+    if clusters:
+        for index, cluster in enumerate(clusters):
+            if cluster['active']:
+                token = cluster.get('token', None)
+                del clusters[index]
+                custom_dict = [
+                    dict(name=cluster['name'], url=cluster['url'], active=True, token=token,
+                         namespace=namespace),
+                ]
+                custom_dict.extend(clusters)
+                set_cluster_config(custom_dict)

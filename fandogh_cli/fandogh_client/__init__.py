@@ -3,15 +3,16 @@ import json
 import click
 import requests
 import os
-from fandogh_cli.config import get_user_config, get_cluster_config
+from fandogh_cli.config import get_user_config, get_cluster_config, get_user_token, get_cluster_namespace
 from fandogh_cli.utils import convert_datetime, parse_key_values, TextStyle, format_text
 from retrying import retry
 
-cluster_url = [key['url'] for key in get_cluster_config() if key['active']][
-    0] if get_cluster_config() else None
-fandogh_host = os.getenv('FANDOGH_HOST', cluster_url if cluster_url else 'https://api.fandogh.cloud')
-fandogh_ssh_host = os.getenv('FANDOGH_SSH_HOST', 'wss://ssh.fandogh.cloud')
-base_url = '%s/api/' % fandogh_host
+cluster_url = [key['url'] for key in get_cluster_config() if key['active']][0] if get_cluster_config() else None
+if cluster_url.startswith("https://api."):
+    cluster_url = cluster_url.replace("https://api.", "")
+fandogh_host = os.getenv('FANDOGH_HOST', cluster_url if cluster_url else 'fandogh.cloud')
+fandogh_ssh_host = os.getenv('FANDOGH_SSH_HOST', 'wss://ssh.{}'.format(fandogh_host))
+base_url = "https://api.{}/api/".format(fandogh_host)
 base_images_url = '%simages' % base_url
 base_services_url = '%sservices' % base_url
 base_managed_services_url = '%smanaged-services' % base_url
@@ -25,7 +26,7 @@ session = requests.Session()
 def get_session():
     session.headers.update({
         'Authorization': 'JWT ' + get_stored_token(),
-        'ACTIVE-NAMESPACE': get_user_config().get('namespace', None)
+        'ACTIVE-NAMESPACE': get_cluster_namespace()
     })
     return session
 
@@ -99,7 +100,7 @@ class CommandParameterException(Exception):
 
 
 def get_stored_token():
-    token_obj = get_user_config().get('token')
+    token_obj = get_user_token()
     if token_obj is None:
         raise AuthenticationError()
     return token_obj
