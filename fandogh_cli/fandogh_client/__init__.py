@@ -492,7 +492,8 @@ def get_manifest_document(doc_key):
 
 
 def get_fandogh_latest_version():
-    response = requests.get(base_url + "/api/latest-version", timeout=5)
+
+    response = requests.get(base_url + "/latest-version", timeout=5)
     if response.status_code != 200:
         return None
     else:
