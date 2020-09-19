@@ -15,7 +15,7 @@ setup(
                       "pyOpenSSL",
                       "requests[security]",
                       "requests-toolbelt",
-                      "beautifultable==0.8",
+                      "beautifultable==0.8.0",
                       "pytz",
                       "tzlocal",
                       "pyyaml>=3.13se",
