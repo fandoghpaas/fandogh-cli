@@ -1,16 +1,18 @@
 import json
+import os
 
 import click
 import requests
-import os
-from fandogh_cli.config import get_user_config, get_cluster_config, get_user_token, get_cluster_namespace
-from fandogh_cli.utils import convert_datetime, parse_key_values, TextStyle, format_text
 from retrying import retry
 
+from fandogh_cli.config import get_cluster_config, get_user_config, get_user_token, get_cluster_namespace
+from fandogh_cli.utils import convert_datetime, parse_key_values, TextStyle, format_text
+
 cluster_url = [key['url'] for key in get_cluster_config() if key['active']][0] if get_cluster_config() else None
-if cluster_url.startswith("https://api."):
-    cluster_url = cluster_url.replace("https://api.", "")
 fandogh_host = os.getenv('FANDOGH_HOST', cluster_url if cluster_url else 'fandogh.cloud')
+if fandogh_host.startswith("https://api."):
+    fandogh_host = fandogh_host.replace("https://api.", "")
+
 fandogh_ssh_host = os.getenv('FANDOGH_SSH_HOST', 'wss://ssh.{}'.format(fandogh_host))
 base_url = "https://api.{}/api/".format(fandogh_host)
 base_images_url = '%simages' % base_url
@@ -163,7 +165,6 @@ from requests_toolbelt.multipart import encoder
 
 
 def create_version(image_name, version, workspace_path, monitor_callback):
-
     with open(workspace_path, 'rb') as file:
         e = encoder.MultipartEncoder(
             fields={'version': version,
