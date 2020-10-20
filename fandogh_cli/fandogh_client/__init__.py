@@ -405,6 +405,16 @@ def request_service_rollback(service_name, history_id):
         return response.json()
 
 
+def request_service_action(service_name, service_action):
+    body = dict({'action': service_action})
+    response = get_session().post(base_services_url + '/{}/actions'.format(service_name), json=body)
+
+    if response.status_code != 200:
+        return get_exception(response)
+    else:
+        return response.json()
+
+
 '''
 Volume Requests Section
 
