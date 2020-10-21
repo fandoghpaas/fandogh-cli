@@ -326,6 +326,17 @@ def service_rollback(name, version):
                 sys.exit(303)
 
 
+@click.command('reset', cls=FandoghCommand)
+@click.option('-s', '--service', '--name', 'name', prompt='Service Name')
+def service_reset(name):
+    """Restart Service"""
+    _RESTART_SERVICE = 'RESTART'
+    if click.confirm(format_text('Restarting service may cause downtime, are you sure about this action?',
+                                 TextStyle.WARNING)):
+        response = request_service_action(name, _RESTART_SERVICE)
+        click.echo(response['message'])
+
+
 @click.group('history')
 def history():
     """Service History Commands"""
@@ -366,6 +377,7 @@ service.add_command(service_logs)
 service.add_command(service_details)
 service.add_command(service_dump)
 service.add_command(service_rollback)
+service.add_command(service_reset)
 
 service.add_command(history)
 history.add_command(history_list)
