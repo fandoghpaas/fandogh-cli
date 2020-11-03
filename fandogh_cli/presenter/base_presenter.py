@@ -28,6 +28,9 @@ def table_renderer(data, **kwargs):
                 row.append(
                     'Resizing' if item['condition'] == 'Resizing' or item['condition'] == 'FileSystemResizePending' else
                     'Operative')
+            elif cn == 'urls':
+                urls = '\n'.join('{}'.format(url) for url in item['urls'])
+                row.append(urls)
             elif item.get(cn) is True:
                 row.append('Yes')
             elif item.get(cn) is False:
