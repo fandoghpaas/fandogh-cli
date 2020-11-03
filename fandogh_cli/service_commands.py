@@ -113,10 +113,10 @@ def service_list():
     data = list_services()
     table = present(lambda: data,
                     renderer='table',
-                    headers=['Service Name', 'URLS', 'Service Type', "Memory Usages", 'Replicas', 'Started at',
+                    headers=['Service Name', 'URL', 'Service Type', "Memory Usages", 'Replicas', 'Started at',
                              'Updated at',
                              'State', 'Restarts'],
-                    columns=['name', 'urls', 'service_type', 'memory', 'replicas', 'start_date', 'last_update', 'state',
+                    columns=['name', 'url', 'service_type', 'memory', 'replicas', 'start_date', 'last_update', 'state',
                              'service_restarts'])
     if table:
         click.echo(table)
