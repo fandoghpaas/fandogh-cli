@@ -61,6 +61,28 @@ def list_images():
         click.echo('https://docs.fandogh.cloud/docs/images.html\n')
 
 
+@click.command('search', cls=FandoghCommand)
+@click.option('--image', 'image_name', prompt='image name', help='Name of The image you looking for.')
+def search_images(image_name):
+    """
+    Search for an image
+    """
+    images = get_images()
+    matching_images = []
+    for image in images:
+        if image_name in image['name']:
+            matching_images.append(image)
+    table = present(lambda: matching_images,
+                    renderer='table',
+                    headers=['Name', 'Last Version',
+                             'Last Version Publication Date'],
+                    columns=['name', 'last_version_version', 'last_version_date'])
+    if table:
+        click.echo(table)
+    else:
+        click.echo('\nCouldn\'t find image you looking for\n')
+    
+
 def show_image_logs(image_name, version, with_timestamp):
     image_offset = 0
 
@@ -186,5 +208,6 @@ image.add_command(init)
 image.add_command(publish)
 image.add_command(versions)
 image.add_command(list_images)
+image.add_command(search_images)
 image.add_command(logs)
 image.add_command(delete)
