@@ -24,7 +24,7 @@ jobs:
             all_branches: true
         - provider: pypi
           user: ${PYPI_USERNAME}
-          password: ${PYPI_PASSWORD
+          password: ${PYPI_PASSWORD}
           edge:
             source: 'native-api/dpl'
             branch: 'pip_fix_upgrade_deps'
