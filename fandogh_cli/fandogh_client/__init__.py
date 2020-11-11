@@ -113,6 +113,7 @@ def get_exception(response):
         404: ResourceNotFoundError,
         401: AuthenticationError,
         400: FandoghBadRequest,
+        429: FandoghBadRequest,
         500: FandoghInternalError,
         403: ExecutionForbidden,
     }.get(response.status_code, FandoghAPIError)
