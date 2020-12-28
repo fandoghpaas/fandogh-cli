@@ -244,15 +244,15 @@ def list_services():
 
 
 def list_archived_services():
-    response = get_session().get(base_services_url + '/archives')
+    response = get_session().get(base_services_url + '/service-archives')
     if response.status_code != 200:
         raise get_exception(response)
     else:
         return response.json()
 
 
-def deploy_archived_service(archive_id):
-    response = get_session().post(base_services_url + '/archives/{}'.format(archive_id))
+def deploy_archived_service(service_name):
+    response = get_session().post(base_services_url + '/service-archives/{}'.format(service_name))
     if response.status_code != 200:
         if response.status_code == 400:
             _check_for_manifest_errors(response)
@@ -261,8 +261,8 @@ def deploy_archived_service(archive_id):
         return response.json()
 
 
-def delete_service_archive(archive_id):
-    response = get_session().delete(base_services_url + '/archives/{}'.format(archive_id))
+def delete_service_archive(service_name):
+    response = get_session().delete(base_services_url + '/service-archives/{}'.format(service_name))
     if response.status_code != 200:
         raise get_exception(response)
     else:
