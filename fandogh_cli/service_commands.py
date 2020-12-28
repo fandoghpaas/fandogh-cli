@@ -184,18 +184,14 @@ def service_details(service_name):
               help='detach terminal.')
 @click.option('-h', '--hide', 'hide_manifest', is_flag=True, default=False,
               help='Hide manifest content.')
-@click.option('--from-archive', 'from_archive', is_flag=True, default=False,
-              help='deploy archived service')
-@click.option('--service', '-s', 'service_name', help='archive service name')
-def service_apply(file, parameters, detach, hide_manifest, service_name, from_archive):
+@click.option('--from-archive', 'from_archive',
+              help='archived service name')
+def service_apply(file, parameters, detach, hide_manifest, from_archive):
     """Deploys a service defined as a manifest or from archive"""
 
     if from_archive:
-        if not service_name:
-            while not service_name:
-                service_name = click.prompt('enter service name:')
 
-        _deploy_from_archive(service_name=service_name,
+        _deploy_from_archive(service_name=from_archive,
                              detach=detach)
     else:
         _deploy_from_manifest(file=file,
