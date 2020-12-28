@@ -138,6 +138,21 @@ def service_destroy(service_name):
     click.echo(message)
 
 
+@click.command('archive', cls=FandoghCommand)
+@click.option('--name', '-s', '--service', 'service_name', prompt='Service name',
+              help='Name of the service you want to archive')
+def service_archive(service_name):
+    """Destroy and archive a service"""
+    if click.confirm(format_text('Archiving a service means destroying it with manifest preserved, '
+                                 'are you sure about the action?',
+                                 TextStyle.WARNING)):
+        click.echo(
+            'you are about to destroy service with name {}.'.format(service_name))
+        click.echo('It might take a while!')
+        message = present(lambda: destroy_service(service_name))
+        click.echo(message)
+
+
 @click.command('logs', cls=FandoghCommand)
 @click.option('--name', 'service_name', prompt='Service name', help="Service name")
 @click.option('--follow', '-f', 'follow', is_flag=True, default=False, help='Monitoring service real-time logs')
@@ -373,6 +388,7 @@ service.add_command(deploy)
 service.add_command(service_apply)
 service.add_command(service_list)
 service.add_command(service_destroy)
+service.add_command(service_archive)
 service.add_command(service_logs)
 service.add_command(service_details)
 service.add_command(service_dump)
