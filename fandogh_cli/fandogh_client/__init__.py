@@ -261,8 +261,8 @@ def deploy_archived_service(service_name):
         return response.json()
 
 
-def delete_service_archive(service_name):
-    response = get_session().delete(base_url + 'service-archives/{}'.format(service_name))
+def delete_service_archive(archive_name):
+    response = get_session().delete(base_url + 'service-archives/{}'.format(archive_name))
     if response.status_code != 200:
         raise get_exception(response)
     else:
