@@ -178,7 +178,7 @@ def service_details(service_name):
 
 
 @click.command('apply', cls=FandoghCommand)
-@click.option('-f', '--file', 'file', prompt='File address')
+@click.option('-f', '--file', 'file')
 @click.option('-p', '--parameter', 'parameters', help='Manifest parameters', multiple=True)
 @click.option('-d', 'detach', is_flag=True, default=False,
               help='detach terminal.')
@@ -194,6 +194,9 @@ def service_apply(file, parameters, detach, hide_manifest, from_archive):
         _deploy_from_archive(service_name=from_archive,
                              detach=detach)
     else:
+        if not file:
+            file = click.prompt('File address')
+
         _deploy_from_manifest(file=file,
                               parameters=parameters,
                               hide_manifest=hide_manifest,
