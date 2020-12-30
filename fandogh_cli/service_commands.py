@@ -331,7 +331,7 @@ def archive_delete(archive_name):
     """Delete Archived Service"""
     if click.confirm('are you sure you want to delete service archive with name {}'.format(archive_name)):
         click.echo(
-            'you are about to delete archive with id {}.'.format(archive_name))
+            'you are about to delete archive with name {}.'.format(archive_name))
         click.echo('It might take a while!')
         message = present(lambda: delete_service_archive(archive_name))
         click.echo(message)
