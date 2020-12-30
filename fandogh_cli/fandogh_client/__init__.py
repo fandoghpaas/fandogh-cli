@@ -243,8 +243,37 @@ def list_services():
         return json_result
 
 
-def destroy_service(service_name):
-    response = get_session().delete(base_services_url + '/' + service_name)
+def list_archived_services():
+    response = get_session().get(base_url + 'service-archives')
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        return response.json()
+
+
+def deploy_archived_service(service_name):
+    response = get_session().post(base_url + 'service-archives/{}'.format(service_name))
+    if response.status_code != 200:
+        if response.status_code == 400:
+            _check_for_manifest_errors(response)
+        raise get_exception(response)
+    else:
+        return response.json()
+
+
+def delete_service_archive(archive_name):
+    response = get_session().delete(base_url + 'service-archives/{}'.format(archive_name))
+    if response.status_code != 200:
+        raise get_exception(response)
+    else:
+        return response.json().get('message', 'service archive deleted successfully')
+
+
+def destroy_service(service_name, with_archive):
+    params = {}
+    if with_archive:
+        params['with_archive'] = True
+    response = get_session().delete(base_services_url + '/' + service_name, params=params)
     if response.status_code != 200:
         raise get_exception(response)
     else:
@@ -316,8 +345,7 @@ def deploy_manifest(manifest):
                                   )
     if response.status_code != 200:
         if response.status_code == 400:
-            document = get_manifest_document(list(response.json().keys())[0])
-            click.echo(format_text(document, TextStyle.WARNING))
+            _check_for_manifest_errors(response)
         raise get_exception(response)
     else:
         return response.json()
@@ -509,3 +537,8 @@ def get_fandogh_latest_version():
         return None
     else:
         return response.json().get('latest_version', None)
+
+
+def _check_for_manifest_errors(response):
+    document = get_manifest_document(list(response.json().keys())[0])
+    click.echo(format_text(document, TextStyle.WARNING))

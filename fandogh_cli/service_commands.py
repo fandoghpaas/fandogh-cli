@@ -116,7 +116,8 @@ def service_list():
                     headers=['Service Name', 'URLS', 'Service Type', "Memory Usages", 'Replicas', 'Started at',
                              'Updated at',
                              'State', 'Restarts'],
-                    columns=['name', 'urls', 'service_type', 'memory', 'replicas', 'start_date', 'last_update', 'state',
+                    columns=['name', 'urls', 'service_type', 'memory', 'replicas', 'start_date', 'last_update',
+                             'state',
                              'service_restarts'])
     if table:
         click.echo(table)
@@ -129,12 +130,14 @@ def service_list():
 @click.command('destroy', cls=FandoghCommand)
 @click.option('--name', '-s', '--service', 'service_name', prompt='Service name',
               help='Name of the service you want to destroy')
-def service_destroy(service_name):
+@click.option('--archived', 'archived', is_flag=True, default=False,
+              help='archive service before destroying it.')
+def service_destroy(service_name, archived):
     """Destroy service"""
     click.echo(
         'you are about to destroy service with name {}.'.format(service_name))
     click.echo('It might take a while!')
-    message = present(lambda: destroy_service(service_name))
+    message = present(lambda: destroy_service(service_name, archived))
     click.echo(message)
 
 
@@ -175,105 +178,35 @@ def service_details(service_name):
 
 
 @click.command('apply', cls=FandoghCommand)
-@click.option('-f', '--file', 'file', prompt='File address')
+@click.option('-f', '--file', 'file')
 @click.option('-p', '--parameter', 'parameters', help='Manifest parameters', multiple=True)
 @click.option('-d', 'detach', is_flag=True, default=False,
               help='detach terminal.')
 @click.option('-h', '--hide', 'hide_manifest', is_flag=True, default=False,
               help='Hide manifest content.')
-def service_apply(file, parameters, detach, hide_manifest):
-    """Deploys a service defined as a manifest"""
-    manifest_content = read_manifest(file, parameters)
+@click.option('--from-archive', 'from_archive',
+              help='archived service name')
+def service_apply(file, parameters, detach, hide_manifest, from_archive):
+    """Deploys a service defined as a manifest or from archive"""
 
-    if manifest_content is None:
-        return
+    if from_archive:
 
-    from yaml import load_all
-    manifests = list(load_all(manifest_content))
+        _deploy_from_archive(service_name=from_archive,
+                             detach=detach)
+    else:
+        if not file:
+            file = click.prompt('File address')
 
-    def hide_manifest_env_content(content):
-        if 'spec' not in content:
-            return content
-        if 'env' not in content['spec']:
-            return content
-
-        from copy import deepcopy
-        temp_content = deepcopy(content)
-        for env in temp_content['spec']['env']:
-            if env.get('hidden', False):
-                env['value'] = '***********'
-        return temp_content
-
-    for index, service_conf in enumerate(manifests):
-        click.echo(
-            'service {} - {} is being deployed'.format(index + 1, len(manifests)))
-
-        click.echo(
-            yaml.safe_dump(hide_manifest_env_content(service_conf) if hide_manifest else service_conf,
-                           default_flow_style=False),
-        )
-
-        deployment_result = deploy_manifest(service_conf)
-        service_name = service_conf.get('name', '')
-        message = "\nCongratulation, Your service is running ^_^\n"
-        service_type = str(deployment_result.get('service_type', '')).lower()
-        service_urls = deployment_result['urls']
-        help_message = deployment_result.get('help_message', "")
-        if help_message:
-            message += help_message
-        else:
-            if service_type == 'external':
-                message += "Your service is accessible using the following URLs:\n{}".format(
-                    "\n".join([" - {}".format(url) for url in service_urls])
-                )
-            elif service_type == 'internal':
-                message += """
-            Since your service is internal, it's not accessible from outside your fandogh private network,
-            but other services inside your private network will be able to find it using it's name: '{}'
-                    """.strip().format(
-                    deployment_result['name']
-                )
-            elif service_type == 'managed':
-                message += """Managed service deployed successfully"""
-
-                if len(service_urls) > 0:
-                    message += "If your service has any web interface, it will be available via the following urls in few seconds:\n{}".format(
-                        "".join([" - {}\n".format(u) for u in service_urls])
-                    )
-
-        if detach:
-            click.echo(message)
-        else:
-            while True:
-                details = get_details(service_name)
-
-                if not details:
-                    sys.exit(302)
-
-                click.clear()
-
-                if details.get('state') == 'RUNNING':
-                    present_service_detail(details)
-                    click.echo(message)
-                    if index == len(manifest_content) - 1:
-                        sys.exit(0)
-                    else:
-                        break
-                elif details.get('state') == 'UNSTABLE':
-                    present_service_detail(details)
-                    click.echo(
-                        'You can press ctrl + C to exit details service state monitoring')
-                    sleep(3)
-                else:
-                    if index == len(manifest_content) - 1:
-                        sys.exit(304)
-                    else:
-                        break
+        _deploy_from_manifest(file=file,
+                              parameters=parameters,
+                              hide_manifest=hide_manifest,
+                              detach=detach)
 
 
 @click.command('dump', cls=FandoghCommand)
 @click.option('-s', '--service', '--name', 'name', prompt='Service name')
 def service_dump(name):
+    """Dump Service Manifest"""
     click.echo(yaml.safe_dump(dump_manifest(name), default_flow_style=False))
 
 
@@ -369,6 +302,41 @@ def history_delete(name, version):
         click.echo(remove_service_history(name, version))
 
 
+@click.group('archive')
+def archive():
+    """Service Archive Commands"""
+
+
+@click.command('list', cls=FandoghCommand)
+def archive_list():
+    """List all archived services"""
+    data = list_archived_services()
+
+    table = present(lambda: data,
+                    renderer='table',
+                    headers=['Id', 'Service Name', 'Memory(Mi)', 'Created At'],
+                    columns=['id', 'name', 'memory', 'created_at'])
+    if table:
+        click.echo(table)
+    else:
+
+        click.echo('\nYou have no archived services right now, why don\'t you try deploying one? \n'
+                   'have fun and follow the link below:\n')
+        click.echo('https://docs.fandogh.cloud/docs/services.html\n')
+
+
+@click.command('delete', cls=FandoghCommand)
+@click.option('--name', '-n', 'archive_name', prompt='Service Archive Name')
+def archive_delete(archive_name):
+    """Delete Archived Service"""
+    if click.confirm('are you sure you want to delete service archive with name {}'.format(archive_name)):
+        click.echo(
+            'you are about to delete archive with name {}.'.format(archive_name))
+        click.echo('It might take a while!')
+        message = present(lambda: delete_service_archive(archive_name))
+        click.echo(message)
+
+
 service.add_command(deploy)
 service.add_command(service_apply)
 service.add_command(service_list)
@@ -382,3 +350,150 @@ service.add_command(service_reset)
 service.add_command(history)
 history.add_command(history_list)
 history.add_command(history_delete)
+
+service.add_command(archive)
+archive.add_command(archive_list)
+archive.add_command(archive_delete)
+
+
+def _deploy_from_manifest(file, parameters, detach, hide_manifest):
+    manifest_content = read_manifest(file, parameters)
+
+    if manifest_content is None:
+        return
+
+    from yaml import load_all
+    manifests = list(load_all(manifest_content))
+
+    for index, service_conf in enumerate(manifests):
+        click.echo(
+            'service {} - {} is being deployed'.format(index + 1, len(manifests)))
+
+        click.echo(
+            yaml.safe_dump(_hide_manifest_env_content(service_conf) if hide_manifest else service_conf,
+                           default_flow_style=False),
+        )
+
+        deployment_result = deploy_manifest(service_conf)
+        service_name = service_conf.get('name', '')
+        message = "\nCongratulation, Your service is running ^_^\n"
+        service_type = str(deployment_result.get('service_type', '')).lower()
+        service_urls = deployment_result['urls']
+        help_message = deployment_result.get('help_message', "")
+        if help_message:
+            message += help_message
+        else:
+            if service_type == 'external':
+                message += "Your service is accessible using the following URLs:\n{}".format(
+                    "\n".join([" - {}".format(url) for url in service_urls])
+                )
+            elif service_type == 'internal':
+                message += """
+            Since your service is internal, it's not accessible from outside your fandogh private network,
+            but other services inside your private network will be able to find it using it's name: '{}'
+                    """.strip().format(
+                    deployment_result['name']
+                )
+            elif service_type == 'managed':
+                message += """Managed service deployed successfully"""
+
+                if len(service_urls) > 0:
+                    message += "If your service has any web interface, it will be available via the following urls in few seconds:\n{}".format(
+                        "".join([" - {}\n".format(u) for u in service_urls])
+                    )
+
+        if detach:
+            click.echo(message)
+        else:
+            while True:
+                details = get_details(service_name)
+
+                if not details:
+                    sys.exit(302)
+
+                click.clear()
+
+                if details.get('state') == 'RUNNING':
+                    present_service_detail(details)
+                    click.echo(message)
+                    if index == len(manifest_content) - 1:
+                        sys.exit(0)
+                    else:
+                        break
+                elif details.get('state') == 'UNSTABLE':
+                    present_service_detail(details)
+                    click.echo(
+                        'You can press ctrl + C to exit details service state monitoring')
+                    sleep(3)
+                else:
+                    if index == len(manifest_content) - 1:
+                        sys.exit(304)
+                    else:
+                        break
+
+
+def _deploy_from_archive(service_name, detach):
+    click.echo('archived service is being deployed...')
+    deployment_result = deploy_archived_service(service_name)
+    message = "\nCongratulation, Your service is running ^_^\n"
+    service_type = str(deployment_result.get('service_type', '')).lower()
+    service_urls = deployment_result['urls']
+    help_message = deployment_result.get('help_message', "")
+    if help_message:
+        message += help_message
+    else:
+        if service_type == 'external':
+            message += "Your service is accessible using the following URLs:\n{}".format(
+                "\n".join([" - {}".format(url) for url in service_urls])
+            )
+        elif service_type == 'internal':
+            message += """
+        Since your service is internal, it's not accessible from outside your fandogh private network,
+        but other services inside your private network will be able to find it using it's name: '{}'
+                """.strip().format(
+                deployment_result['name']
+            )
+        elif service_type == 'managed':
+            message += """Managed service deployed successfully"""
+
+            if len(service_urls) > 0:
+                message += "If your service has any web interface, it will be available via the following urls in few seconds:\n{}".format(
+                    "".join([" - {}\n".format(u) for u in service_urls])
+                )
+
+    if detach:
+        click.echo(message)
+    else:
+        while True:
+            details = get_details(service_name)
+
+            if not details:
+                sys.exit(302)
+
+            click.clear()
+
+            if details.get('state') == 'RUNNING':
+                present_service_detail(details)
+                click.echo(message)
+                break
+            elif details.get('state') == 'UNSTABLE':
+                present_service_detail(details)
+                click.echo(
+                    'You can press ctrl + C to exit details service state monitoring')
+                sleep(3)
+            else:
+                break
+
+
+def _hide_manifest_env_content(content):
+    if 'spec' not in content:
+        return content
+    if 'env' not in content['spec']:
+        return content
+
+    from copy import deepcopy
+    temp_content = deepcopy(content)
+    for env in temp_content['spec']['env']:
+        if env.get('hidden', False):
+            env['value'] = '***********'
+    return temp_content
