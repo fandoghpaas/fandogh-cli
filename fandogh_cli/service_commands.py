@@ -329,7 +329,7 @@ def archive_list():
 @click.option('--name', '-n', 'archive_name', prompt='Service Archive Name')
 def archive_delete(archive_name):
     """Delete Archived Service"""
-    if click.confirm('are you sure you want to delete service archive with id {}'.format(archive_name)):
+    if click.confirm('are you sure you want to delete service archive with name {}'.format(archive_name)):
         click.echo(
             'you are about to delete archive with id {}.'.format(archive_name))
         click.echo('It might take a while!')
