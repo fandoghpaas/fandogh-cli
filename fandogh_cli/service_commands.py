@@ -311,8 +311,8 @@ def archive_list():
 
     table = present(lambda: data,
                     renderer='table',
-                    headers=['Id', 'Service Name', 'Created At'],
-                    columns=['id', 'name', 'created_at'])
+                    headers=['Id', 'Service Name', 'Memory(Mi)', 'Created At'],
+                    columns=['id', 'name', 'memory', 'created_at'])
     if table:
         click.echo(table)
     else:
