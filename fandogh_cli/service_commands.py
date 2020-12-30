@@ -326,7 +326,7 @@ def archive_list():
 
 
 @click.command('delete', cls=FandoghCommand)
-@click.option('--name', '-n', 'archive_name', prompt='Service Archive Id')
+@click.option('--name', '-n', 'archive_name', prompt='Service Archive Name')
 def archive_delete(archive_name):
     """Delete Archived Service"""
     if click.confirm('are you sure you want to delete service archive with id {}'.format(archive_name)):
