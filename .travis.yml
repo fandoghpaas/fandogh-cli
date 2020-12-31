@@ -25,9 +25,9 @@ jobs:
         - provider: pypi
           user: ${PYPI_USERNAME}
           password: ${PYPI_PASSWORD}
-#          edge:
-#            source: 'native-api/dpl'
-#            branch: 'pip_fix_upgrade_deps'
+          edge:
+            source: 'native-api/dpl'
+            branch: 'pip_fix_upgrade_deps'
           skip_cleanup: true
           skip_existing: true
           on:
