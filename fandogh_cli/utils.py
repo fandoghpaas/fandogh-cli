@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 import pytz
 import tzlocal
+import platform
 
 FANDOGH_DEBUG = os.environ.get('FANDOGH_DEBUG', False)
 USER_TIMEZONE = pytz.timezone(tzlocal.get_localzone().zone)
@@ -56,9 +57,12 @@ def convert_datetime(datetime_value):
 
 def get_window_width():
     try:
-        with os.popen('stty size', 'r') as size:
-            columns = size.read().split()[1]
-            return int(columns)
+        if platform.system() in ['Linux','Darwin','Java']:
+            with os.popen('stty size', 'r') as size:
+                columns = size.read().split()[1]
+                return int(columns)
+        else:
+            return None
     except Exception as exp:
         return None
 
