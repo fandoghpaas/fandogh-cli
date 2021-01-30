@@ -228,7 +228,7 @@ def create_fandoghignore_file(project_name):
         exist_ignore_list = [line.rstrip() for line in open('.fandoghignore')]
         os.remove('.fandoghignore')
     exist_ignore_list = itertools.chain.from_iterable(
-        (exist_ignore_list, project_type_ignore_dict.get(project_name, None) or []))
+        (exist_ignore_list, project_type_ignore_dict.get(project_name, [])))
     unique_ignore_list = set(exist_ignore_list)
     with open('.fandoghignore', 'w+') as file:
         for item in unique_ignore_list:
