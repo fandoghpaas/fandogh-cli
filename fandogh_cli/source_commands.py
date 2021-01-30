@@ -13,6 +13,7 @@ from .fandogh_client import *
 from .workspace import Workspace
 import sys
 import re
+import itertools
 
 
 @click.group("source")
@@ -198,6 +199,11 @@ project_type_ignore_dict = {
                    'bld/',
                    '[Bb]in/', '[Oo]bj/', '[Oo]ut/', 'msbuild.log', 'msbuild.err', 'msbuild.wrn', '.idea', '*.pyc',
                    '.vscode', 'nupkg/'],
+    'aspnet': ['.git', '.vs/', '[Dd]ebug/', '[Dd]ebugPublic/', '[Rr]elease/', '[Rr]eleases/', 'x64/', 'x86/',
+               'build/',
+               'bld/',
+               '[Bb]in/', '[Oo]bj/', '[Oo]ut/', 'msbuild.log', 'msbuild.err', 'msbuild.wrn', '.idea', '*.pyc',
+               '.vscode', 'nupkg/'],
     'nodejs': ['.git', '.tern-port', '.dynamodb/', '.fusebox/', '.serverless/', 'serverless', '.cache/',
                '.nuxt',
                '.next', '.cache', '.env.test', '.env', '.yarn-integrity', '*.tgz', '.node_repl_history',
@@ -211,7 +217,8 @@ project_type_ignore_dict = {
         '.factorypath', '.gradle', '.idea', '.metadata', '.project', '.recommenders', '.settings',
         '.springBeans', '/build', '/code', 'MANIFEST.MF', '_site/', 'activemq-data', 'bin', 'build', 'build.log',
         'dependency-reduced-pom.xml', 'dump.rdb', 'interpolated*.xml', 'lib/', 'manifest.yml', 'overridedb.*',
-        'target', 'transaction-logs', '.flattened-pom.xml', 'secrets.yml', '.gradletasknamecache', '.sts4-cache']
+        'target', 'transaction-logs', '.flattened-pom.xml', 'secrets.yml', '.gradletasknamecache', '.sts4-cache'],
+
 }
 
 
@@ -220,8 +227,9 @@ def create_fandoghignore_file(project_name):
     if os.path.exists('.fandoghignore'):
         exist_ignore_list = [line.rstrip() for line in open('.fandoghignore')]
         os.remove('.fandoghignore')
-    total_ignore_list = exist_ignore_list + project_type_ignore_dict.get(project_name)
-    unique_ignore_list = set(total_ignore_list)
+    exist_ignore_list = itertools.chain.from_iterable(
+        (exist_ignore_list, project_type_ignore_dict.get(project_name, [])))
+    unique_ignore_list = set(exist_ignore_list)
     with open('.fandoghignore', 'w+') as file:
         for item in unique_ignore_list:
             file.write("{}\n".format(item))
