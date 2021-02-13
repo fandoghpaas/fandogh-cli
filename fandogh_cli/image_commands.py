@@ -201,6 +201,9 @@ def versions(image):
 @click.option('-i', '--image', '--name', 'image', prompt='Image name', help='The image name',
               default=lambda: get_project_config().get('image.name'))
 def delete(image):
+    """
+    Delete an image
+    """
     click.echo(delete_image(image)['message'])
 
 
