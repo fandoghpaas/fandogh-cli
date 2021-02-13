@@ -227,7 +227,13 @@ project_type_ignore_dict = {
               '.grunt', '.nyc_output', '*.lcov', 'coverage', 'lib-cov', '*.pid.lock', '*.seed', '*.pid', 'pids',
               'logs', '*.log', 'npm-debug.log*', 'yarn-debug.log*', 'yarn-error.log*', 'lerna-debug.log*',
               'node_modules', 'node_modules/', '.DS_Store', '/dist/', '.env.local', '.idea', '.vscode', '*.suo',
-              '*.ntvs*', '*.njsproj', '*.sw*', '*.sln','scripts/flow/*/.flowconfig','.flowconfig'],
+              '*.ntvs*', '*.njsproj', '*.sw*', '*.sln', 'scripts/flow/*/.flowconfig', '.flowconfig',
+              'packages/react-devtools-core/dist', 'packages/react-devtools-extensions/chrome/build',
+              'packages/react-devtools-extensions/firefox/build', 'packages/react-devtools-scheduling-profiler/dist',
+              'packages/react-devtools-shell/dist', 'packages/react-devtools-inline/dist',
+              'packages/react-devtools-extensions/.tempUserDataDir', 'packages/react-devtools-extensions/shared/build',
+              'packages/react-devtools-extensions/firefox/*.pem', 'packages/react-devtools-extensions/firefox/*.xpi',
+              '*.sublime-workspace'],
 
     'spring_boot': [
         '.git', '*.iml', '*.ipr', '*.iws', '*.jar', '*.sw?', '*~', '.#*', '.*.md.html', '.DS_Store', '.classpath',
