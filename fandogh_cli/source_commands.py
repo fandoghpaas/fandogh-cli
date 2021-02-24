@@ -6,7 +6,7 @@ import os
 from .source import key_hints, manifest_builders
 from .presenter import present_service_detail
 from .image_commands import show_image_logs
-from .fandogh_client.source_client import upload_source, get_project_types
+from .fandogh_client.source_client import upload_source, get_project_types, get_ignore_files_from_server
 from .base_commands import FandoghCommand
 from .config import ConfigRepository
 from .fandogh_client import *
@@ -14,6 +14,8 @@ from .workspace import Workspace
 import sys
 import re
 import itertools
+
+base_sources_url = '{}sources'.format(base_url)
 
 
 @click.group("source")
@@ -177,81 +179,13 @@ def setup_manifest(name, project_type_name, chosen_params):
     manifest_repository.save()
 
 
-project_type_ignore_dict = {
-    'django': ['.git', '*.log', '*.pot', '*.pyc', '__pycache__/', 'local_settings.py', '.env', 'db.sqlite3', '*.mo',
-               '*.pot', 'venv', 'venv/'],
-    'laravel': [
-        '.git', 'node_modules', '/public/hot', '/public/storage', '/storage/*.key', '/vendor', '.env', '.env.backup',
-        '.phpunit.result.cache', 'Homestead.json', 'Homestead.yaml', 'npm-debug.log', 'yarn - error.log',
-        'node_modules', 'node_modules/', 'vendor', 'vendor/'],
-    'static_website': ['.tern-port', '.dynamodb/', '.fusebox/', '.serverless/', 'serverless', 'public', '.cache/',
-                       '.nuxt',
-                       '.next', '.cache', '.env.test', '.env', '.yarn-integrity', '*.tgz', '.node_repl_history',
-                       '.rts2_cache_umd/', '.rts2_cache_es/', '.rts2_cache_cjs/', '.rpt2_cache/', '.eslintcache',
-                       '.npm',
-                       '*.tsbuildinfo', 'typings/', 'jspm_packages/', 'build/Release', '.lock-wscript',
-                       'bower_components',
-                       '.grunt', '.nyc_output', '*.lcov', 'coverage', 'lib-cov', '*.pid.lock', '*.seed', '*.pid',
-                       'pids',
-                       'logs', '*.log', 'npm-debug.log*', 'yarn-debug.log*', 'yarn-error.log*', 'lerna-debug.log*'],
-    'aspnetcore': ['.git', '.vs/', '[Dd]ebug/', '[Dd]ebugPublic/', '[Rr]elease/', '[Rr]eleases/', 'x64/', 'x86/',
-                   'build/',
-                   'bld/',
-                   '[Bb]in/', '[Oo]bj/', '[Oo]ut/', 'msbuild.log', 'msbuild.err', 'msbuild.wrn', '.idea', '*.pyc',
-                   '.vscode', 'nupkg/'],
-    'aspnet': ['.git', '.vs/', '[Dd]ebug/', '[Dd]ebugPublic/', '[Rr]elease/', '[Rr]eleases/', 'x64/', 'x86/',
-               'build/',
-               'bld/',
-               '[Bb]in/', '[Oo]bj/', '[Oo]ut/', 'msbuild.log', 'msbuild.err', 'msbuild.wrn', '.idea', '*.pyc',
-               '.vscode', 'nupkg/'],
-    'nodejs': ['.git', '.tern-port', '.dynamodb/', '.fusebox/', '.serverless/', 'serverless', '.cache/',
-               '.nuxt',
-               '.next', '.cache', '.env.test', '.env', '.yarn-integrity', '*.tgz', '.node_repl_history',
-               '.rts2_cache_umd/', '.rts2_cache_es/', '.rts2_cache_cjs/', '.rpt2_cache/', '.eslintcache', '.npm',
-               '*.tsbuildinfo', 'typings/', 'jspm_packages/', 'build/Release', '.lock-wscript', 'bower_components',
-               '.grunt', '.nyc_output', '*.lcov', 'coverage', 'lib-cov', '*.pid.lock', '*.seed', '*.pid', 'pids',
-               'logs', '*.log', 'npm-debug.log*', 'yarn-debug.log*', 'yarn-error.log*', 'lerna-debug.log*',
-               'node_modules', 'node_modules/', ],
-    'vuejs': ['.git', '.tern-port', '.dynamodb/', '.fusebox/', '.serverless/', 'serverless', '.cache/',
-              '.next', '.cache', '.env.test', '.env', '.yarn-integrity', '*.tgz', '.node_repl_history',
-              '.rts2_cache_umd/', '.rts2_cache_es/', '.rts2_cache_cjs/', '.rpt2_cache/', '.eslintcache', '.npm',
-              '*.tsbuildinfo', 'typings/', 'jspm_packages/', 'build/Release', '.lock-wscript', 'bower_components',
-              '.grunt', '.nyc_output', '*.lcov', 'coverage', 'lib-cov', '*.pid.lock', '*.seed', '*.pid', 'pids',
-              'logs', '*.log', 'npm-debug.log*', 'yarn-debug.log*', 'yarn-error.log*', 'lerna-debug.log*',
-              'node_modules', 'node_modules/', '.DS_Store', '/dist/', '.env.local', '.idea', '.vscode', '*.suo',
-              '*.ntvs*', '*.njsproj', '*.sw*', '*.sln'],
-    'react': ['.git', '.tern-port', '.dynamodb/', '.fusebox/', '.serverless/', 'serverless', '.cache/',
-              '.next', '.cache', '.env.test', '.env', '.yarn-integrity', '*.tgz', '.node_repl_history',
-              '.rts2_cache_umd/', '.rts2_cache_es/', '.rts2_cache_cjs/', '.rpt2_cache/', '.eslintcache', '.npm',
-              '*.tsbuildinfo', 'typings/', 'jspm_packages/', 'build/Release', '.lock-wscript', 'bower_components',
-              '.grunt', '.nyc_output', '*.lcov', 'coverage', 'lib-cov', '*.pid.lock', '*.seed', '*.pid', 'pids',
-              'logs', '*.log', 'npm-debug.log*', 'yarn-debug.log*', 'yarn-error.log*', 'lerna-debug.log*',
-              'node_modules', 'node_modules/', '.DS_Store', '/dist/', '.env.local', '.idea', '.vscode', '*.suo',
-              '*.ntvs*', '*.njsproj', '*.sw*', '*.sln', 'scripts/flow/*/.flowconfig', '.flowconfig',
-              'packages/react-devtools-core/dist', 'packages/react-devtools-extensions/chrome/build',
-              'packages/react-devtools-extensions/firefox/build', 'packages/react-devtools-scheduling-profiler/dist',
-              'packages/react-devtools-shell/dist', 'packages/react-devtools-inline/dist',
-              'packages/react-devtools-extensions/.tempUserDataDir', 'packages/react-devtools-extensions/shared/build',
-              'packages/react-devtools-extensions/firefox/*.pem', 'packages/react-devtools-extensions/firefox/*.xpi',
-              '*.sublime-workspace'],
-
-    'spring_boot': [
-        '.git', '*.iml', '*.ipr', '*.iws', '*.jar', '*.sw?', '*~', '.#*', '.*.md.html', '.DS_Store', '.classpath',
-        '.factorypath', '.gradle', '.idea', '.metadata', '.project', '.recommenders', '.settings',
-        '.springBeans', '/build', '/code', 'MANIFEST.MF', '_site/', 'activemq-data', 'bin', 'build', 'build.log',
-        'dependency-reduced-pom.xml', 'dump.rdb', 'interpolated*.xml', 'lib/', 'manifest.yml', 'overridedb.*',
-        'target', 'transaction-logs', '.flattened-pom.xml', 'secrets.yml', '.gradletasknamecache', '.sts4-cache'],
-
-}
-
-
 def create_fandoghignore_file(project_name):
     exist_ignore_list = []
     if os.path.exists('.fandoghignore'):
         exist_ignore_list = [line.rstrip() for line in open('.fandoghignore')]
         os.remove('.fandoghignore')
     exist_ignore_list = itertools.chain.from_iterable(
-        (exist_ignore_list, project_type_ignore_dict.get(project_name, [])))
+        (exist_ignore_list, get_ignore_files_from_server(project_type=project_name)))
     unique_ignore_list = set(exist_ignore_list)
     with open('.fandoghignore', 'w+') as file:
         for item in unique_ignore_list:
