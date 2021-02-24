@@ -6,7 +6,7 @@ import os
 from .source import key_hints, manifest_builders
 from .presenter import present_service_detail
 from .image_commands import show_image_logs
-from .fandogh_client.source_client import upload_source, get_project_types
+from .fandogh_client.source_client import upload_source, get_project_types, get_ignore_files_from_server
 from .base_commands import FandoghCommand
 from .config import ConfigRepository
 from .fandogh_client import *
@@ -185,28 +185,11 @@ def create_fandoghignore_file(project_name):
         exist_ignore_list = [line.rstrip() for line in open('.fandoghignore')]
         os.remove('.fandoghignore')
     exist_ignore_list = itertools.chain.from_iterable(
-        (exist_ignore_list, _get_ignore_files_from_server(project_type=project_name)))
+        (exist_ignore_list, get_ignore_files_from_server(project_type=project_name)))
     unique_ignore_list = set(exist_ignore_list)
     with open('.fandoghignore', 'w+') as file:
         for item in unique_ignore_list:
             file.write("{}\n".format(item))
-
-
-def _get_ignore_files_from_server(project_type):
-    response = get_session().get(base_sources_url + '/ignorefiles/' + project_type)
-    if response.status_code != 200:
-        raise get_exception(response)
-    ignorefiles_list = _clean_ignore_files_and_return_list(response.content)
-    return ignorefiles_list
-
-
-def _clean_ignore_files_and_return_list(str_list):
-    rep = {'"': "", "[": "", "]": ""}
-    rep = dict((re.escape(k), v) for k, v in rep.iteritems())
-    pattern = re.compile("|".join(rep.keys()))
-    text = pattern.sub(lambda m: rep[re.escape(m.group(0))], str_list)
-    final_list = list(text.split(","))
-    return final_list
 
 
 source.add_command(init)

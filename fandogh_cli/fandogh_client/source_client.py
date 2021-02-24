@@ -34,3 +34,10 @@ def get_project_types():
     if response.status_code != 200:
         raise get_exception(response)
     return response.json()
+
+
+def get_ignore_files_from_server(project_type):
+    response = get_session().get(base_sources_url + '/ignorefiles/' + project_type)
+    if response.status_code != 200:
+        raise get_exception(response)
+    return response.json()
