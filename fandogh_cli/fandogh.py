@@ -41,7 +41,8 @@ def login(username, password):
                 if cluster['active']:
                     del clusters[index]
                     custom_dict = [
-                        dict(name=cluster['name'], url=cluster['url'], active=True, token=token_obj['token']),
+                        dict(name=cluster['name'], url=cluster['url'], active=True, token=token_obj['token'],
+                             namespace=cluster.get('namespace', '')),
                     ]
                     custom_dict.extend(clusters)
                     set_cluster_config(custom_dict)
