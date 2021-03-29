@@ -42,7 +42,7 @@ def login(username, password):
                     del clusters[index]
                     custom_dict = [
                         dict(name=cluster['name'], url=cluster['url'], active=True, token=token_obj['token'],
-                             namespace=cluster.get('namespace', '')),
+                             namespace=cluster.get('namespace', None)),
                     ]
                     custom_dict.extend(clusters)
                     set_cluster_config(custom_dict)
