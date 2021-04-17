@@ -7,3 +7,4 @@ requests-toolbelt
 pytz
 tzlocal
 websocket-client
+mmh3
