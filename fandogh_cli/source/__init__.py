@@ -2,9 +2,12 @@ from .django import wsgi_name_hint, requirements_hint, build_manifest as django_
 
 key_hints = {
     'wsgi': wsgi_name_hint,
-    'django': requirements_hint
+    'django': requirements_hint,
+    'flask': requirements_hint,
+
 }
 
 manifest_builders = {
-    'django': django_build_manifest
+    'django': django_build_manifest,
+
 }
