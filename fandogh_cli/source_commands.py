@@ -10,6 +10,7 @@ from .fandogh_client.source_client import upload_source, get_project_types, get_
 from .base_commands import FandoghCommand
 from .config import ConfigRepository
 from .fandogh_client import *
+from .utils import read_manifest
 from .workspace import Workspace
 import sys
 import re
@@ -62,10 +63,16 @@ def init(name):
 @click.command('run', cls=FandoghCommand)
 @click.option('--with_timestamp', 'with_timestamp', is_flag=True, default=False,
               help='timestamp for each line of image build process')
-def run(with_timestamp):
+@click.option('-p', '--parameter', 'parameters', help='Manifest parameters', multiple=True)
+def run(with_timestamp, parameters):
     # to implicitly check whether user's token is still valid or not
     get_images()
-    manifest_repository = ConfigRepository(os.path.join(os.getcwd(), 'fandogh.yml'))
+    fandogh_yml_path = os.path.join(os.getcwd(), 'fandogh.yml')
+    with open(fandogh_yml_path, 'r') as config_file:
+        new_manifest = config_file.read()
+    if parameters:
+        new_manifest = read_manifest(fandogh_yml_path, parameters)
+    manifest_repository = ConfigRepository(configurations=yaml.safe_load(new_manifest))
     context_pth = manifest_repository.get('spec', {}).get('source', {}).get('context', '.')
     workspace = Workspace(context=context_pth)
     click.echo(message='workspace size is : {} MB'.format(round(workspace.tar_file_size)))
