@@ -17,7 +17,7 @@ setup(
                       "requests-toolbelt",
                       "beautifultable==0.8.0",
                       "pytz",
-                      "tzlocal",
+                      "tzlocal==2.1",
                       "pyyaml>=3.13se",
                       "websocket-client"],
     author_email='soroosh.sarabadani@gmail.com',
