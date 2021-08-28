@@ -5,5 +5,5 @@ beautifultable
 pyyaml
 requests-toolbelt
 pytz
-tzlocal
+tzlocal==2.1
 websocket-client
