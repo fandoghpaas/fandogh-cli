@@ -18,7 +18,7 @@ setup(
                       "beautifultable==0.8.0",
                       "pytz",
                       "tzlocal==2.1",
-                      "pyyaml==5.4.1.1",
+                      "pyyaml==5.4.1",
                       "websocket-client"],
     author_email='soroosh.sarabadani@gmail.com',
     url='https://github.com/fandoghpaas/fandogh-cli',
