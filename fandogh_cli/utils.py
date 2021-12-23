@@ -1,4 +1,7 @@
+import urllib
 from string import Template
+from urllib.request import urlopen
+
 import click
 import os
 from datetime import datetime
@@ -98,12 +101,22 @@ def trim_comments(manifest):
 
 def read_manifest(manifest_file, parameters):
     try:
-        with open(manifest_file, mode='r') as manifest:
-            rendered_manifest = process_template(
-                manifest.read(),
-                parse_key_values(
-                    parameters
+
+        if str(manifest_file).startswith('http'):
+            with urllib.request.urlopen(manifest_file) as manifest:
+                rendered_manifest = process_template(
+                    manifest.read().decode('utf-8'),
+                    parse_key_values(
+                        parameters
+                    )
                 )
+        else:
+            with open(manifest_file) as manifest:
+                rendered_manifest = process_template(
+                    manifest.read(),
+                    parse_key_values(
+                        parameters
+                    )
             )
         return trim_comments(rendered_manifest)
     except IOError as e:
