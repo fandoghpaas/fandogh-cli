@@ -49,16 +49,16 @@ class Workspace:
             ignore_file_path = os.path.join(self.path, ignore_file)
             if os.path.exists(ignore_file_path):
                 with open(ignore_file_path, 'r') as file:
-                    entries = [line for line in file.readlines() if line.strip() and not line.startswith('#')]
+                    entries = [line.strip() for line in file.readlines() if line.strip() and not line.startswith('#')]
         entries = self.add_custom_ignore_folder_to_entries(entries, [".git/", ".git"])
         expand_entries = []
         for entry in entries:
-            expand_entries.append(entry.strip() + os.sep + '*')
+            if not str(entry.strip()).endswith(os.sep + '*') and not str(entry.strip()).endswith(os.sep):
+                expand_entries.append(entry.strip() + os.sep + '*')
         entries = entries + expand_entries
         for index, entry in enumerate(entries):
             if entry.startswith("/"):
                 entries[index] = entry[1:]
-
         return entries
 
     def tardir(self, path, tarh):
@@ -70,6 +70,8 @@ class Workspace:
                 if file != 'workspace.tar.gz':
 
                     file_path = os.path.join(os.path.relpath(root, path), file)
+                    if file_path.startswith('./'):
+                        file_path = file_path.replace('./', '', 1)
 
                     if file.lower() != "dockerfile" and any(
                             fnmatch(file_path, ignore.strip()) for ignore in ignored_entries):
