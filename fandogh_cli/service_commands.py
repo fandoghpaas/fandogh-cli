@@ -1,3 +1,5 @@
+import re
+
 import click
 import yaml
 import sys
@@ -155,7 +157,18 @@ def service_logs(service_name, follow, max_logs, with_timestamp, previous):
         logs_response = get_logs(service_name, last_logged_time, max_logs, with_timestamp, previous)
 
         if logs_response['logs']:
-            click.echo(logs_response['logs'])
+            lines = logs_response['logs'].split('\n')
+            for line in lines:
+                parts = line.split('->')
+                regex = r"[+[a-zA-Z-0-9]+]"
+                words = re.findall(regex, parts[0])
+                phrase = ''
+                for word in words:
+                    phrase += '\033[37;46m{}\033[0m '.format(word)
+
+                phrase += '->'
+                phrase += parts[1]
+                click.echo(phrase)
 
         if follow:
             last_logged_time = logs_response['last_logged_time']
