@@ -8,6 +8,7 @@ from .fandogh_client import *
 from time import sleep
 from .workspace import Workspace
 import sys
+import difflib
 
 
 @click.group("image")
@@ -62,16 +63,23 @@ def list_images():
 
 
 @click.command('search', cls=FandoghCommand)
-@click.option('--image', 'image_name', prompt='image name', help='Name of The image you looking for.')
-def search_images(image_name):
+@click.option('-i', '--image', 'image_name', prompt='image name', help='Name of The image you looking for.')
+@click.option('-c', '--closest_matches', 'closest_matches', is_flag=True, help='Find closest matches.')
+def search_images(image_name, closest_matches):
     """
     Search for an image
     """
     images = get_images()
     matching_images = []
-    for image in images:
-        if image_name in image['name']:
-            matching_images.append(image)
+    if closest_matches:
+        image_names = [image['name'] for image in images]
+        matching_image_names = difflib.get_close_matches(image_name,image_names)
+        for close_image_name in matching_image_names:
+            matching_images = [image for image in images if image['name'] == close_image_name]
+    else:
+        for image in images:
+            if image_name in image['name']:
+                matching_images.append(image)
     table = present(lambda: matching_images,
                     renderer='table',
                     headers=['Name', 'Last Version',
